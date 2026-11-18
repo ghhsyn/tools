@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Base64 Kodlama ve Çözme – Metin ve Dosya | Notettiklerim Tools</title>
+<meta name="description" content="Metni Base64&#x27;e kodlayın veya Base64&#x27;ü çözün (UTF-8 destekli). Dosyaları Base64 / Data URL&#x27;e dönüştürün, Base64&#x27;ten dosya indirin. URL güvenli Base64 seçeneği.">
+<link rel="canonical" href="https://tools.notettiklerim.com/base64/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Base64 Kodlama ve Çözme – Metin ve Dosya">
+<meta property="og:description" content="Metni Base64&#x27;e kodlayın veya Base64&#x27;ü çözün (UTF-8 destekli). Dosyaları Base64 / Data URL&#x27;e dönüştürün, Base64&#x27;ten dosya indirin. URL güvenli Base64 seçeneği.">
+<meta property="og:url" content="https://tools.notettiklerim.com/base64/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="base64">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <div class="card stack">
+    <div class="tabs" id="tab"><button data-t="text" class="active"><i data-icon="type"></i>Metin</button><button data-t="file"><i data-icon="file"></i>Dosya → Base64</button><button data-t="tofile"><i data-icon="download"></i>Base64 → Dosya</button></div>
+    <div data-p="text" class="stack">
+      <div class="row row-between"><div class="seg" id="dir" data-value="enc"><button data-v="enc">Kodla</button><button data-v="dec">Çöz</button></div><label class="check"><input type="checkbox" id="urlsafe">URL güvenli</label></div>
+      <div class="grid-2">
+        <div class="field"><label for="in" id="inL">Metin</label><textarea class="textarea mono" id="in" style="min-height:280px" spellcheck="false">Merhaba Dünya! Çok güzel bir gün 🌞</textarea></div>
+        <div class="field"><label for="out" id="outL">Base64</label><textarea class="textarea mono" id="out" style="min-height:280px" readonly></textarea><span class="hint" id="err"></span></div>
+      </div>
+      <div class="row row-end" style="gap:8px"><button class="btn btn-sm btn-ghost" id="swap"><i data-icon="refresh"></i>Yönü değiştir</button><button class="btn btn-sm" data-copy-target="#out"><i data-icon="copy"></i>Kopyala</button></div>
+    </div>
+    <div data-p="file" class="stack" hidden>
+      <div id="dz"></div>
+      <div id="fileRes" class="stack-sm" hidden>
+        <div class="row row-between"><span class="small" id="fileInfo"></span><label class="check"><input type="checkbox" id="dataurl" checked>Data URL olarak (data:…;base64,)</label></div>
+        <textarea class="textarea mono" id="fileOut" style="min-height:220px" readonly></textarea>
+        <div class="row row-end" style="gap:8px"><button class="btn btn-sm" data-copy-target="#fileOut"><i data-icon="copy"></i>Kopyala</button><button class="btn btn-sm" id="fileDl"><i data-icon="download"></i>.txt indir</button></div>
+      </div>
+    </div>
+    <div data-p="tofile" class="stack" hidden>
+      <div class="field"><label for="b64">Base64 veya Data URL</label><textarea class="textarea mono" id="b64" style="min-height:220px" spellcheck="false" placeholder="data:image/png;base64,iVBORw0KGgo… veya düz Base64"></textarea></div>
+      <div class="grid-2"><div class="field"><label for="fname">Dosya adı</label><input class="input" id="fname" value="dosya"></div><div class="field"><label>&nbsp;</label><button class="btn btn-primary" id="mk"><i data-icon="download"></i>Dosyayı indir</button></div></div>
+      <div id="imgPrev"></div>
+    </div>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>Metin veya Dosya sekmesini seçin.</li>
+        <li>Kodla/Çöz yönünü belirleyin; sonuç siz yazdıkça oluşur.</li>
+        <li>Sonucu kopyalayın veya dosya olarak indirin.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Türkçe karakterler bozuluyor mu?</summary><p>Hayır. Metin UTF-8 olarak kodlanır, böylece ğ, ş, ı gibi karakterler doğru şekilde kodlanır ve çözülür.</p></details>
+      <details class="faq"><summary>URL güvenli Base64 nedir?</summary><p>+ ve / karakterleri yerine - ve _ kullanılır, sondaki = işaretleri kaldırılır. URL ve dosya adlarında güvenle kullanılabilir.</p></details>
+      <details class="faq"><summary>Data URL nedir?</summary><p>Dosyanın türü ile birlikte Base64 halidir (data:image/png;base64,...). HTML ve CSS içinde doğrudan kullanılabilir.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, $$, esc } = T;
+  $('#tab').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; $$('#tab button').forEach((x) => x.classList.toggle('active', x === b)); $$('[data-p]').forEach((p) => (p.hidden = p.dataset.p !== b.dataset.t)); });
+  const enc = (str) => { const bytes = new TextEncoder().encode(str); let bin = ''; for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); return btoa(bin); };
+  const toStd = (s) => { s = s.replace(/^data:[^,]*,/, '').replace(/\s+/g, '').replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return s; };
+  const decBytes = (s) => Uint8Array.from(atob(toStd(s)), (c) => c.charCodeAt(0));
+  const dec = (s) => new TextDecoder('utf-8', { fatal: true }).decode(decBytes(s));
+  const dir = T.seg($('#dir'), () => { $('#inL').textContent = dir.get() === 'enc' ? 'Metin' : 'Base64'; $('#outL').textContent = dir.get() === 'enc' ? 'Base64' : 'Metin'; run(); });
+  function run() {
+    const v = $('#in').value; $('#err').textContent = '';
+    try {
+      if (dir.get() === 'enc') { let r = enc(v); if ($('#urlsafe').checked) r = r.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); $('#out').value = r; }
+      else $('#out').value = v.trim() ? dec(v) : '';
+    } catch (e) { $('#out').value = ''; $('#err').innerHTML = '<span style="color:var(--danger)">Geçersiz Base64 veya UTF-8 olmayan veri.</span>'; }
+  }
+  $('#in').addEventListener('input', run); $('#urlsafe').addEventListener('change', run);
+  $('#swap').onclick = () => { const o = $('#out').value; dir.set(dir.get() === 'enc' ? 'dec' : 'enc', false); $('#in').value = o; $('#inL').textContent = dir.get() === 'enc' ? 'Metin' : 'Base64'; $('#outL').textContent = dir.get() === 'enc' ? 'Base64' : 'Metin'; run(); };
+  run();
+
+  let cur = null;
+  T.dropzone($('#dz'), { compact: true, icon: 'file', title: 'Dosya seçin', subtitle: 'Her tür dosya · görseller önizlenir', onFiles: async (f) => { cur = { file: f[0], url: await T.readDataURL(f[0]) }; showFile(); } });
+  function showFile() {
+    if (!cur) return;
+    const full = $('#dataurl').checked ? cur.url : cur.url.slice(cur.url.indexOf(',') + 1);
+    $('#fileRes').hidden = false; $('#fileOut').value = full;
+    $('#fileInfo').innerHTML = `<b>${esc(cur.file.name)}</b> · ${T.formatBytes(cur.file.size)} → ${T.formatBytes(full.length)} Base64`;
+  }
+  $('#dataurl').addEventListener('change', showFile);
+  $('#fileDl').onclick = () => T.download(new Blob([$('#fileOut').value], { type: 'text/plain' }), (cur ? T.baseName(cur.file.name) : 'base64') + '.txt');
+
+  const EXT = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/gif': 'gif', 'image/webp': 'webp', 'image/svg+xml': 'svg', 'application/pdf': 'pdf', 'text/plain': 'txt', 'application/json': 'json', 'application/zip': 'zip', 'audio/mpeg': 'mp3', 'video/mp4': 'mp4' };
+  function sniff(b) {
+    const h = [...b.slice(0, 8)].map((x) => x.toString(16).padStart(2, '0')).join('');
+    if (h.startsWith('89504e47')) return 'image/png'; if (h.startsWith('ffd8ff')) return 'image/jpeg'; if (h.startsWith('47494638')) return 'image/gif';
+    if (h.startsWith('25504446')) return 'application/pdf'; if (h.startsWith('504b0304')) return 'application/zip'; if (h.startsWith('52494646') && String.fromCharCode(...b.slice(8, 12)) === 'WEBP') return 'image/webp';
+    return 'application/octet-stream';
+  }
+  $('#b64').addEventListener('input', T.debounce(() => {
+    const v = $('#b64').value.trim(); $('#imgPrev').innerHTML = '';
+    if (!v) return;
+    try { const b = decBytes(v); const m = (v.match(/^data:([^;,]+)/) || [])[1] || sniff(b); if (m.startsWith('image/')) $('#imgPrev').innerHTML = `<div class="preview-box" style="min-height:160px"><img src="${URL.createObjectURL(new Blob([b], { type: m }))}" alt="" style="max-height:300px"></div>`; $('#imgPrev').insertAdjacentHTML('beforeend', `<p class="muted small">Algılanan tür: ${m} · ${T.formatBytes(b.length)}</p>`); }
+    catch { $('#imgPrev').innerHTML = '<p class="small" style="color:var(--danger)">Geçersiz Base64</p>'; }
+  }, 250));
+  $('#mk').onclick = () => {
+    const v = $('#b64').value.trim(); if (!v) return T.toast('Base64 verisi girin', 'error');
+    try { const b = decBytes(v); const m = (v.match(/^data:([^;,]+)/) || [])[1] || sniff(b); let n = $('#fname').value.trim() || 'dosya'; if (!/\.\w+$/.test(n) && EXT[m]) n += '.' + EXT[m]; T.download(new Blob([b], { type: m }), n); }
+    catch { T.toast('Geçersiz Base64', 'error'); }
+  };
+})();
+</script>
+</body>
+</html>

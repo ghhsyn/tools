@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UUID / GUID Oluşturucu – Toplu UUID v4, v7 ve Nano ID | Notettiklerim Tools</title>
+<meta name="description" content="Kriptografik olarak güvenli rastgele UUID v4, zaman sıralı UUID v7 ve kısa Nano ID değerleri üretin. Toplu üretim, büyük harf, tiresiz ve süslü parantez seçenekleri.">
+<link rel="canonical" href="https://tools.notettiklerim.com/uuid-olustur/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="UUID / GUID Oluşturucu – Toplu UUID v4, v7 ve Nano ID">
+<meta property="og:description" content="Kriptografik olarak güvenli rastgele UUID v4, zaman sıralı UUID v7 ve kısa Nano ID değerleri üretin. Toplu üretim, büyük harf, tiresiz ve süslü parantez seçenekleri.">
+<meta property="og:url" content="https://tools.notettiklerim.com/uuid-olustur/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="uuid-olustur">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <div class="tool-layout">
+    <div class="card stack">
+      <textarea class="textarea mono" id="out" style="min-height:460px" readonly></textarea>
+      <div class="row row-between"><span class="muted small" id="info"></span><div class="row" style="gap:8px"><button class="btn" id="gen"><i data-icon="refresh"></i>Yeniden üret</button><button class="btn" id="dl"><i data-icon="download"></i>.txt</button><button class="btn btn-primary" data-copy-target="#out"><i data-icon="copy"></i>Kopyala</button></div></div>
+    </div>
+    <aside class="side card stack">
+      <div class="card-title"><i data-icon="sliders"></i>Ayarlar</div>
+      <div class="field"><label>Tür</label><div class="seg block" id="type" data-value="v4"><button data-v="v4">UUID v4</button><button data-v="v7">UUID v7</button><button data-v="nano">Nano ID</button></div></div>
+      <div class="field"><div class="range-head"><label>Adet</label><output></output></div><input type="range" id="n" min="1" max="500" value="10"></div>
+      <div data-u class="stack-sm">
+        <label class="check"><input type="checkbox" id="upper">BÜYÜK HARF</label>
+        <label class="check"><input type="checkbox" id="nodash">Tiresiz</label>
+        <label class="check"><input type="checkbox" id="braces">{Süslü parantez}</label>
+        <label class="check"><input type="checkbox" id="quotes">"Tırnak", virgülle</label>
+      </div>
+      <div data-nano class="field" hidden><div class="range-head"><label>Uzunluk</label><output></output></div><input type="range" id="len" min="6" max="64" value="21"></div>
+      <div class="panel small mono" id="one" style="word-break:break-all;cursor:pointer" title="Tıklayarak kopyala"></div>
+    </aside>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>Kimlik türünü (UUID v4, v7 veya Nano ID) seçin.</li>
+        <li>Adet ve biçim seçeneklerini ayarlayın.</li>
+        <li>Listeyi kopyalayın veya .txt olarak indirin.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>UUID v4 ile v7 farkı nedir?</summary><p>v4 tamamen rastgeledir. v7 ise başında zaman damgası taşır, böylece üretilme sırasına göre sıralanabilir ve veritabanı indekslerinde daha verimlidir.</p></details>
+      <details class="faq"><summary>Üretilen değerler gerçekten benzersiz mi?</summary><p>Tarayıcının kriptografik rastgele sayı üreticisi kullanılır. UUID v4'te çakışma olasılığı pratikte sıfırdır.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $ } = T;
+  const hex = (b) => [...b].map((x) => x.toString(16).padStart(2, '0')).join('');
+  const fmtU = (h) => `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`;
+  const v4 = () => (crypto.randomUUID ? crypto.randomUUID() : (() => { const b = crypto.getRandomValues(new Uint8Array(16)); b[6] = (b[6] & 0x0f) | 0x40; b[8] = (b[8] & 0x3f) | 0x80; return fmtU(hex(b)); })());
+  let lastMs = 0, seq = 0;
+  function v7() {
+    const b = crypto.getRandomValues(new Uint8Array(16));
+    let ms = Date.now(); if (ms <= lastMs) { ms = lastMs; seq++; } else { seq = 0; lastMs = ms; }
+    const t = BigInt(ms);
+    for (let i = 0; i < 6; i++) b[i] = Number((t >> BigInt(8 * (5 - i))) & 0xffn);
+    b[6] = 0x70 | ((seq >> 8) & 0x0f); b[7] = seq & 0xff;
+    b[8] = (b[8] & 0x3f) | 0x80;
+    return fmtU(hex(b));
+  }
+  const ALPH = 'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict';
+  const nano = (n) => [...crypto.getRandomValues(new Uint8Array(n))].map((x) => ALPH[x & 63]).join('');
+  const type = T.seg($('#type'), () => { const nn = type.get() === 'nano'; $('[data-u]').hidden = nn; $('[data-nano]').hidden = !nn; gen(); });
+  T.bindRange($('#n')); T.bindRange($('#len'));
+  function gen() {
+    const n = +$('#n').value, t = type.get();
+    let list = Array.from({ length: n }, () => (t === 'v4' ? v4() : t === 'v7' ? v7() : nano(+$('#len').value)));
+    if (t !== 'nano') {
+      if ($('#nodash').checked) list = list.map((x) => x.replace(/-/g, ''));
+      if ($('#upper').checked) list = list.map((x) => x.toUpperCase());
+      if ($('#braces').checked) list = list.map((x) => `{${x}}`);
+    }
+    const q = $('#quotes').checked && t !== 'nano';
+    $('#out').value = q ? list.map((x) => `"${x}"`).join(',\n') : list.join('\n');
+    $('#info').textContent = `${n} adet ${t === 'nano' ? 'Nano ID' : 'UUID ' + t}`;
+    $('#one').textContent = list[0];
+  }
+  document.querySelector('.side').addEventListener('input', gen);
+  $('#gen').onclick = gen;
+  $('#one').onclick = () => T.copy($('#one').textContent);
+  $('#dl').onclick = () => T.download(new Blob([$('#out').value], { type: 'text/plain' }), 'uuid-listesi.txt');
+  gen();
+})();
+</script>
+</body>
+</html>

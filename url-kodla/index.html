@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>URL Encode / Decode – URL Kodlama, Çözme ve Ayrıştırma | Notettiklerim Tools</title>
+<meta name="description" content="URL&#x27;leri ve metinleri percent-encoding ile kodlayın veya çözün. URL&#x27;yi protokol, alan adı, yol ve parametrelerine ayırın, sorgu parametrelerini düzenleyin.">
+<link rel="canonical" href="https://tools.notettiklerim.com/url-kodla/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="URL Encode / Decode – URL Kodlama, Çözme ve Ayrıştırma">
+<meta property="og:description" content="URL&#x27;leri ve metinleri percent-encoding ile kodlayın veya çözün. URL&#x27;yi protokol, alan adı, yol ve parametrelerine ayırın, sorgu parametrelerini düzenleyin.">
+<meta property="og:url" content="https://tools.notettiklerim.com/url-kodla/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="url-kodla">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <div class="card stack">
+    <div class="tabs" id="tab"><button data-t="code" class="active"><i data-icon="code"></i>Kodla / Çöz</button><button data-t="parse"><i data-icon="link"></i>URL Ayrıştırıcı</button></div>
+    <div data-p="code" class="stack">
+      <div class="row"><div class="seg" id="dir" data-value="enc"><button data-v="enc">Kodla</button><button data-v="dec">Çöz</button></div><div class="seg" id="mode" data-value="comp"><button data-v="comp">Bileşen</button><button data-v="uri">Tam URL</button></div><label class="check"><input type="checkbox" id="plus">Boşluğu + yap (form)</label></div>
+      <div class="grid-2">
+        <div class="field"><label for="in">Girdi</label><textarea class="textarea mono" id="in" style="min-height:220px" spellcheck="false">https://ornek.com/arama?q=çok güzel şeyler&kategori=kitap & dergi</textarea></div>
+        <div class="field"><label for="out">Sonuç</label><textarea class="textarea mono" id="out" style="min-height:220px" readonly></textarea><span class="hint" id="err"></span></div>
+      </div>
+      <div class="row row-end" style="gap:8px"><button class="btn btn-sm btn-ghost" id="swap"><i data-icon="refresh"></i>Sonucu girdi yap</button><button class="btn btn-sm" data-copy-target="#out"><i data-icon="copy"></i>Kopyala</button></div>
+    </div>
+    <div data-p="parse" class="stack" hidden>
+      <div class="field"><label for="url">URL</label><input class="input mono" id="url" value="https://kullanici:sifre@tools.notettiklerim.com:8080/pdf/birlestir?dil=tr&tema=koyu&ara=%C3%A7ok#bolum-2"></div>
+      <div id="parts"></div>
+      <div class="row row-between"><div class="label">Sorgu parametreleri</div><button class="btn btn-sm" id="addP"><i data-icon="plus"></i>Parametre ekle</button></div>
+      <div class="stack-sm" id="params"></div>
+      <div class="field"><label>Oluşan URL</label><div class="output-box"><pre class="code" id="built" style="padding-right:110px"></pre><button class="btn btn-sm copy-btn" data-copy-target="#built"><i data-icon="copy"></i>Kopyala</button></div></div>
+    </div>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>Kodla/Çöz sekmesinde metninizi yazın; sonuç anında oluşur.</li>
+        <li>URL Ayrıştırıcı sekmesine bir adres yapıştırarak bileşenlerini ve parametrelerini görün.</li>
+        <li>Parametreleri düzenleyin, yeni URL'yi kopyalayın.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>encodeURI ile encodeURIComponent farkı nedir?</summary><p>"Bileşen" modu (encodeURIComponent) / ? & = gibi ayraçları da kodlar ve parametre değerleri için uygundur. "Tam URL" modu (encodeURI) adresin yapısını korur.</p></details>
+      <details class="faq"><summary>Türkçe karakterler nasıl kodlanır?</summary><p>UTF-8 olarak kodlanır; örneğin "ş" → %C5%9F olur.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, $$, esc, icon } = T;
+  $('#tab').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; $$('#tab button').forEach((x) => x.classList.toggle('active', x === b)); $$('[data-p]').forEach((p) => (p.hidden = p.dataset.p !== b.dataset.t)); });
+  const dir = T.seg($('#dir'), run), mode = T.seg($('#mode'), run);
+  function run() {
+    const v = $('#in').value, plus = $('#plus').checked; $('#err').textContent = '';
+    try {
+      if (dir.get() === 'enc') { let r = mode.get() === 'comp' ? encodeURIComponent(v) : encodeURI(v); if (plus) r = r.replace(/%20/g, '+'); $('#out').value = r; }
+      else { const s = plus ? v.replace(/\+/g, ' ') : v; $('#out').value = mode.get() === 'comp' ? decodeURIComponent(s) : decodeURI(s); }
+    } catch { $('#out').value = ''; $('#err').innerHTML = '<span style="color:var(--danger)">Geçersiz kodlanmış dizi (ör. eksik % karakteri).</span>'; }
+  }
+  $('#in').addEventListener('input', run); $('#plus').addEventListener('change', run);
+  $('#swap').onclick = () => { $('#in').value = $('#out').value; dir.set(dir.get() === 'enc' ? 'dec' : 'enc'); };
+  run();
+
+  let u = null;
+  function parse() {
+    try { u = new URL($('#url').value.trim()); } catch { $('#parts').innerHTML = '<div class="alert error">' + icon('alert') + '<span>Geçerli bir URL girin (ör. https://ornek.com)</span></div>'; $('#params').innerHTML = ''; $('#built').textContent = ''; return; }
+    const rows = [['Protokol', u.protocol], ['Kullanıcı', u.username && decodeURIComponent(u.username)], ['Şifre', u.password && '••••'], ['Alan adı', u.hostname], ['Port', u.port], ['Yol', decodeURIComponent(u.pathname)], ['Sorgu', u.search], ['Parça (#)', u.hash && decodeURIComponent(u.hash)], ['Köken', u.origin]].filter((r) => r[1]);
+    $('#parts').innerHTML = `<div class="table-wrap"><table class="table"><tbody>${rows.map(([k, v]) => `<tr><th style="width:140px">${k}</th><td class="mono" style="word-break:break-all">${esc(v)}</td></tr>`).join('')}</tbody></table></div>`;
+    $('#params').innerHTML = [...u.searchParams].map(([k, v], i) => prow(k, v)).join('') || '<p class="muted small" style="margin:0">Parametre yok.</p>';
+    $('#built').textContent = u.href;
+  }
+  const prow = (k = '', v = '') => `<div class="row prow" style="gap:8px;flex-wrap:nowrap"><input class="input mono pk" value="${esc(k)}" placeholder="anahtar" style="flex:1"><input class="input mono pv" value="${esc(v)}" placeholder="değer" style="flex:2"><button class="btn btn-ghost btn-icon btn-sm" data-rm title="Sil">${icon('x')}</button></div>`;
+  function rebuild() {
+    if (!u) return;
+    const sp = new URLSearchParams();
+    $$('.prow').forEach((r) => { const k = $('.pk', r).value; if (k) sp.append(k, $('.pv', r).value); });
+    u.search = sp.toString();
+    $('#built').textContent = u.href;
+  }
+  $('#url').addEventListener('input', T.debounce(parse, 200));
+  $('#params').addEventListener('input', rebuild);
+  $('#params').addEventListener('click', (e) => { if (e.target.closest('[data-rm]')) { e.target.closest('.prow').remove(); rebuild(); } });
+  $('#addP').onclick = () => { if (!$('.prow')) $('#params').innerHTML = ''; $('#params').insertAdjacentHTML('beforeend', prow()); $$('.pk').pop().focus(); };
+  parse();
+})();
+</script>
+</body>
+</html>

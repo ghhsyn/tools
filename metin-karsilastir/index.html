@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Metin Karşılaştırma (Diff) – İki Metin Arasındaki Farkları Bul | Notettiklerim Tools</title>
+<meta name="description" content="İki metni veya kodu karşılaştırın; eklenen, silinen ve değişen satırları ve kelimeleri renkli olarak görün. Yan yana veya birleşik görünüm, boşluk ve harf duyarlılığı seçenekleri.">
+<link rel="canonical" href="https://tools.notettiklerim.com/metin-karsilastir/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Metin Karşılaştırma (Diff) – İki Metin Arasındaki Farkları Bul">
+<meta property="og:description" content="İki metni veya kodu karşılaştırın; eklenen, silinen ve değişen satırları ve kelimeleri renkli olarak görün. Yan yana veya birleşik görünüm, boşluk ve harf duyarlılığı seçenekleri.">
+<meta property="og:url" content="https://tools.notettiklerim.com/metin-karsilastir/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="metin-karsilastir">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <style>
+    .diff { font-family: var(--mono); font-size: 13px; border: 1px solid var(--border); border-radius: var(--radius); overflow: auto; max-height: 640px; background: var(--surface); }
+    .diff table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .diff td { padding: 1px 10px; vertical-align: top; white-space: pre-wrap; word-break: break-word; line-height: 1.6; }
+    .diff td.ln { width: 46px; text-align: right; color: var(--muted); user-select: none; background: var(--surface-2); font-size: 12px; padding: 1px 8px; }
+    .diff td.sg { width: 18px; padding: 1px 4px; color: var(--muted); user-select: none; }
+    .diff tr.del td:not(.ln) { background: rgba(239, 68, 68, .10); }
+    .diff tr.ins td:not(.ln) { background: rgba(16, 185, 129, .11); }
+    .diff td.d { background: rgba(239, 68, 68, .10); }
+    .diff td.i { background: rgba(16, 185, 129, .11); }
+    .diff td.e { background: var(--surface-2); }
+    .diff del { background: rgba(239, 68, 68, .32); text-decoration: none; border-radius: 3px; }
+    .diff ins { background: rgba(16, 185, 129, .35); text-decoration: none; border-radius: 3px; }
+    .diff tr.sep td { background: var(--surface-2); color: var(--muted); text-align: center; font-family: var(--font); font-size: 12px; padding: 4px; }
+    .diff .mid { border-left: 1px solid var(--border); }
+  </style>
+  <div class="stack">
+    <div class="card stack">
+      <div class="grid-2">
+        <div class="field"><label for="a">Orijinal metin</label><textarea class="textarea mono" id="a" style="min-height:220px" spellcheck="false">Merhaba dünya,
+Bu bir örnek metindir.
+Notettiklerim Tools ile metinlerinizi karşılaştırın.
+Satır dört burada.
+Son satır.</textarea></div>
+        <div class="field"><label for="b">Değiştirilmiş metin</label><textarea class="textarea mono" id="b" style="min-height:220px" spellcheck="false">Merhaba dünya!
+Bu bir örnek metindir.
+Notettiklerim Tools ile iki metni kolayca karşılaştırın.
+Yeni eklenen satır.
+Son satır.</textarea></div>
+      </div>
+      <div class="row row-between">
+        <div class="row">
+          <div class="seg" id="view" data-value="split"><button data-v="split">Yan yana</button><button data-v="unified">Birleşik</button></div>
+          <label class="check"><input type="checkbox" id="ws">Boşlukları yok say</label>
+          <label class="check"><input type="checkbox" id="cs">Büyük/küçük harfi yok say</label>
+          <label class="check"><input type="checkbox" id="ctx">Sadece değişiklikler</label>
+        </div>
+        <div class="row" style="gap:8px"><button class="btn btn-sm btn-ghost" id="swap"><i data-icon="refresh"></i>Yer değiştir</button><button class="btn btn-sm btn-ghost btn-danger" id="clr">Temizle</button></div>
+      </div>
+    </div>
+    <div class="card stack">
+      <div class="row row-between"><div class="card-title" style="margin:0"><i data-icon="diff"></i>Farklar</div><div class="chips" id="sum"></div></div>
+      <div class="diff" id="out"></div>
+    </div>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>Orijinal metni sol kutuya, değiştirilmiş metni sağ kutuya yapıştırın.</li>
+        <li>Farklar anında hesaplanır; yan yana veya birleşik görünümü seçin.</li>
+        <li>Silinen kısımlar kırmızı, eklenenler yeşil olarak vurgulanır.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Kod karşılaştırmak için uygun mu?</summary><p>Evet. Satır bazlı karşılaştırma ve kelime düzeyinde vurgulama ile kod incelemeleri için idealdir.</p></details>
+      <details class="faq"><summary>Metinlerim bir yere gönderiliyor mu?</summary><p>Hayır. Karşılaştırma tamamen tarayıcınızda yapılır.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, esc } = T;
+  const view = T.seg($('#view'), run);
+  function lcsOps(a, b, eq) {
+    // trim common prefix/suffix
+    let s = 0; while (s < a.length && s < b.length && eq(a[s], b[s])) s++;
+    let e = 0; while (e < a.length - s && e < b.length - s && eq(a[a.length - 1 - e], b[b.length - 1 - e])) e++;
+    const A = a.slice(s, a.length - e), B = b.slice(s, b.length - e);
+    const n = A.length, m = B.length;
+    const ops = [];
+    for (let i = 0; i < s; i++) ops.push(['=', i, i]);
+    if (n * m > 30e6) { A.forEach((_, i) => ops.push(['-', s + i])); B.forEach((_, j) => ops.push(['+', null, s + j])); }
+    else {
+      const W = m + 1, dp = new Uint32Array((n + 1) * W);
+      for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--) dp[i * W + j] = eq(A[i], B[j]) ? dp[(i + 1) * W + j + 1] + 1 : Math.max(dp[(i + 1) * W + j], dp[i * W + j + 1]);
+      let i = 0, j = 0;
+      while (i < n || j < m) {
+        if (i < n && j < m && eq(A[i], B[j])) { ops.push(['=', s + i, s + j]); i++; j++; }
+        else if (j < m && (i >= n || dp[i * W + j + 1] >= dp[(i + 1) * W + j])) { ops.push(['+', null, s + j]); j++; }
+        else { ops.push(['-', s + i]); i++; }
+      }
+    }
+    for (let k = 0; k < e; k++) ops.push(['=', a.length - e + k, b.length - e + k]);
+    return ops;
+  }
+  const tok = (s) => s.match(/\s+|[\p{L}\p{N}_]+|[^\s\p{L}\p{N}_]/gu) || [];
+  function wordDiff(x, y, eq) {
+    const a = tok(x), b = tok(y);
+    const ops = lcsOps(a, b, eq);
+    let L = '', R = '';
+    ops.forEach(([o, i, j]) => { if (o === '=') { L += esc(a[i]); R += esc(b[j]); } else if (o === '-') L += `<del>${esc(a[i])}</del>`; else R += `<ins>${esc(b[j])}</ins>`; });
+    return [L, R];
+  }
+  function run() {
+    const a = $('#a').value.split(/\r?\n/), b = $('#b').value.split(/\r?\n/);
+    const ws = $('#ws').checked, cs = $('#cs').checked;
+    const nrm = (s) => { if (ws) s = s.replace(/\s+/g, ' ').trim(); if (cs) s = s.toLocaleLowerCase('tr-TR'); return s; };
+    const eq = (x, y) => nrm(x) === nrm(y);
+    const teq = (x, y) => (ws && /^\s+$/.test(x) && /^\s+$/.test(y)) || (cs ? x.toLocaleLowerCase('tr-TR') === y.toLocaleLowerCase('tr-TR') : x === y);
+    const ops = lcsOps(a, b, eq);
+    // group into rows: equal rows, and change blocks (dels + ins paired)
+    const rows = [];
+    for (let k = 0; k < ops.length;) {
+      if (ops[k][0] === '=') { rows.push({ t: '=', i: ops[k][1], j: ops[k][2] }); k++; continue; }
+      const dels = [], ins = [];
+      while (k < ops.length && ops[k][0] !== '=') { (ops[k][0] === '-' ? dels : ins).push(ops[k]); k++; }
+      const n = Math.max(dels.length, ins.length);
+      for (let q = 0; q < n; q++) rows.push({ t: 'c', i: dels[q]?.[1] ?? null, j: ins[q]?.[2] ?? null });
+    }
+    const added = ops.filter((o) => o[0] === '+').length, removed = ops.filter((o) => o[0] === '-').length;
+    $('#sum').innerHTML = added + removed === 0 ? '<span class="badge ok">✓ Metinler aynı</span>' : `<span class="badge ok">+${added} eklendi</span><span class="badge err">−${removed} silindi</span>`;
+    const only = $('#ctx').checked;
+    const visible = rows.map((r, idx) => !only || r.t === 'c' || rows.slice(Math.max(0, idx - 2), idx + 3).some((x) => x.t === 'c'));
+    let html = '<table>';
+    let skipped = false;
+    rows.forEach((r, idx) => {
+      if (!visible[idx]) { if (!skipped) { html += `<tr class="sep"><td colspan="${view.get() === 'split' ? 6 : 4}">⋯ değişmeyen satırlar ⋯</td></tr>`; skipped = true; } return; }
+      skipped = false;
+      const L = r.i != null ? a[r.i] : null, R = r.j != null ? b[r.j] : null;
+      if (view.get() === 'split') {
+        if (r.t === '=') html += `<tr><td class="ln">${r.i + 1}</td><td class="sg"></td><td>${esc(L)}</td><td class="ln mid">${r.j + 1}</td><td class="sg"></td><td>${esc(R)}</td></tr>`;
+        else {
+          let lh = L != null ? esc(L) : '', rh = R != null ? esc(R) : '';
+          if (L != null && R != null) [lh, rh] = wordDiff(L, R, teq);
+          html += `<tr><td class="ln">${L != null ? r.i + 1 : ''}</td><td class="sg ${L != null ? 'd' : 'e'}">${L != null ? '−' : ''}</td><td class="${L != null ? 'd' : 'e'}">${lh}</td><td class="ln mid">${R != null ? r.j + 1 : ''}</td><td class="sg ${R != null ? 'i' : 'e'}">${R != null ? '+' : ''}</td><td class="${R != null ? 'i' : 'e'}">${rh}</td></tr>`;
+        }
+      } else {
+        if (r.t === '=') html += `<tr><td class="ln">${r.i + 1}</td><td class="ln">${r.j + 1}</td><td class="sg"></td><td>${esc(L)}</td></tr>`;
+        else {
+          let lh = L != null ? esc(L) : '', rh = R != null ? esc(R) : '';
+          if (L != null && R != null) [lh, rh] = wordDiff(L, R, teq);
+          if (L != null) html += `<tr class="del"><td class="ln">${r.i + 1}</td><td class="ln"></td><td class="sg">−</td><td>${lh}</td></tr>`;
+          if (R != null) html += `<tr class="ins"><td class="ln"></td><td class="ln">${r.j + 1}</td><td class="sg">+</td><td>${rh}</td></tr>`;
+        }
+      }
+    });
+    $('#out').innerHTML = html + '</table>';
+  }
+  ['#a', '#b'].forEach((s) => $(s).addEventListener('input', T.debounce(run, 150)));
+  ['#ws', '#cs', '#ctx'].forEach((s) => $(s).addEventListener('change', run));
+  $('#swap').onclick = () => { const t = $('#a').value; $('#a').value = $('#b').value; $('#b').value = t; run(); };
+  $('#clr').onclick = () => { $('#a').value = $('#b').value = ''; run(); };
+  run();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Metin Dönüştürücü – Büyük/Küçük Harf, Slug, camelCase | Notettiklerim Tools</title>
+<meta name="description" content="Metni Türkçe kurallarına uygun büyük harf, küçük harf, başlık düzeni veya cümle düzenine çevirin. Slug, camelCase, snake_case, satır sıralama, tekrar silme ve daha fazlası.">
+<link rel="canonical" href="https://tools.notettiklerim.com/metin-donustur/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Metin Dönüştürücü – Büyük/Küçük Harf, Slug, camelCase">
+<meta property="og:description" content="Metni Türkçe kurallarına uygun büyük harf, küçük harf, başlık düzeni veya cümle düzenine çevirin. Slug, camelCase, snake_case, satır sıralama, tekrar silme ve daha fazlası.">
+<meta property="og:url" content="https://tools.notettiklerim.com/metin-donustur/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="metin-donustur">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <style>
+    .ops { display: flex; flex-wrap: wrap; gap: 8px; }
+    .ops-group { display: flex; flex-direction: column; gap: 8px; }
+    .ops-group .label { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+  </style>
+  <div class="card stack">
+    <div class="grid-2">
+      <div class="field"><div class="row row-between"><label for="in">Girdi</label><span class="muted small" id="inC"></span></div><textarea class="textarea" id="in" style="min-height:260px" placeholder="Dönüştürülecek metni yazın…">Merhaba Dünya! Bu bir İSTANBUL örnek metnidir.
+ıspanak ve ılık süt
+çok güzel şeyler</textarea></div>
+      <div class="field"><div class="row row-between"><label for="out">Sonuç</label><span class="row" style="gap:6px"><button class="btn btn-sm btn-ghost" id="use" title="Sonucu girdi yap"><i data-icon="arrowUp"></i>Girdiye taşı</button><button class="btn btn-sm" data-copy-target="#out"><i data-icon="copy"></i>Kopyala</button></span></div><textarea class="textarea" id="out" style="min-height:260px" readonly placeholder="Sonuç burada görünecek"></textarea></div>
+    </div>
+    <div class="grid-3" id="opsWrap"></div>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>Metninizi sol kutuya yazın veya yapıştırın.</li>
+        <li>Uygulamak istediğiniz dönüşüm butonuna tıklayın.</li>
+        <li>Sonucu kopyalayın veya yeni dönüşümler için girdi olarak kullanın.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Türkçe karakterler doğru dönüşüyor mu?</summary><p>Evet. "i → İ" ve "I → ı" gibi Türkçe'ye özgü büyük/küçük harf kuralları doğru uygulanır.</p></details>
+      <details class="faq"><summary>Slug nedir?</summary><p>URL'lerde kullanılan, Türkçe karakter ve boşluk içermeyen metindir. Örneğin "Merhaba Dünya!" → "merhaba-dunya".</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, esc } = T;
+  const up = (s) => s.toLocaleUpperCase('tr-TR'), low = (s) => s.toLocaleLowerCase('tr-TR');
+  const words = (s) => s.replace(/([a-zçğıöşü0-9])([A-ZÇĞİÖŞÜ])/g, '$1 $2').split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+  const translit = (s) => s.replace(/[çÇğĞıİöÖşŞüÜâÂîÎûÛ]/g, (c) => ({ ç: 'c', Ç: 'C', ğ: 'g', Ğ: 'G', ı: 'i', İ: 'I', ö: 'o', Ö: 'O', ş: 's', Ş: 'S', ü: 'u', Ü: 'U', â: 'a', Â: 'A', î: 'i', Î: 'I', û: 'u', Û: 'U' }[c])).normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const lines = (s) => s.split(/\r?\n/);
+  const GROUPS = [
+    ['Büyük / küçük harf', [
+      ['BÜYÜK HARF', up], ['küçük harf', low],
+      ['Başlık Düzeni', (s) => s.replace(/[\p{L}\p{N}][^\s-]*/gu, (w) => up(w[0]) + low(w.slice(1)))],
+      ['Cümle düzeni', (s) => low(s).replace(/(^\s*|[.!?…]\s+|\n\s*)(\p{L})/gu, (m, a, b) => a + up(b))],
+      ['tERS hARF', (s) => [...s].map((c) => (c === up(c) ? low(c) : up(c))).join('')],
+    ]],
+    ['Programlama', [
+      ['slug-format', (s) => lines(s).map((l) => translit(low(l)).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')).join('\n')],
+      ['camelCase', (s) => lines(s).map((l) => words(translit(l)).map((w, i) => (i ? w[0].toUpperCase() + w.slice(1).toLowerCase() : w.toLowerCase())).join('')).join('\n')],
+      ['PascalCase', (s) => lines(s).map((l) => words(translit(l)).map((w) => w[0].toUpperCase() + w.slice(1).toLowerCase()).join('')).join('\n')],
+      ['snake_case', (s) => lines(s).map((l) => words(translit(l)).map((w) => w.toLowerCase()).join('_')).join('\n')],
+      ['kebab-case', (s) => lines(s).map((l) => words(translit(l)).map((w) => w.toLowerCase()).join('-')).join('\n')],
+      ['CONSTANT_CASE', (s) => lines(s).map((l) => words(translit(l)).map((w) => w.toUpperCase()).join('_')).join('\n')],
+    ]],
+    ['Satır ve boşluk', [
+      ['Satırları sırala (A→Z)', (s) => lines(s).sort((a, b) => a.localeCompare(b, 'tr')).join('\n')],
+      ['Satırları sırala (Z→A)', (s) => lines(s).sort((a, b) => b.localeCompare(a, 'tr')).join('\n')],
+      ['Tekrarlananları sil', (s) => [...new Set(lines(s))].join('\n')],
+      ['Boş satırları sil', (s) => lines(s).filter((l) => l.trim()).join('\n')],
+      ['Fazla boşlukları sil', (s) => lines(s).map((l) => l.replace(/[ \t]+/g, ' ').trim()).join('\n')],
+      ['Satırları birleştir', (s) => lines(s).map((l) => l.trim()).filter(Boolean).join(' ')],
+      ['Satır numarası ekle', (s) => lines(s).map((l, i) => `${i + 1}. ${l}`).join('\n')],
+      ['Satırları karıştır', (s) => { const a = lines(s); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a.join('\n'); }],
+    ]],
+    ['Diğer', [
+      ['Metni ters çevir', (s) => [...s].reverse().join('')],
+      ['Türkçe karakterleri sil', translit],
+      ['HTML etiketlerini sil', (s) => { const d = new DOMParser().parseFromString(s, 'text/html'); return d.body.textContent || ''; }],
+      ['HTML\'e kaçışla', (s) => esc(s)],
+      ['Noktalamayı sil', (s) => s.replace(/[^\p{L}\p{N}\s]/gu, '')],
+    ]],
+  ];
+  $('#opsWrap').innerHTML = GROUPS.map(([g, ops], gi) => `<div class="ops-group"><span class="label">${g}</span><div class="ops">${ops.map(([n], oi) => `<button class="btn btn-sm" data-op="${gi}:${oi}">${esc(n)}</button>`).join('')}</div></div>`).join('');
+  $('#opsWrap').style.gridTemplateColumns = 'repeat(auto-fit, minmax(260px, 1fr))';
+  let lastOp = null;
+  function run(op) {
+    if (!op) return;
+    const [gi, oi] = op.split(':').map(Number);
+    $('#out').value = GROUPS[gi][1][oi][1]($('#in').value);
+    document.querySelectorAll('[data-op]').forEach((b) => b.classList.toggle('btn-primary', b.dataset.op === op));
+  }
+  $('#opsWrap').addEventListener('click', (e) => { const b = e.target.closest('[data-op]'); if (!b) return; lastOp = b.dataset.op; run(lastOp); });
+  const cnt = () => ($('#inC').textContent = [...$('#in').value].length.toLocaleString('tr-TR') + ' karakter');
+  $('#in').addEventListener('input', () => { cnt(); run(lastOp); });
+  $('#use').onclick = () => { $('#in').value = $('#out').value; cnt(); };
+  cnt();
+  lastOp = '0:0'; run(lastOp);
+})();
+</script>
+</body>
+</html>

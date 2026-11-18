@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lorem Ipsum Üretici – Türkçe ve Latince Yer Tutucu Metin | Notettiklerim Tools</title>
+<meta name="description" content="Tasarım ve web projeleriniz için paragraf, cümle veya kelime sayısına göre Lorem Ipsum ya da Türkçe yer tutucu metin oluşturun. HTML etiketli çıktı seçeneği.">
+<link rel="canonical" href="https://tools.notettiklerim.com/lorem-ipsum/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Lorem Ipsum Üretici – Türkçe ve Latince Yer Tutucu Metin">
+<meta property="og:description" content="Tasarım ve web projeleriniz için paragraf, cümle veya kelime sayısına göre Lorem Ipsum ya da Türkçe yer tutucu metin oluşturun. HTML etiketli çıktı seçeneği.">
+<meta property="og:url" content="https://tools.notettiklerim.com/lorem-ipsum/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="lorem-ipsum">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <div class="tool-layout">
+    <div class="card stack">
+      <div class="output-box"><textarea class="textarea" id="out" style="min-height:460px" readonly></textarea></div>
+      <div class="row row-between"><span class="muted small" id="info"></span><div class="row" style="gap:8px"><button class="btn" id="regen"><i data-icon="refresh"></i>Yeniden üret</button><button class="btn btn-primary" data-copy-target="#out"><i data-icon="copy"></i>Kopyala</button></div></div>
+    </div>
+    <aside class="side card stack">
+      <div class="card-title"><i data-icon="sliders"></i>Ayarlar</div>
+      <div class="field"><label>Dil</label><div class="seg block" id="lang" data-value="la"><button data-v="la">Latince</button><button data-v="tr">Türkçe</button></div></div>
+      <div class="field"><label>Birim</label><div class="seg block" id="unit" data-value="p"><button data-v="p">Paragraf</button><button data-v="s">Cümle</button><button data-v="w">Kelime</button></div></div>
+      <div class="field"><div class="range-head"><label>Miktar</label><output></output></div><input type="range" id="n" min="1" max="20" value="4"></div>
+      <label class="switch"><input type="checkbox" id="start" checked><span class="track"></span>"Lorem ipsum dolor sit amet" ile başla</label>
+      <label class="switch"><input type="checkbox" id="html"><span class="track"></span>HTML &lt;p&gt; etiketleri ekle</label>
+    </aside>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>Dil (Latince veya Türkçe) ve birim (paragraf, cümle, kelime) seçin.</li>
+        <li>Miktarı belirleyin; metin anında üretilir.</li>
+        <li>Düz metin veya HTML olarak kopyalayın.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Lorem Ipsum nedir?</summary><p>Matbaa ve dizgi endüstrisinde 1500'lerden beri kullanılan, anlamsız yer tutucu metindir. Okuyucunun dikkatini içerik yerine tasarıma yönlendirir.</p></details>
+      <details class="faq"><summary>Türkçe seçenek neden var?</summary><p>Türkçe yer tutucu metin, ğ, ş, ı gibi karakterlerin ve Türkçe kelime uzunluklarının tasarımda nasıl göründüğünü test etmenizi sağlar.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $ } = T;
+  const LA = 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo consequat duis aute irure in reprehenderit voluptate velit esse cillum fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt culpa qui officia deserunt mollit anim id est laborum curabitur pretium tincidunt lacus nunc pulvinar sapien ligula porta vestibulum mauris integer posuere erat justo viverra accumsan sodales felis praesent blandit'.split(' ');
+  const TR = 'güneş deniz kıyısında ağır ağır batarken şehrin ışıkları birer birer yanmaya başladı çocuklar parkta oyun oynuyor yaşlılar bankta sohbet ediyordu rüzgâr hafifçe esiyor ağaçların yaprakları hışırdıyordu kahve kokusu sokakları sarmıştı martılar gökyüzünde süzülüyor vapurlar iskeleye yanaşıyordu kitap okumak insanı başka dünyalara götürür yeni fikirler üretmek cesaret ister güzel günler yakında gelecek umut her zaman vardır çalışmak başarmanın anahtarıdır öğrenmek hiç bitmeyen bir yolculuktur sabah erkenden yola çıktık dağların arasından geçen yol oldukça dolambaçlıydı köyün meydanında büyük bir çınar ağacı vardı'.split(' ');
+  const lang = T.seg($('#lang'), () => { $('#start').closest('label').hidden = lang.get() !== 'la'; gen(); });
+  const unit = T.seg($('#unit'), () => { const u = unit.get(); const r = $('#n'); r.max = u === 'w' ? 500 : u === 's' ? 50 : 20; if (+r.value > +r.max) r.value = r.max; r.dispatchEvent(new Event('input')); gen(); });
+  T.bindRange($('#n'));
+  const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const cap = (s) => s.charAt(0).toLocaleUpperCase('tr-TR') + s.slice(1);
+  function sentence(W) {
+    const n = rnd(7, 15); const w = Array.from({ length: n }, () => W[rnd(0, W.length - 1)]);
+    if (n > 9 && Math.random() > 0.5) w[rnd(3, n - 4)] += ',';
+    return cap(w.join(' ')) + '.';
+  }
+  const para = (W) => Array.from({ length: rnd(4, 7) }, () => sentence(W)).join(' ');
+  function gen() {
+    const W = lang.get() === 'la' ? LA : TR, n = +$('#n').value, u = unit.get();
+    let parts;
+    if (u === 'p') parts = Array.from({ length: n }, () => para(W));
+    else if (u === 's') parts = [Array.from({ length: n }, () => sentence(W)).join(' ')];
+    else parts = [cap(Array.from({ length: n }, () => W[rnd(0, W.length - 1)]).join(' ')) + '.'];
+    if (lang.get() === 'la' && $('#start').checked) {
+      const first = parts[0].split(' ');
+      if (u === 'w') parts[0] = cap(['lorem', 'ipsum', 'dolor', 'sit', 'amet', ...parts[0].toLowerCase().replace(/\.$/, '').split(' ')].slice(0, n).join(' ')) + '.';
+      else parts[0] = 'Lorem ipsum dolor sit amet, ' + first.join(' ').replace(/^\p{L}/u, (c) => c.toLowerCase());
+    }
+    const out = $('#html').checked ? parts.map((p) => `<p>${p}</p>`).join('\n') : parts.join('\n\n');
+    $('#out').value = out;
+    const words = out.replace(/<[^>]+>/g, '').split(/\s+/).filter(Boolean).length;
+    $('#info').textContent = `${words} kelime · ${out.length} karakter`;
+  }
+  ['#n', '#start', '#html'].forEach((s) => $(s).addEventListener('input', gen));
+  $('#regen').onclick = gen;
+  gen();
+})();
+</script>
+</body>
+</html>

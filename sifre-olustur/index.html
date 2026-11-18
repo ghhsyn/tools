@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Güçlü Şifre Oluşturucu – Rastgele ve Akılda Kalıcı Parola | Notettiklerim Tools</title>
+<meta name="description" content="Kriptografik olarak güvenli, rastgele ve güçlü şifreler oluşturun. Uzunluk, karakter türleri ve akılda kalıcı kelime tabanlı parola seçenekleri; şifre gücü ve kırılma süresi tahmini.">
+<link rel="canonical" href="https://tools.notettiklerim.com/sifre-olustur/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Güçlü Şifre Oluşturucu – Rastgele ve Akılda Kalıcı Parola">
+<meta property="og:description" content="Kriptografik olarak güvenli, rastgele ve güçlü şifreler oluşturun. Uzunluk, karakter türleri ve akılda kalıcı kelime tabanlı parola seçenekleri; şifre gücü ve kırılma süresi tahmini.">
+<meta property="og:url" content="https://tools.notettiklerim.com/sifre-olustur/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="sifre-olustur">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <style>
+    .pw { font-family: var(--mono); font-size: clamp(18px, 3vw, 26px); font-weight: 600; word-break: break-all; padding: 22px 20px; border-radius: var(--radius-lg); background: var(--surface-2); border: 1px solid var(--border); min-height: 84px; display: flex; align-items: center; letter-spacing: .02em; }
+    .pw .d { color: #2563eb; } .pw .s { color: #db2777; }
+    [data-theme="dark"] .pw .d { color: #93c5fd; } [data-theme="dark"] .pw .s { color: #f9a8d4; }
+    .pw-list { font-family: var(--mono); font-size: 13.5px; }
+    .pw-list div { display: flex; gap: 8px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .pw-list div:last-child { border-bottom: 0; }
+    .pw-list span { flex: 1; word-break: break-all; }
+  </style>
+  <div class="tool-layout">
+    <div class="stack">
+      <div class="card stack">
+        <div class="pw" id="pw"></div>
+        <div class="stack-sm">
+          <div class="row row-between small"><b id="strLbl"></b><span class="muted" id="strInfo"></span></div>
+          <div class="strength"><div id="bar"></div></div>
+        </div>
+        <div class="row" style="gap:8px"><button class="btn btn-primary btn-lg" id="cp"><i data-icon="copy"></i>Kopyala</button><button class="btn btn-lg" id="re"><i data-icon="refresh"></i>Yeni şifre</button></div>
+      </div>
+      <div class="card">
+        <div class="row row-between"><div class="card-title" style="margin:0"><i data-icon="layers"></i>Diğer öneriler</div><button class="btn btn-sm btn-ghost" id="more"><i data-icon="refresh"></i>Yenile</button></div>
+        <div class="pw-list" id="list"></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><i data-icon="shield"></i>Kendi şifreni test et</div>
+        <input class="input mono" id="test" type="password" placeholder="Şifrenizi yazın (hiçbir yere gönderilmez)" autocomplete="off">
+        <div class="stack-sm" style="margin-top:12px"><div class="strength"><div id="tBar"></div></div><div class="small muted" id="tInfo">Şifre girildiğinde analiz edilir.</div></div>
+      </div>
+    </div>
+    <aside class="side card stack">
+      <div class="card-title"><i data-icon="sliders"></i>Ayarlar</div>
+      <div class="seg block" id="mode" data-value="chars"><button data-v="chars">Rastgele</button><button data-v="words">Kelimeler</button><button data-v="pin">PIN</button></div>
+      <div class="field"><div class="range-head"><label id="lenL">Uzunluk</label><output></output></div><input type="range" id="len" min="4" max="64" value="18"></div>
+      <div data-m="chars" class="stack-sm">
+        <label class="check"><input type="checkbox" id="up" checked>Büyük harf (A-Z)</label>
+        <label class="check"><input type="checkbox" id="lo" checked>Küçük harf (a-z)</label>
+        <label class="check"><input type="checkbox" id="di" checked>Rakam (0-9)</label>
+        <label class="check"><input type="checkbox" id="sy" checked>Sembol (!@#$…)</label>
+        <label class="check"><input type="checkbox" id="amb">Benzer karakterleri hariç tut (I l 1 O 0)</label>
+        <div class="field"><label for="ex">Hariç tutulacak karakterler</label><input class="input mono" id="ex" placeholder="ör. {}[]"></div>
+      </div>
+      <div data-m="words" class="stack-sm" hidden>
+        <div class="field"><label for="sep">Ayraç</label><select class="select" id="sep"><option value="-">Tire ( - )</option><option value=".">Nokta ( . )</option><option value="_">Alt çizgi ( _ )</option><option value=" ">Boşluk</option><option value="">Yok</option></select></div>
+        <label class="check"><input type="checkbox" id="wcap" checked>Baş harfleri büyük</label>
+        <label class="check"><input type="checkbox" id="wnum" checked>Sonuna rakam ekle</label>
+      </div>
+    </aside>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>Şifre türünü seçin: rastgele karakterler veya akılda kalıcı kelimeler.</li>
+        <li>Uzunluk ve karakter seçeneklerini ayarlayın; güç göstergesini takip edin.</li>
+        <li>Şifreyi kopyalayın ve güvenli bir şifre yöneticisinde saklayın.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Oluşturulan şifreler bir yere kaydediliyor mu?</summary><p>Hayır. Şifreler tarayıcınızın kriptografik rastgele sayı üreticisiyle (crypto.getRandomValues) cihazınızda üretilir ve hiçbir yere gönderilmez.</p></details>
+      <details class="faq"><summary>Ne kadar uzun bir şifre kullanmalıyım?</summary><p>Önemli hesaplar için en az 16 karakter veya 5–6 kelimelik parola önerilir. Her hesap için farklı şifre kullanın.</p></details>
+      <details class="faq"><summary>Akılda kalıcı parola güvenli mi?</summary><p>Evet. Rastgele seçilmiş 5 kelime, tahmin edilmesi son derece zor ve hatırlaması kolay bir parola oluşturur.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, $$, esc } = T;
+  const WORDS = 'elma armut kiraz çilek muz kavun karpuz limon portakal erik incir nar üzüm ayva dut ceviz fındık badem kale kule köprü liman deniz dağ orman nehir göl ova vadi tepe çöl ada kıyı bulut yağmur kar rüzgar güneş ay yıldız gezegen şimşek fırtına bahar yaz güz kış sabah akşam gece öğle kalem defter kitap masa sandalye lamba kapı pencere anahtar saat ayna halı yastık battaniye bardak tabak kaşık çatal bıçak tencere çaydanlık fincan kedi köpek kuş balık aslan kaplan kartal şahin tavşan geyik ayı kurt tilki sincap kirpi kaplumbağa yunus balina penguen zürafa fil zebra deve koyun keçi inek at eşek tavuk horoz ördek kaz baykuş arı karınca kelebek uğur gemi tren uçak otobüs bisiklet araba kayık roket balon fener pusula harita çanta şapka eldiven atkı ceket gömlek ayakkabı çorap gitar piyano keman davul flüt zil şarkı resim heykel tiyatro sinema müzik dans oyun bilmece masal hikaye roman şiir mektup gazete dergi radyo kamera telefon ekran klavye fare yazıcı robot pil mıknatıs kristal elmas altın gümüş bakır demir taş kum toprak çakıl mermer kömür buz ateş duman ışık gölge renk mavi yeşil kırmızı sarı mor turuncu pembe beyaz siyah gri'.split(' ');
+  const SETS = { up: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', lo: 'abcdefghijklmnopqrstuvwxyz', di: '0123456789', sy: '!@#$%^&*()-_=+[]{};:,.<>?/~' };
+  const rnd = (n) => { const lim = Math.floor(0x100000000 / n) * n; const a = new Uint32Array(1); let x; do { crypto.getRandomValues(a); x = a[0]; } while (x >= lim); return x % n; };
+  const mode = T.seg($('#mode'), () => { const m = mode.get(); $$('[data-m]').forEach((e) => (e.hidden = e.dataset.m !== m)); const r = $('#len'); if (m === 'words') { r.min = 3; r.max = 10; r.value = 5; $('#lenL').textContent = 'Kelime sayısı'; } else if (m === 'pin') { r.min = 4; r.max = 12; r.value = 6; $('#lenL').textContent = 'Hane sayısı'; } else { r.min = 4; r.max = 64; r.value = 18; $('#lenL').textContent = 'Uzunluk'; } r.dispatchEvent(new Event('input')); });
+  T.bindRange($('#len'));
+
+  function pool() {
+    let p = Object.keys(SETS).filter((k) => $('#' + k).checked).map((k) => SETS[k]).join('');
+    if ($('#amb').checked) p = p.replace(/[Il1O0o|`'"]/g, '');
+    const ex = $('#ex').value; if (ex) p = [...p].filter((c) => !ex.includes(c)).join('');
+    return [...new Set(p)].join('');
+  }
+  function make() {
+    const m = mode.get(), n = +$('#len').value;
+    if (m === 'pin') return { pw: Array.from({ length: n }, () => rnd(10)).join(''), bits: n * Math.log2(10) };
+    if (m === 'words') {
+      const cap = $('#wcap').checked;
+      const w = Array.from({ length: n }, () => { const x = WORDS[rnd(WORDS.length)]; return cap ? x.charAt(0).toLocaleUpperCase('tr-TR') + x.slice(1) : x; });
+      let pw = w.join($('#sep').value); let bits = n * Math.log2(WORDS.length);
+      if ($('#wnum').checked) { pw += $('#sep').value + rnd(100); bits += Math.log2(100); }
+      return { pw, bits };
+    }
+    const p = pool(); if (!p) return { pw: '', bits: 0 };
+    // guarantee at least one char of each selected set
+    const sets = Object.keys(SETS).filter((k) => $('#' + k).checked).map((k) => [...SETS[k]].filter((c) => p.includes(c)).join('')).filter(Boolean);
+    let arr;
+    for (let tries = 0; tries < 50; tries++) { arr = Array.from({ length: n }, () => p[rnd(p.length)]); if (n < sets.length || sets.every((s) => arr.some((c) => s.includes(c)))) break; }
+    return { pw: arr.join(''), bits: n * Math.log2(p.length) };
+  }
+  function crack(bits) {
+    const s = 2 ** bits / 2 / 1e10;
+    if (s < 1) return 'anında'; if (s < 60) return Math.round(s) + ' saniye'; if (s < 3600) return Math.round(s / 60) + ' dakika'; if (s < 86400) return Math.round(s / 3600) + ' saat';
+    if (s < 31536000) return Math.round(s / 86400) + ' gün'; const y = s / 31536000; if (y < 1e3) return Math.round(y) + ' yıl'; if (y < 1e6) return Math.round(y / 1e3) + ' bin yıl'; if (y < 1e9) return Math.round(y / 1e6) + ' milyon yıl'; if (y < 1e12) return Math.round(y / 1e9) + ' milyar yıl'; return 'trilyonlarca yıl';
+  }
+  function level(bits) {
+    if (bits < 28) return ['Çok zayıf', 10, 'var(--danger)']; if (bits < 40) return ['Zayıf', 28, '#f97316']; if (bits < 60) return ['Orta', 50, 'var(--warning)']; if (bits < 80) return ['Güçlü', 75, '#22c55e']; return ['Çok güçlü', 100, 'var(--success)'];
+  }
+  const color = (pw) => [...pw].map((c) => (/\d/.test(c) ? `<span class="d">${esc(c)}</span>` : /[^\p{L}\d\s]/u.test(c) ? `<span class="s">${esc(c)}</span>` : esc(c))).join('');
+  let cur = '';
+  function gen() {
+    const { pw, bits } = make(); cur = pw;
+    $('#pw').innerHTML = pw ? color(pw) : '<span class="muted" style="font-size:15px;font-family:var(--font)">En az bir karakter türü seçin</span>';
+    const [l, p, c] = level(bits);
+    $('#strLbl').textContent = l; $('#strLbl').style.color = c;
+    $('#bar').style.width = p + '%'; $('#bar').style.background = c;
+    $('#strInfo').textContent = `${Math.round(bits)} bit entropi · kırılma süresi ≈ ${crack(bits)}`;
+  }
+  function list() { $('#list').innerHTML = Array.from({ length: 5 }, () => make().pw).map((p) => `<div><span>${esc(p)}</span><button class="btn btn-ghost btn-icon btn-sm" data-c="${esc(p)}" title="Kopyala">${T.icon('copy')}</button></div>`).join(''); }
+  $('#list').addEventListener('click', (e) => { const b = e.target.closest('[data-c]'); if (b) T.copy(b.dataset.c, 'Şifre kopyalandı'); });
+  document.querySelector('.side').addEventListener('input', () => { gen(); list(); });
+  $('#re').onclick = gen; $('#more').onclick = list;
+  $('#cp').onclick = () => cur && T.copy(cur, 'Şifre kopyalandı');
+
+  $('#test').addEventListener('input', () => {
+    const v = $('#test').value;
+    if (!v) { $('#tBar').style.width = '0'; $('#tInfo').textContent = 'Şifre girildiğinde analiz edilir.'; return; }
+    let size = 0; if (/[a-z]/.test(v)) size += 26; if (/[A-Z]/.test(v)) size += 26; if (/\d/.test(v)) size += 10; if (/[^a-zA-Z0-9]/.test(v)) size += 33;
+    let bits = [...v].length * Math.log2(size || 1);
+    const warns = [];
+    if (/(.)\1{2,}/.test(v)) { bits *= 0.75; warns.push('tekrarlanan karakterler'); }
+    if (/(0123|1234|2345|3456|4567|5678|6789|abcd|qwer|asdf|zxcv)/i.test(v)) { bits *= 0.6; warns.push('ardışık dizi'); }
+    if (/^(password|parola|sifre|şifre|123456|qwerty|admin|iloveyou|galatasaray|fenerbahce|besiktas)/i.test(v)) { bits = Math.min(bits, 10); warns.push('çok yaygın şifre'); }
+    if (v.length < 8) warns.push('8 karakterden kısa');
+    const [l, p, c] = level(bits);
+    $('#tBar').style.width = p + '%'; $('#tBar').style.background = c;
+    $('#tInfo').innerHTML = `<b style="color:${c}">${l}</b> · ≈${Math.round(bits)} bit · kırılma süresi ≈ ${crack(bits)}${warns.length ? ` · <span style="color:var(--danger)">Uyarı: ${warns.join(', ')}</span>` : ''}`;
+  });
+  gen(); list();
+})();
+</script>
+</body>
+</html>

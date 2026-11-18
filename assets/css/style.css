@@ -280,7 +280,8 @@ input[type="range"] { width: 100%; accent-color: var(--primary); height: 24px; c
 @media (max-width: 600px) { .card { padding: 18px; border-radius: 16px; } }
 
 /* ---------- Hero (home) ---------- */
-.hero { padding: 72px 0 40px; text-align: center; }
+.hero { padding-top: 72px; padding-bottom: 40px; text-align: center; }
+@media (max-width: 600px) { .hero { padding-top: 44px; } }
 .hero-badge {
   display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 8px; border-radius: 99px;
   background: var(--surface); border: 1px solid var(--border); font-size: 13px; font-weight: 600; color: var(--text-2); box-shadow: var(--shadow-sm); margin-bottom: 22px;
@@ -363,7 +364,7 @@ input[type="range"] { width: 100%; accent-color: var(--primary); height: 24px; c
 
 .tool-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; align-items: start; }
 .tool-layout > .side { position: sticky; top: calc(var(--header-h) + 20px); }
-@media (max-width: 960px) { .tool-layout { grid-template-columns: 1fr; } .tool-layout > .side { position: static; } }
+@media (max-width: 960px) { .tool-layout { grid-template-columns: minmax(0, 1fr); } .tool-layout > .side { position: static; } }
 
 .privacy-note { display: flex; gap: 10px; align-items: center; font-size: 13px; color: var(--muted); margin-top: 14px; }
 .privacy-note svg { width: 16px; height: 16px; color: var(--success); flex: none; }
@@ -566,3 +567,6 @@ table.table tr:last-child td { border-bottom: 0; }
 .side .result { flex-wrap: wrap; gap: 12px; }
 .side .result > .row { width: 100%; }
 .side .result .btn { flex: 1; }
+
+html, body { overflow-x: clip; }
+.grid-2 > *, .grid-3 > *, .grid-4 > * { min-width: 0; }

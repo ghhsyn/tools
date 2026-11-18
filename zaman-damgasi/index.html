@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unix Zaman Damgası Dönüştürücü – Epoch ↔ Tarih | Notettiklerim Tools</title>
+<meta name="description" content="Unix zaman damgasını (saniye veya milisaniye) okunabilir tarihe, tarihi zaman damgasına dönüştürün. Canlı zaman damgası, saat dilimleri, ISO 8601 ve göreli zaman.">
+<link rel="canonical" href="https://tools.notettiklerim.com/zaman-damgasi/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Unix Zaman Damgası Dönüştürücü – Epoch ↔ Tarih">
+<meta property="og:description" content="Unix zaman damgasını (saniye veya milisaniye) okunabilir tarihe, tarihi zaman damgasına dönüştürün. Canlı zaman damgası, saat dilimleri, ISO 8601 ve göreli zaman.">
+<meta property="og:url" content="https://tools.notettiklerim.com/zaman-damgasi/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="zaman-damgasi">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <style>.live { font-family: var(--mono); font-size: clamp(28px, 5vw, 44px); font-weight: 800; letter-spacing: -.02em; }</style>
+  <div class="stack">
+    <div class="card"><div class="row row-between"><div><div class="label">Şu anki Unix zaman damgası</div><div class="live" id="now"></div><div class="muted small" id="nowMs"></div></div><div class="row" style="gap:8px"><button class="btn" id="pause">Durdur</button><button class="btn btn-primary" id="cpNow"><i data-icon="copy"></i>Kopyala</button></div></div></div>
+    <div class="grid-2" style="align-items:start">
+      <div class="card stack">
+        <div class="card-title" style="margin:0"><i data-icon="hash"></i>Zaman damgası → Tarih</div>
+        <div class="field"><label for="ts">Zaman damgası</label><input class="input mono" id="ts" inputmode="numeric"><span class="hint" id="unit"></span></div>
+        <div class="field"><label for="tz">Saat dilimi</label><select class="select" id="tz"></select></div>
+        <div class="stack-sm" id="res1"></div>
+      </div>
+      <div class="card stack">
+        <div class="card-title" style="margin:0"><i data-icon="calendar"></i>Tarih → Zaman damgası</div>
+        <div class="field"><label for="dt">Tarih ve saat (yerel)</label><input class="input" type="datetime-local" id="dt" step="1"></div>
+        <div class="row" style="gap:6px"><button class="btn btn-sm" data-q="0">Şimdi</button><button class="btn btn-sm" data-q="today">Bugün 00:00</button><button class="btn btn-sm" data-q="1d">+1 gün</button><button class="btn btn-sm" data-q="7d">+1 hafta</button><button class="btn btn-sm" data-q="30d">+30 gün</button></div>
+        <div class="stack-sm" id="res2"></div>
+      </div>
+    </div>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>Zaman damgasını yazın; saniye veya milisaniye otomatik algılanır.</li>
+        <li>Ya da tarih/saat seçerek karşılık gelen zaman damgasını alın.</li>
+        <li>Farklı biçimlerdeki sonuçları tıklayarak kopyalayın.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Unix zaman damgası nedir?</summary><p>1 Ocak 1970 00:00:00 UTC'den bu yana geçen saniye sayısıdır. Programlamada tarihleri saklamak için yaygın olarak kullanılır.</p></details>
+      <details class="faq"><summary>Saniye mi milisaniye mi?</summary><p>10 haneli değerler genellikle saniye, 13 haneli değerler milisaniyedir. Araç bunu otomatik algılar.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, esc, icon } = T;
+  let paused = false;
+  const tick = () => { if (paused) return; const ms = Date.now(); $('#now').textContent = Math.floor(ms / 1000); $('#nowMs').textContent = ms + ' ms'; };
+  setInterval(tick, 250); tick();
+  $('#pause').onclick = () => { paused = !paused; $('#pause').textContent = paused ? 'Devam et' : 'Durdur'; };
+  $('#cpNow').onclick = () => T.copy($('#now').textContent);
+  const zones = ['Europe/Istanbul', 'UTC', 'Europe/London', 'Europe/Berlin', 'America/New_York', 'America/Los_Angeles', 'Asia/Tokyo', 'Asia/Dubai', 'Australia/Sydney'];
+  const local = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  if (!zones.includes(local)) zones.unshift(local);
+  $('#tz').innerHTML = zones.map((z) => `<option ${z === local ? 'selected' : ''}>${z}</option>`).join('');
+  const rtf = new Intl.RelativeTimeFormat('tr', { numeric: 'auto' });
+  function rel(ms) {
+    const d = (ms - Date.now()) / 1000, a = Math.abs(d);
+    const [v, u] = a < 60 ? [d, 'second'] : a < 3600 ? [d / 60, 'minute'] : a < 86400 ? [d / 3600, 'hour'] : a < 2592000 ? [d / 86400, 'day'] : a < 31536000 ? [d / 2592000, 'month'] : [d / 31536000, 'year'];
+    return rtf.format(Math.round(v), u);
+  }
+  const row = (k, v) => `<button class="code-item" data-v="${esc(v)}" style="display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--border);border-radius:11px;background:var(--surface);cursor:pointer;font:inherit;color:var(--text);text-align:left;width:100%"><b style="font-size:12px;color:var(--muted);width:110px;flex:none">${k}</b><span class="mono" style="flex:1;font-size:13.5px;word-break:break-all">${esc(v)}</span>${icon('copy', 'width="15" height="15" style="color:var(--muted)"')}</button>`;
+  document.addEventListener('click', (e) => { const b = e.target.closest('.code-item'); if (b) T.copy(b.dataset.v); });
+  function fromTs() {
+    const raw = $('#ts').value.trim();
+    if (!/^-?\d+(\.\d+)?$/.test(raw)) { $('#res1').innerHTML = raw ? '<p class="small" style="color:var(--danger);margin:0">Geçerli bir sayı girin</p>' : ''; $('#unit').textContent = ''; return; }
+    let n = +raw; const isMs = Math.abs(n) > 1e11; const ms = isMs ? n : n * 1000;
+    $('#unit').textContent = isMs ? 'Milisaniye olarak algılandı' : 'Saniye olarak algılandı';
+    const d = new Date(ms); if (isNaN(d)) return;
+    const tz = $('#tz').value;
+    const f = (o) => new Intl.DateTimeFormat('tr-TR', { timeZone: tz, ...o }).format(d);
+    $('#res1').innerHTML = [
+      ['Tarih', f({ dateStyle: 'full', timeStyle: 'medium' })], ['Kısa', f({ year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })],
+      ['ISO 8601 (UTC)', d.toISOString()], ['RFC 2822', d.toUTCString()], ['Göreli', rel(ms)], ['Saniye', String(Math.floor(ms / 1000))], ['Milisaniye', String(Math.round(ms))],
+    ].map(([k, v]) => row(k, v)).join('');
+  }
+  const pad = (n) => String(n).padStart(2, '0');
+  const toLocalInput = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  function fromDate() {
+    const v = $('#dt').value; if (!v) return;
+    const d = new Date(v);
+    $('#res2').innerHTML = [['Saniye', String(Math.floor(d / 1000))], ['Milisaniye', String(+d)], ['ISO 8601 (UTC)', d.toISOString()], ['Göreli', rel(+d)]].map(([k, x]) => row(k, x)).join('');
+  }
+  $('#ts').addEventListener('input', fromTs); $('#tz').addEventListener('change', fromTs);
+  $('#dt').addEventListener('input', fromDate);
+  document.querySelectorAll('[data-q]').forEach((b) => (b.onclick = () => {
+    const q = b.dataset.q; let d = new Date();
+    if (q === 'today') d.setHours(0, 0, 0, 0); else if (q !== '0') d = new Date(Date.now() + parseInt(q) * 86400000);
+    $('#dt').value = toLocalInput(d); fromDate();
+  }));
+  $('#ts').value = Math.floor(Date.now() / 1000); fromTs();
+  $('#dt').value = toLocalInput(new Date()); fromDate();
+})();
+</script>
+</body>
+</html>

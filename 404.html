@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sayfa bulunamadı | Notettiklerim Tools</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body>
+<div id="site-header"></div>
+<main class="container">
+  <section class="hero" style="padding-bottom:10px">
+    <h1 style="font-size:clamp(70px,14vw,140px);margin-bottom:0"><span class="gradient-text">404</span></h1>
+    <p class="lead">Aradığınız sayfa bulunamadı. Taşınmış ya da hiç var olmamış olabilir.</p>
+    <div class="row" style="justify-content:center;gap:10px">
+      <a class="btn btn-primary btn-lg" href="/">Ana sayfaya dön</a>
+      <button class="btn btn-lg" data-cmdk>Araç ara</button>
+    </div>
+  </section>
+  <section class="related"><h2>Popüler araçlar</h2><div class="tool-grid" id="popular"></div></section>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+  (function () {
+    var pick = ['pdf-birlestir', 'qr-olustur', 'pdf-sikistir', 'gorsel-sikistir'];
+    document.getElementById('popular').innerHTML = pick.map(function (s) {
+      var t = T.TOOLS.find(function (x) { return x.slug === s; });
+      return '<a class="tool-card" href="/' + t.slug + '/" style="--c:' + T.CATS[t.cat].color + '"><div class="ti">' + T.icon(t.icon) + '</div><h3>' + T.esc(t.name) + '</h3><p>' + T.esc(t.desc) + '</p></a>';
+    }).join('');
+    document.querySelector('[data-cmdk]').addEventListener('click', function () { document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true })); });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kelime Sayacı ve Karakter Sayma Aracı – Online | Notettiklerim Tools</title>
+<meta name="description" content="Metninizdeki kelime, karakter (boşluklu/boşluksuz), cümle, paragraf sayısını ve okuma süresini anında hesaplayın. En sık kullanılan kelimeleri ve sosyal medya karakter sınırlarını görün.">
+<link rel="canonical" href="https://tools.notettiklerim.com/kelime-sayaci/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Kelime Sayacı ve Karakter Sayma Aracı – Online">
+<meta property="og:description" content="Metninizdeki kelime, karakter (boşluklu/boşluksuz), cümle, paragraf sayısını ve okuma süresini anında hesaplayın. En sık kullanılan kelimeleri ve sosyal medya karakter sınırlarını görün.">
+<meta property="og:url" content="https://tools.notettiklerim.com/kelime-sayaci/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="kelime-sayaci">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <div class="tool-layout">
+    <div class="stack">
+      <div class="stat-grid" id="stats"></div>
+      <div class="card stack">
+        <textarea class="textarea" id="txt" style="min-height:380px;font-size:15.5px" placeholder="Metninizi buraya yazın veya yapıştırın…"></textarea>
+        <div class="row row-between">
+          <span class="muted small" id="extra"></span>
+          <div class="row" style="gap:8px"><button class="btn btn-sm" data-copy-target="#txt"><i data-icon="copy"></i>Kopyala</button><button class="btn btn-sm btn-ghost btn-danger" id="clear"><i data-icon="trash"></i>Temizle</button></div>
+        </div>
+      </div>
+    </div>
+    <aside class="side stack">
+      <div class="card">
+        <div class="card-title"><i data-icon="message"></i>Karakter sınırları</div>
+        <div class="stack-sm" id="limits"></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><i data-icon="sparkles"></i>En sık kelimeler</div>
+        <div id="top" class="stack-sm"><p class="muted small" style="margin:0">Metin girildiğinde görünür.</p></div>
+        <label class="check" style="margin-top:12px"><input type="checkbox" id="stop" checked>Yaygın kelimeleri (ve, bir, bu…) hariç tut</label>
+      </div>
+    </aside>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>Metninizi kutuya yazın veya yapıştırın.</li>
+        <li>Sayımlar siz yazdıkça anında güncellenir.</li>
+        <li>En sık geçen kelimeleri ve platform karakter sınırlarını sağ panelden takip edin.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Okuma süresi nasıl hesaplanıyor?</summary><p>Ortalama yetişkin okuma hızı olan dakikada 200 kelime, konuşma süresi için dakikada 130 kelime esas alınır.</p></details>
+      <details class="faq"><summary>Metnim kaydediliyor mu?</summary><p>Metniniz yalnızca tarayıcınızın yerel depolamasında tutulur, böylece sayfayı yenilediğinizde kaybolmaz. Hiçbir sunucuya gönderilmez.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, esc } = T;
+  const STOP = new Set('ve veya ile bir bu şu o da de ki mi mı mu mü için gibi daha çok en ama fakat ancak her ne ya hem kadar sonra önce olan olarak ise diye ben sen biz siz onlar the a an and or of to in is it that for on with as at by'.split(' '));
+  const LIMITS = [['X (Twitter)', 280], ['SMS', 160], ['Meta açıklaması', 160], ['Instagram açıklaması', 2200], ['LinkedIn gönderisi', 3000], ['YouTube başlığı', 100]];
+  const ta = $('#txt');
+  try { ta.value = localStorage.getItem('wc-text') || ''; } catch {}
+  const fmt = (n) => n.toLocaleString('tr-TR');
+  const time = (min) => (min < 1 ? Math.max(1, Math.round(min * 60)) + ' sn' : Math.floor(min) + ' dk ' + (Math.round((min % 1) * 60) ? Math.round((min % 1) * 60) + ' sn' : '')).trim();
+  function update() {
+    const v = ta.value;
+    try { localStorage.setItem('wc-text', v); } catch {}
+    const words = v.match(/[\p{L}\p{N}][\p{L}\p{N}'’-]*/gu) || [];
+    const chars = [...v].length, noSpace = [...v.replace(/\s/g, '')].length;
+    const sentences = v.trim() ? (v.match(/[^.!?…]+[.!?…]+|[^.!?…]+$/g) || []).filter((s) => /[\p{L}\p{N}]/u.test(s)).length : 0;
+    const paras = v.split(/\n\s*\n/).filter((p) => p.trim()).length;
+    const lines = v ? v.split('\n').length : 0;
+    $('#stats').innerHTML = [['Kelime', fmt(words.length)], ['Karakter', fmt(chars)], ['Boşluksuz', fmt(noSpace)], ['Cümle', fmt(sentences)], ['Paragraf', fmt(paras)], ['Okuma süresi', words.length ? time(words.length / 200) : '0 sn']]
+      .map(([k, val]) => `<div class="stat"><div class="v">${val}</div><div class="k">${k}</div></div>`).join('');
+    const avg = words.length ? (words.reduce((s, w) => s + w.length, 0) / words.length).toFixed(1).replace('.', ',') : 0;
+    $('#extra').textContent = `${fmt(lines)} satır · ort. kelime uzunluğu ${avg} · konuşma süresi ${words.length ? time(words.length / 130) : '0 sn'}`;
+    $('#limits').innerHTML = LIMITS.map(([n, l]) => {
+      const p = Math.min(100, (chars / l) * 100), over = chars > l;
+      return `<div><div class="row row-between small"><span>${n}</span><span style="font-weight:700;color:${over ? 'var(--danger)' : 'var(--muted)'}">${fmt(chars)} / ${fmt(l)}</span></div><div class="progress" style="height:6px;margin-top:4px"><div style="width:${p}%;${over ? 'background:var(--danger)' : ''}"></div></div></div>`;
+    }).join('');
+    const freq = {};
+    const useStop = $('#stop').checked;
+    words.forEach((w) => { const k = w.toLocaleLowerCase('tr-TR'); if (k.length < 2 || (useStop && STOP.has(k))) return; freq[k] = (freq[k] || 0) + 1; });
+    const top = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    const max = top[0]?.[1] || 1;
+    $('#top').innerHTML = top.length ? top.map(([w, c]) => `<div><div class="row row-between small"><span style="font-weight:600">${esc(w)}</span><span class="muted">${c}× · %${((c / words.length) * 100).toFixed(1).replace('.', ',')}</span></div><div class="progress" style="height:6px;margin-top:4px"><div style="width:${(c / max) * 100}%"></div></div></div>`).join('') : '<p class="muted small" style="margin:0">Metin girildiğinde görünür.</p>';
+  }
+  ta.addEventListener('input', T.debounce(update, 60));
+  $('#stop').addEventListener('change', update);
+  $('#clear').onclick = () => { ta.value = ''; update(); ta.focus(); };
+  update();
+})();
+</script>
+</body>
+</html>
