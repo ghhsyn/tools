@@ -12,6 +12,7 @@
   <url><loc>https://tools.notettiklerim.com/pdf-sayfa-numarasi/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
   <url><loc>https://tools.notettiklerim.com/pdf-metin/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
   <url><loc>https://tools.notettiklerim.com/pdf-bilgi/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
+  <url><loc>https://tools.notettiklerim.com/pdf-ocr/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
   <url><loc>https://tools.notettiklerim.com/qr-olustur/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
   <url><loc>https://tools.notettiklerim.com/qr-oku/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
   <url><loc>https://tools.notettiklerim.com/toplu-qr/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
@@ -28,6 +29,8 @@
   <url><loc>https://tools.notettiklerim.com/url-kodla/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
   <url><loc>https://tools.notettiklerim.com/uuid-olustur/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
   <url><loc>https://tools.notettiklerim.com/zaman-damgasi/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
+  <url><loc>https://tools.notettiklerim.com/rastgele-grup/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
+  <url><loc>https://tools.notettiklerim.com/sunum-zamanlayici/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
   <url><loc>https://tools.notettiklerim.com/sifre-olustur/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
   <url><loc>https://tools.notettiklerim.com/hash-olustur/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
 </urlset>

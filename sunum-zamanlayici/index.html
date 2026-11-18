@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sunum Zamanlayıcı – Tam Ekran Geri Sayım ve Konuşma Süresi | Notettiklerim Tools</title>
+<meta name="description" content="Sunum, ders, tez savunması ve konferans oturumları için tam ekran geri sayım. Renkli süre uyarıları, sesli uyarı, oturum programı (çoklu konuşmacı) ve metinden konuşma süresi tahmini.">
+<link rel="canonical" href="https://tools.notettiklerim.com/sunum-zamanlayici/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Sunum Zamanlayıcı – Tam Ekran Geri Sayım ve Konuşma Süresi">
+<meta property="og:description" content="Sunum, ders, tez savunması ve konferans oturumları için tam ekran geri sayım. Renkli süre uyarıları, sesli uyarı, oturum programı (çoklu konuşmacı) ve metinden konuşma süresi tahmini.">
+<meta property="og:url" content="https://tools.notettiklerim.com/sunum-zamanlayici/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="sunum-zamanlayici">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <style>
+    #stage { --st: var(--text); position: relative; border-radius: var(--radius-xl); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); padding: 28px 24px 24px; text-align: center; overflow: hidden; transition: background .4s, border-color .4s; }
+    #stage.warn { --st: #b45309; background: color-mix(in srgb, #f59e0b 14%, var(--surface)); border-color: #f59e0b; }
+    #stage.danger { --st: #dc2626; background: color-mix(in srgb, #ef4444 14%, var(--surface)); border-color: #ef4444; }
+    #stage.over { --st: #fff; background: #dc2626; border-color: #dc2626; animation: blink 1s steps(2) infinite; }
+    [data-theme="dark"] #stage.warn { --st: #fbbf24; } [data-theme="dark"] #stage.danger { --st: #f87171; }
+    @keyframes blink { 50% { background: #991b1b; } }
+    .seg-name { font-size: 18px; font-weight: 700; color: var(--muted); min-height: 1.4em; }
+    #stage.over .seg-name, #stage.over .sub { color: rgba(255,255,255,.85); }
+    .clock { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 800; font-size: clamp(72px, 15vw, 180px); line-height: 1; letter-spacing: -.04em; color: var(--st); margin: 10px 0 6px; transition: color .4s; }
+    .sub { color: var(--muted); font-size: 14px; min-height: 1.4em; }
+    .tbar { height: 10px; border-radius: 99px; background: var(--surface-3); overflow: hidden; margin: 18px auto 0; max-width: 720px; }
+    .tbar > div { height: 100%; width: 0; background: var(--st); border-radius: inherit; transition: width .25s linear, background .4s; }
+    #stage.over .tbar { background: rgba(255,255,255,.25); }
+    .ctrls { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
+    .ctrls .btn-lg { min-width: 150px; }
+    #stage:fullscreen { display: flex; flex-direction: column; justify-content: center; border-radius: 0; border: 0; padding: 4vh 4vw; }
+    #stage:fullscreen .clock { font-size: min(30vw, 55vh); }
+    #stage:fullscreen .seg-name { font-size: 4vh; }
+    #stage:fullscreen .sub { font-size: 2.4vh; }
+    #stage:fullscreen .tbar { max-width: 80vw; height: 1.6vh; }
+    #stage:fullscreen .ctrls { opacity: .15; transition: opacity .3s; } #stage:fullscreen .ctrls:hover { opacity: 1; }
+    .presets { display: flex; flex-wrap: wrap; gap: 6px; }
+    .presets button { cursor: pointer; }
+    .agenda-row { display: grid; grid-template-columns: 26px 1fr 78px 32px; gap: 8px; align-items: center; }
+    .agenda-row.cur .input { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+    .agenda-row.done { opacity: .55; }
+    .agenda-row b { font-size: 12.5px; color: var(--muted); text-align: center; }
+  </style>
+  <div class="tool-layout">
+    <div class="stack">
+      <div id="stage">
+        <div class="seg-name" id="segName"></div>
+        <div class="clock" id="clock">10:00</div>
+        <div class="sub" id="sub">Başlatmak için Boşluk tuşuna basın</div>
+        <div class="tbar"><div id="tbar"></div></div>
+        <div class="ctrls">
+          <button class="btn" id="minus" title="1 dakika çıkar (−)">−1 dk</button>
+          <button class="btn btn-primary btn-lg" id="toggle"><i data-icon="play"></i><span>Başlat</span></button>
+          <button class="btn" id="plus" title="1 dakika ekle (+)">+1 dk</button>
+          <button class="btn" id="reset" title="Sıfırla (R)"><i data-icon="refresh"></i></button>
+          <button class="btn" id="next" title="Sonraki konuşmacı (N)" hidden><i data-icon="skip"></i>Sonraki</button>
+          <button class="btn" id="fs" title="Tam ekran (F)"><i data-icon="expand"></i></button>
+        </div>
+      </div>
+
+      <div class="card stack">
+        <div class="row row-between"><div class="card-title" style="margin:0"><i data-icon="calendar"></i>Oturum programı</div><label class="switch"><input type="checkbox" id="useAgenda"><span class="track"></span>Programı kullan</label></div>
+        <p class="muted small" style="margin:0">Konferans oturumu, tez savunması veya toplantı gündemi için konuşmacıları ve sürelerini ekleyin. Her bölüm bitince "Sonraki" ile geçin.</p>
+        <div class="stack-sm" id="agenda"></div>
+        <div class="row row-between"><button class="btn btn-sm" id="addRow"><i data-icon="plus"></i>Bölüm ekle</button><span class="small muted" id="agTotal"></span></div>
+      </div>
+
+      <div class="card stack">
+        <div class="card-title" style="margin:0"><i data-icon="alignLeft"></i>Konuşma süresi tahmini</div>
+        <textarea class="textarea" id="speech" style="min-height:130px" placeholder="Konuşma metninizi buraya yapıştırın…"></textarea>
+        <div class="row row-between">
+          <div class="row"><select class="select" id="wpm" style="width:auto"><option value="110">Yavaş (110 kelime/dk)</option><option value="130" selected>Normal (130 kelime/dk)</option><option value="160">Hızlı (160 kelime/dk)</option></select><b id="est"></b></div>
+          <button class="btn btn-sm" id="useEst">Bu süreyi ayarla</button>
+        </div>
+      </div>
+    </div>
+
+    <aside class="side card stack">
+      <div class="card-title"><i data-icon="sliders"></i>Ayarlar</div>
+      <div class="seg block" id="mode" data-value="down"><button data-v="down">Geri sayım</button><button data-v="up">Kronometre</button></div>
+      <div id="durF" class="stack-sm">
+        <div class="grid-2"><div class="field"><label for="mm">Dakika</label><input class="input" type="number" id="mm" min="0" max="600" value="10"></div><div class="field"><label for="ss">Saniye</label><input class="input" type="number" id="ss" min="0" max="59" value="0"></div></div>
+        <div class="presets" id="presets"></div>
+      </div>
+      <div class="grid-2" id="warnF">
+        <div class="field"><label for="warn">Sarı uyarı (son dk)</label><input class="input" type="number" id="warn" min="0" step="0.5" value="2"></div>
+        <div class="field"><label for="danger">Kırmızı (son dk)</label><input class="input" type="number" id="danger" min="0" step="0.5" value="1"></div>
+      </div>
+      <label class="switch"><input type="checkbox" id="over" checked><span class="track"></span>Süre bitince fazlayı say</label>
+      <label class="switch"><input type="checkbox" id="sound" checked><span class="track"></span>Sesli uyarı</label>
+      <label class="switch"><input type="checkbox" id="showMs"><span class="track"></span>Saliseyi göster</label>
+      <hr class="divider">
+      <div class="small muted"><b>Kısayollar:</b> <kbd>Boşluk</kbd> başlat/duraklat · <kbd>F</kbd> tam ekran · <kbd>R</kbd> sıfırla · <kbd>N</kbd> sonraki · <kbd>+</kbd>/<kbd>−</kbd> dakika</div>
+    </aside>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>Süreyi girin veya hazır sürelerden birini seçin; sarı ve kırmızı uyarı zamanlarını ayarlayın.</li>
+        <li>Konferans oturumu için programa konuşmacıları ve sürelerini ekleyin.</li>
+        <li>"Başlat"a basın ve tam ekrana geçin. Kısayollar: Boşluk başlat/duraklat, F tam ekran, R sıfırla, N sonraki, +/− dakika ekle/çıkar.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Ekran kendiliğinden kapanır mı?</summary><p>Desteklenen tarayıcılarda zamanlayıcı çalışırken ekranın kararması otomatik olarak engellenir.</p></details>
+      <details class="faq"><summary>Süre dolunca ne olur?</summary><p>Ekran kırmızıya döner ve "Fazla süre" modunda aşılan süreyi saymaya devam eder; böylece konuşmacı ne kadar aştığını görür.</p></details>
+      <details class="faq"><summary>Konuşma süresi tahmini nasıl hesaplanıyor?</summary><p>Türkçe konuşma için ortalama dakikada 110 (yavaş), 130 (normal) veya 160 (hızlı) kelime esas alınır.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, $$, esc, icon } = T;
+  let running = false, startAt = 0, elapsedBefore = 0, total = 600000, raf = 0, wake = null, fired = {}, segIdx = 0;
+  let agenda = [];
+  try { agenda = JSON.parse(localStorage.getItem('timer-agenda') || 'null') || null; } catch {}
+  if (!agenda) agenda = [{ n: 'Açılış', m: 2 }, { n: 'Konuşmacı 1', m: 15 }, { n: 'Konuşmacı 2', m: 15 }, { n: 'Soru-cevap', m: 10 }];
+  const mode = T.seg($('#mode'), () => { $('#durF').hidden = $('#warnF').hidden = mode.get() === 'up'; reset(); });
+  [5, 10, 15, 20, 30, 45, 60].forEach((m) => { const b = T.h(`<button type="button" class="chip">${m} dk</button>`); b.onclick = () => { $('#mm').value = m; $('#ss').value = 0; $('#useAgenda').checked = false; agendaUi(); reset(); }; $('#presets').appendChild(b); });
+
+  const useAg = () => $('#useAgenda').checked && agenda.length > 0 && mode.get() === 'down';
+  const durationMs = () => useAg() ? (+agenda[segIdx]?.m || 0) * 60000 : ((+$('#mm').value || 0) * 60 + (+$('#ss').value || 0)) * 1000;
+  const elapsed = () => elapsedBefore + (running ? performance.now() - startAt : 0);
+  function fmt(ms, withMs) {
+    const neg = ms < 0; ms = Math.abs(ms);
+    const tot = withMs ? Math.floor(ms / 1000) : Math.ceil(ms / 1000 - 1e-9);
+    const h = Math.floor(tot / 3600), m = Math.floor((tot % 3600) / 60), s = tot % 60;
+    let out = (h ? h + ':' + String(m).padStart(2, '0') : String(m).padStart(2, '0')) + ':' + String(s).padStart(2, '0');
+    if (withMs) out += '.' + String(Math.floor((ms % 1000) / 10)).padStart(2, '0');
+    return (neg ? '+' : '') + out;
+  }
+  let actx;
+  function beep(n = 1, f = 880) {
+    if (!$('#sound').checked) return;
+    try { actx = actx || new AudioContext(); for (let i = 0; i < n; i++) { const t = actx.currentTime + i * 0.28, o = actx.createOscillator(), g = actx.createGain(); o.type = 'sine'; o.frequency.value = f; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.25, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22); o.connect(g).connect(actx.destination); o.start(t); o.stop(t + 0.25); } } catch {}
+  }
+  function render() {
+    const st = $('#stage'), e = elapsed();
+    let cls = '';
+    if (mode.get() === 'up') {
+      $('#clock').textContent = fmt(e, $('#showMs').checked);
+      $('#tbar').style.width = '0';
+      $('#sub').textContent = running ? 'Kronometre çalışıyor' : e ? 'Duraklatıldı' : 'Başlatmak için Boşluk tuşuna basın';
+    } else {
+      const left = total - e;
+      const w = (+$('#warn').value || 0) * 60000, d = (+$('#danger').value || 0) * 60000;
+      if (left <= 0) {
+        cls = 'over';
+        if (!fired.end) { fired.end = 1; beep(3, 660); }
+        if (!$('#over').checked) { pause(); elapsedBefore = total; }
+      } else if (left <= d) { cls = 'danger'; if (!fired.d && running) { fired.d = 1; beep(2, 880); } }
+      else if (left <= w) { cls = 'warn'; if (!fired.w && running) { fired.w = 1; beep(1, 880); } }
+      $('#clock').textContent = left <= 0 && !$('#over').checked ? '00:00' : fmt(left, $('#showMs').checked);
+      $('#tbar').style.width = Math.min(100, (e / (total || 1)) * 100) + '%';
+      const nxt = useAg() && agenda[segIdx + 1] ? ` · Sonraki: ${agenda[segIdx + 1].n}` : '';
+      $('#sub').textContent = left <= 0 ? `Süre doldu${$('#over').checked ? ' · fazla süre sayılıyor' : ''}${nxt}` : running ? `Toplam ${fmt(total)}${nxt}` : e ? 'Duraklatıldı' + nxt : `Başlatmak için Boşluk tuşuna basın${nxt}`;
+    }
+    st.className = cls;
+    $('#segName').textContent = useAg() ? `${segIdx + 1}/${agenda.length} · ${agenda[segIdx]?.n || ''}` : '';
+    document.title = (running ? '▶ ' : '') + $('#clock').textContent + ' · Sunum Zamanlayıcı';
+  }
+  function loop() { render(); if (running) raf = requestAnimationFrame(loop); }
+  async function start() {
+    if (running) return;
+    if (mode.get() === 'down' && !total) return T.toast('Süre girin', 'error');
+    running = true; startAt = performance.now(); loop(); setBtn();
+    try { if ('wakeLock' in navigator) wake = await navigator.wakeLock.request('screen'); } catch {}
+  }
+  function pause() { if (!running) return; elapsedBefore = elapsed(); running = false; cancelAnimationFrame(raf); setBtn(); wake?.release?.(); wake = null; render(); }
+  function reset() { running = false; cancelAnimationFrame(raf); elapsedBefore = 0; fired = {}; total = durationMs(); setBtn(); wake?.release?.(); wake = null; render(); agendaUi(); }
+  function setBtn() { $('#toggle').innerHTML = running ? `${icon('pause')}<span>Duraklat</span>` : `${icon('play')}<span>${elapsed() ? 'Devam et' : 'Başlat'}</span>`; }
+  function adjust(min) {
+    if (mode.get() === 'up') return;
+    total = Math.max(0, total + min * 60000);
+    if (total - elapsed() > (+$('#danger').value || 0) * 60000) fired.d = 0;
+    if (total - elapsed() > (+$('#warn').value || 0) * 60000) fired.w = 0;
+    if (total - elapsed() > 0) fired.end = 0;
+    render();
+  }
+  function next() {
+    if (!useAg()) return;
+    if (segIdx < agenda.length - 1) { segIdx++; const was = running; reset(); if (was) start(); }
+    else { pause(); T.toast('Program tamamlandı', 'success'); }
+  }
+  $('#toggle').onclick = () => (running ? pause() : start());
+  $('#reset').onclick = reset;
+  $('#plus').onclick = () => adjust(1); $('#minus').onclick = () => adjust(-1);
+  $('#next').onclick = next;
+  $('#fs').onclick = () => { const s = $('#stage'); document.fullscreenElement ? document.exitFullscreen() : s.requestFullscreen?.().catch(() => {}); };
+  ['#mm', '#ss'].forEach((s) => $(s).addEventListener('input', () => { if (!running && !elapsed()) reset(); }));
+  ['#warn', '#danger', '#over', '#showMs'].forEach((s) => $(s).addEventListener('input', render));
+  document.addEventListener('keydown', (e) => {
+    if (/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) || e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key.toLowerCase();
+    if (e.code === 'Space') { e.preventDefault(); running ? pause() : start(); }
+    else if (k === 'f') $('#fs').click(); else if (k === 'r') reset(); else if (k === 'n') next();
+    else if (k === '+' || k === '=') adjust(1); else if (k === '-') adjust(-1);
+  });
+  document.addEventListener('visibilitychange', async () => { if (running && document.visibilityState === 'visible' && !wake) { try { wake = await navigator.wakeLock.request('screen'); } catch {} } });
+
+  // ---------- agenda ----------
+  function saveAg() { try { localStorage.setItem('timer-agenda', JSON.stringify(agenda)); } catch {} }
+  function agendaUi() {
+    const on = useAg();
+    $('#next').hidden = !on;
+    $('#agenda').innerHTML = agenda.map((a, i) => `<div class="agenda-row ${on && i === segIdx ? 'cur' : ''} ${on && i < segIdx ? 'done' : ''}" data-i="${i}"><b>${i + 1}</b><input class="input an" value="${esc(a.n)}" placeholder="Konuşmacı / bölüm"><input class="input am" type="number" min="0" step="0.5" value="${a.m}" title="Dakika"><button class="btn btn-ghost btn-icon btn-sm" data-rm title="Sil">${icon('x')}</button></div>`).join('');
+    const t = agenda.reduce((s, a) => s + (+a.m || 0), 0);
+    $('#agTotal').textContent = `Toplam: ${Math.floor(t / 60) ? Math.floor(t / 60) + ' sa ' : ''}${Math.round(t % 60)} dk`;
+  }
+  $('#agenda').addEventListener('input', (e) => {
+    const r = e.target.closest('.agenda-row'); if (!r) return; const a = agenda[+r.dataset.i];
+    if (e.target.classList.contains('an')) a.n = e.target.value; else a.m = +e.target.value;
+    saveAg(); const t = agenda.reduce((s, x) => s + (+x.m || 0), 0); $('#agTotal').textContent = `Toplam: ${Math.round(t)} dk`;
+    if (useAg() && +r.dataset.i === segIdx && !running && !elapsed()) { total = durationMs(); render(); }
+  });
+  $('#agenda').addEventListener('click', (e) => { if (!e.target.closest('[data-rm]')) return; agenda.splice(+e.target.closest('.agenda-row').dataset.i, 1); segIdx = Math.min(segIdx, Math.max(0, agenda.length - 1)); saveAg(); reset(); });
+  $('#addRow').onclick = () => { agenda.push({ n: 'Konuşmacı ' + (agenda.length + 1), m: 10 }); saveAg(); agendaUi(); };
+  $('#useAgenda').addEventListener('change', () => { segIdx = 0; if (useAg() || !$('#useAgenda').checked) reset(); if ($('#useAgenda').checked && mode.get() === 'up') { mode.set('down'); } });
+
+  // ---------- speech estimate ----------
+  let estMin = 0;
+  function estimate() {
+    const w = ($('#speech').value.match(/[\p{L}\p{N}]+/gu) || []).length;
+    estMin = w / +$('#wpm').value;
+    $('#est').textContent = w ? `${w} kelime ≈ ${Math.floor(estMin)} dk ${Math.round((estMin % 1) * 60)} sn` : '';
+  }
+  $('#speech').addEventListener('input', T.debounce(estimate, 150)); $('#wpm').addEventListener('change', estimate);
+  $('#useEst').onclick = () => { if (!estMin) return T.toast('Önce metin girin', 'error'); const s = Math.ceil(estMin * 60); $('#useAgenda').checked = false; mode.set('down', false); $('#durF').hidden = $('#warnF').hidden = false; $('#mm').value = Math.floor(s / 60); $('#ss').value = s % 60; reset(); window.scrollTo({ top: 0, behavior: 'smooth' }); T.toast('Süre ayarlandı', 'success'); };
+
+  reset();
+})();
+</script>
+</body>
+</html>

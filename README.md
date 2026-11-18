@@ -4,15 +4,16 @@
 
 Tüm işlemler tarayıcıda yapılır. Dosyalar hiçbir sunucuya yüklenmez; site tamamen statiktir (derleme adımı yok).
 
-## Araçlar (29)
+## Araçlar (32)
 
 | Kategori | Araçlar |
 |---|---|
-| PDF | Birleştir, Böl, Sayfa Düzenle (sırala/döndür/sil), İmzala, Görselden PDF, PDF'ten Görsele, Sıkıştır, Filigran, Sayfa Numarası, Metin Çıkar, Meta Veri |
+| PDF | Birleştir, Böl, Sayfa Düzenle (sırala/döndür/sil), İmzala, Görselden PDF, PDF'ten Görsele, Sıkıştır, Filigran, Sayfa Numarası, Metin Çıkar, Meta Veri, OCR (taranmış belge → aranabilir PDF) |
 | QR & Barkod | QR Oluştur (logo, gradyan, desen, WiFi, vCard…), QR Okuyucu (kamera/görsel), Toplu QR (ZIP/A4 PDF), Barkod |
 | Görsel | Sıkıştır & Dönüştür (JPG/PNG/WebP, boyutlandırma), Favicon Oluştur, Renk Araçları |
 | Metin | Kelime Sayacı, Metin Dönüştürücü, Metin Karşılaştır (diff), Lorem Ipsum |
 | Geliştirici | JSON Biçimlendirici, Base64, URL Kodla/Çöz, UUID, Zaman Damgası |
+| Eğitim & Sunum | Rastgele Grup & Öğrenci Seçici (çark), Sunum Zamanlayıcı |
 | Güvenlik | Şifre Oluşturucu, Hash (MD5/SHA) |
 
 ## Yapı
@@ -22,7 +23,7 @@ index.html              Ana sayfa (araç listesi JS ile kayıttan üretilir)
 <arac-adi>/index.html   Her araç kendi klasöründe (temiz URL)
 assets/css/style.css    Tasarım sistemi (açık/koyu tema)
 assets/js/app.js        Araç kaydı (TOOLS), başlık/altbilgi, arama (Ctrl+K), yardımcılar
-assets/vendor/          pdf-lib, pdf.js, JSZip, qrcode-generator, jsQR, JsBarcode, fontlar
+assets/vendor/          pdf-lib, pdf.js, Tesseract.js (OCR), JSZip, qrcode-generator, jsQR, JsBarcode, fontlar
 sw.js                   Ağ öncelikli service worker (çevrimdışı destek)
 ```
 
@@ -47,4 +48,4 @@ Herhangi bir statik sunucuda (Nginx, Apache, Netlify, Cloudflare Pages) da oldu�
 
 ## Lisanslar
 
-Üçüncü taraf kütüphaneler kendi lisanslarıyla gelir: pdf-lib (MIT), PDF.js (Apache-2.0), JSZip (MIT), qrcode-generator (MIT), jsQR (Apache-2.0), JsBarcode (MIT), DejaVu Sans, Dancing Script & Great Vibes (OFL).
+Üçüncü taraf kütüphaneler kendi lisanslarıyla gelir: pdf-lib (MIT), PDF.js (Apache-2.0), Tesseract.js (Apache-2.0), JSZip (MIT), qrcode-generator (MIT), jsQR (Apache-2.0), JsBarcode (MIT), DejaVu Sans, Dancing Script & Great Vibes (OFL).

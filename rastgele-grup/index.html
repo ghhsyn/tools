@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rastgele Grup Oluşturucu ve Öğrenci Seçme Çarkı | Notettiklerim Tools</title>
+<meta name="description" content="Sınıf listesinden adil ve rastgele gruplar oluşturun, sunum sırası belirleyin veya çarkı çevirerek öğrenci seçin. Tam ekran sınıf modu, yazdırma ve Excel&#x27;e aktarma.">
+<link rel="canonical" href="https://tools.notettiklerim.com/rastgele-grup/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Rastgele Grup Oluşturucu ve Öğrenci Seçme Çarkı">
+<meta property="og:description" content="Sınıf listesinden adil ve rastgele gruplar oluşturun, sunum sırası belirleyin veya çarkı çevirerek öğrenci seçin. Tam ekran sınıf modu, yazdırma ve Excel&#x27;e aktarma.">
+<meta property="og:url" content="https://tools.notettiklerim.com/rastgele-grup/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="rastgele-grup">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <style>
+    .groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
+    .group { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); overflow: hidden; animation: pop .35s ease both; }
+    .group h4 { margin: 0; padding: 10px 14px; font-size: 14.5px; color: #fff; display: flex; justify-content: space-between; align-items: center; }
+    .group h4 span { font-size: 12px; opacity: .85; font-weight: 600; }
+    .group ol { margin: 0; padding: 10px 14px 12px 34px; font-size: 14.5px; line-height: 1.75; }
+    .group li.lead { font-weight: 800; }
+    .group li.lead::after { content: " ★"; color: #f59e0b; }
+    .order { columns: 2 240px; column-gap: 24px; font-size: 15px; }
+    .order div { break-inside: avoid; display: flex; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); animation: pop .3s ease both; }
+    .order b { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--primary-soft); color: var(--primary-text); font-size: 13px; flex: none; }
+    .wheel-wrap { position: relative; display: grid; place-items: center; }
+    .wheel-wrap canvas { width: min(100%, 520px); aspect-ratio: 1; height: auto; }
+    .wheel-wrap .pointer { position: absolute; top: -4px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 16px solid transparent; border-right: 16px solid transparent; border-top: 30px solid var(--text); filter: drop-shadow(0 3px 4px rgba(0,0,0,.3)); z-index: 2; }
+    .winner { text-align: center; font-size: clamp(26px, 5vw, 46px); font-weight: 850; letter-spacing: -.02em; min-height: 1.3em; }
+    .winner.flash { animation: win .6s ease; }
+    @keyframes win { 0% { transform: scale(.6); opacity: 0; } 60% { transform: scale(1.12); } 100% { transform: scale(1); opacity: 1; } }
+    #stage:fullscreen { background: var(--bg); padding: 4vh 4vw; overflow: auto; display: flex; flex-direction: column; justify-content: center; }
+    #stage:fullscreen .groups { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    #stage:fullscreen .group ol { font-size: 20px; }
+    #stage:fullscreen .order { font-size: 22px; }
+    #stage:fullscreen .wheel-wrap canvas { width: min(70vh, 90vw); }
+    #stage:fullscreen .winner { font-size: 64px; }
+    @media print { .tool-layout > .side, .tabs, #stageBar { display: none !important; } .tool-layout { display: block; } .card { box-shadow: none; border: 0; } }
+  </style>
+  <div class="tool-layout">
+    <div class="card stack">
+      <div class="tabs" id="mode"><button data-m="groups" class="active"><i data-icon="users"></i>Grup oluştur</button><button data-m="order"><i data-icon="alignLeft"></i>Sıralama</button><button data-m="wheel"><i data-icon="refresh"></i>Çark</button></div>
+      <div id="stage" class="stack">
+        <div class="row row-between" id="stageBar">
+          <div class="row" style="gap:8px" id="actGroups"><button class="btn btn-primary" id="mkGroups"><i data-icon="shuffle"></i>Grupları oluştur</button></div>
+          <div class="row" style="gap:8px" id="actOrder" hidden><button class="btn btn-primary" id="mkOrder"><i data-icon="shuffle"></i>Sırayı karıştır</button></div>
+          <div class="row" style="gap:8px" id="actWheel" hidden><button class="btn btn-primary btn-lg" id="spin"><i data-icon="refresh"></i>Çarkı çevir</button><label class="check"><input type="checkbox" id="removeWin" checked>Seçileni listeden çıkar</label></div>
+          <div class="row" style="gap:6px"><button class="btn btn-sm btn-ghost" id="fs" title="Tam ekran (tahtaya yansıt)"><i data-icon="expand"></i>Tam ekran</button></div>
+        </div>
+        <div id="viewGroups"><div class="groups" id="groups"></div></div>
+        <div id="viewOrder" hidden><div class="order" id="order"></div></div>
+        <div id="viewWheel" hidden class="stack">
+          <div class="winner" id="winner"></div>
+          <div class="wheel-wrap"><div class="pointer"></div><canvas id="wheel" width="1040" height="1040"></canvas></div>
+          <div id="picked" class="chips" style="justify-content:center"></div>
+        </div>
+        <div class="row row-end" style="gap:8px" id="exportBar">
+          <button class="btn btn-sm" id="copy"><i data-icon="copy"></i>Kopyala</button>
+          <button class="btn btn-sm" id="csv"><i data-icon="download"></i>CSV</button>
+          <button class="btn btn-sm" id="print"><i data-icon="printer"></i>Yazdır</button>
+        </div>
+      </div>
+    </div>
+    <aside class="side card stack">
+      <div class="row row-between"><div class="card-title" style="margin:0"><i data-icon="users"></i>Liste</div><span class="badge" id="count">0 kişi</span></div>
+      <textarea class="textarea" id="names" style="min-height:240px" placeholder="Her satıra bir isim&#10;Ayşe Yılmaz&#10;Mehmet Demir&#10;…"></textarea>
+      <div class="row" style="gap:6px"><button class="btn btn-sm" id="load"><i data-icon="upload"></i>Dosya yükle</button><button class="btn btn-sm btn-ghost" id="sample">Örnek liste</button><button class="btn btn-sm btn-ghost btn-danger" id="clr">Temizle</button><input type="file" id="file" accept=".txt,.csv,.tsv,text/plain,text/csv" hidden></div>
+      <div id="optGroups" class="stack-sm">
+        <hr class="divider">
+        <div class="seg block" id="by" data-value="count"><button data-v="count">Grup sayısı</button><button data-v="size">Kişi / grup</button></div>
+        <div class="field"><div class="range-head"><label id="byL">Grup sayısı</label><output></output></div><input type="range" id="byN" min="2" max="20" value="4"></div>
+        <span class="hint" id="byHint"></span>
+        <label class="check"><input type="checkbox" id="leader">Her gruba başkan ata (★)</label>
+        <div class="field"><label for="gname">Grup adları</label><select class="select" id="gname"><option value="num">Grup 1, Grup 2…</option><option value="abc">A Grubu, B Grubu…</option><option value="color">Renkler (Kırmızı, Mavi…)</option><option value="planet">Gezegenler</option></select></div>
+      </div>
+      <p class="muted small" style="margin:0">Liste bu tarayıcıda saklanır, hiçbir yere gönderilmez.</p>
+    </aside>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>İsim listesini yapıştırın veya Excel/CSV/TXT dosyası yükleyin (her satıra bir kişi).</li>
+        <li>Grup oluşturma, sıralama veya çark modunu seçin.</li>
+        <li>Sonucu tahtaya yansıtmak için tam ekranı kullanın, kopyalayın, yazdırın veya CSV olarak indirin.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Seçim gerçekten rastgele mi?</summary><p>Evet. Tarayıcının kriptografik rastgele sayı üreticisi (crypto.getRandomValues) ve Fisher–Yates karıştırma algoritması kullanılır; her kişinin her gruba düşme olasılığı eşittir.</p></details>
+      <details class="faq"><summary>Listem kaydediliyor mu?</summary><p>Listeniz yalnızca bu cihazdaki tarayıcı belleğinde tutulur, böylece bir sonraki derste hazır olur. Hiçbir sunucuya gönderilmez.</p></details>
+      <details class="faq"><summary>Aynı öğrencinin tekrar seçilmesini engelleyebilir miyim?</summary><p>Evet. Çark modunda "Seçileni listeden çıkar" seçeneğini açın; herkes seçilene kadar kimse ikinci kez seçilmez.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, $$, esc } = T;
+  const COLORS = ['#6366f1', '#ec4899', '#10b981', '#f59e0b', '#0ea5e9', '#8b5cf6', '#ef4444', '#14b8a6', '#f97316', '#84cc16', '#06b6d4', '#a855f7', '#e11d48', '#22c55e', '#3b82f6', '#d946ef', '#eab308', '#64748b', '#0891b2', '#be123c'];
+  const NAMES = {
+    color: ['Kırmızı', 'Mavi', 'Yeşil', 'Sarı', 'Mor', 'Turuncu', 'Pembe', 'Turkuaz', 'Lacivert', 'Bordo', 'Gri', 'Kahverengi', 'Lila', 'Bej', 'Altın', 'Gümüş', 'Mercan', 'Zümrüt', 'Safir', 'Yakut'],
+    planet: ['Merkür', 'Venüs', 'Dünya', 'Mars', 'Jüpiter', 'Satürn', 'Uranüs', 'Neptün', 'Plüton', 'Ay', 'Titan', 'Europa', 'Io', 'Ganymede', 'Callisto', 'Phobos', 'Deimos', 'Triton', 'Ceres', 'Vesta'],
+  };
+  const SAMPLE = 'Ayşe Yılmaz\nMehmet Demir\nZeynep Kaya\nAli Çelik\nElif Şahin\nMustafa Öztürk\nFatma Aydın\nEmre Arslan\nBüşra Doğan\nBurak Koç\nSeda Kurt\nOğuz Polat\nMerve Erdem\nCan Aksoy\nİrem Yıldız\nHakan Güneş\nDeniz Tekin\nGizem Uçar';
+  const rnd = (n) => { const lim = Math.floor(0x100000000 / n) * n; const a = new Uint32Array(1); let x; do { crypto.getRandomValues(a); x = a[0]; } while (x >= lim); return x % n; };
+  const shuffle = (arr) => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  let mode = 'groups', groups = [], order = [], pool = [], picked = [];
+  const names = () => [...new Set($('#names').value.split(/\r?\n/).map((s) => s.split(/[;\t]/)[0].trim()).filter(Boolean))];
+  try { $('#names').value = localStorage.getItem('rg-names') || SAMPLE; } catch { $('#names').value = SAMPLE; }
+
+  const by = T.seg($('#by'), () => { const c = by.get() === 'count'; $('#byL').textContent = c ? 'Grup sayısı' : 'Kişi / grup'; $('#byN').min = 2; hint(); });
+  T.bindRange($('#byN'));
+  function hint() {
+    const n = names().length, k = +$('#byN').value;
+    const g = by.get() === 'count' ? Math.min(k, Math.max(1, n)) : Math.max(1, Math.ceil(n / k));
+    const per = n ? `${Math.floor(n / g)}${n % g ? '–' + Math.ceil(n / g) : ''}` : 0;
+    $('#byHint').textContent = n ? `${n} kişi → ${g} grup, grup başına ${per} kişi` : '';
+  }
+  function updCount() {
+    const n = names().length;
+    $('#count').textContent = n + ' kişi';
+    $('#byN').max = Math.max(2, Math.min(by.get() === 'count' ? 30 : 20, n || 2));
+    $('#byN').dispatchEvent(new Event('input'));
+    hint();
+    try { localStorage.setItem('rg-names', $('#names').value); } catch {}
+  }
+  $('#names').addEventListener('input', T.debounce(() => { updCount(); pool = names(); picked = []; drawWheel(); renderPicked(); }, 200));
+  $('#byN').addEventListener('input', hint);
+  $('#sample').onclick = () => { $('#names').value = SAMPLE; updCount(); pool = names(); picked = []; drawWheel(); renderPicked(); };
+  $('#clr').onclick = () => { $('#names').value = ''; updCount(); pool = []; drawWheel(); };
+  $('#load').onclick = () => $('#file').click();
+  $('#file').onchange = async () => { const f = $('#file').files[0]; if (!f) return; const t = (await T.readText(f)).replace(/^﻿/, ''); $('#names').value = t.split(/\r?\n/).map((l) => l.split(/[;,\t]/)[0].replace(/^"|"$/g, '').trim()).filter(Boolean).join('\n'); $('#file').value = ''; updCount(); pool = names(); drawWheel(); };
+
+  $('#mode').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    mode = b.dataset.m; $$('#mode button').forEach((x) => x.classList.toggle('active', x === b));
+    $('#viewGroups').hidden = $('#actGroups').hidden = $('#optGroups').hidden = mode !== 'groups';
+    $('#viewOrder').hidden = $('#actOrder').hidden = mode !== 'order';
+    $('#viewWheel').hidden = $('#actWheel').hidden = mode !== 'wheel';
+    $('#exportBar').hidden = mode === 'wheel';
+    if (mode === 'wheel') { if (!pool.length) pool = names(); drawWheel(); }
+    if (mode === 'order' && !order.length) mkOrder();
+  });
+
+  const gTitle = (i) => { const t = $('#gname').value; return t === 'abc' ? String.fromCharCode(65 + (i % 26)) + ' Grubu' : NAMES[t] ? NAMES[t][i % 20] : 'Grup ' + (i + 1); };
+  function mkGroups() {
+    const list = shuffle(names());
+    if (list.length < 2) return T.toast('En az 2 kişi girin', 'error');
+    const k = +$('#byN').value;
+    const g = by.get() === 'count' ? Math.min(k, list.length) : Math.max(1, Math.ceil(list.length / k));
+    groups = Array.from({ length: g }, () => []);
+    list.forEach((n, i) => groups[i % g].push(n));
+    groups = shuffle(groups);
+    const lead = $('#leader').checked;
+    $('#groups').innerHTML = groups.map((m, i) => `<div class="group" style="animation-delay:${i * 50}ms"><h4 style="background:${COLORS[i % COLORS.length]}">${esc(gTitle(i))}<span>${m.length} kişi</span></h4><ol>${m.map((x, j) => `<li class="${lead && j === 0 ? 'lead' : ''}">${esc(x)}</li>`).join('')}</ol></div>`).join('');
+  }
+  function mkOrder() {
+    order = shuffle(names());
+    $('#order').innerHTML = order.map((n, i) => `<div style="animation-delay:${Math.min(i, 30) * 25}ms"><b>${i + 1}</b><span>${esc(n)}</span></div>`).join('') || '<p class="muted">Listeye isim ekleyin.</p>';
+  }
+  $('#mkGroups').onclick = mkGroups; $('#mkOrder').onclick = mkOrder;
+  $('#gname').onchange = () => groups.length && mkGroups();
+
+  // ---------- wheel ----------
+  const cv = $('#wheel'), ctx = cv.getContext('2d');
+  let angle = 0, spinning = false;
+  function drawWheel() {
+    const W = cv.width, R = W / 2 - 10, n = pool.length;
+    ctx.clearRect(0, 0, W, W);
+    ctx.save(); ctx.translate(W / 2, W / 2);
+    if (!n) { ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--surface-2'); ctx.beginPath(); ctx.arc(0, 0, R, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#94a3b8'; ctx.font = '600 40px Inter, Segoe UI, sans-serif'; ctx.textAlign = 'center'; ctx.fillText(picked.length ? 'Herkes seçildi 🎉' : 'Liste boş', 0, 14); ctx.restore(); return; }
+    const seg = (Math.PI * 2) / n;
+    ctx.rotate(angle);
+    for (let i = 0; i < n; i++) {
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, R, i * seg - Math.PI / 2, (i + 1) * seg - Math.PI / 2); ctx.closePath();
+      ctx.fillStyle = COLORS[i % COLORS.length]; if (n % COLORS.length === 1 && i === n - 1) ctx.fillStyle = COLORS[(i + 3) % COLORS.length];
+      ctx.fill(); ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = 3; ctx.stroke();
+      ctx.save(); ctx.rotate(i * seg + seg / 2 - Math.PI / 2);
+      const fs = Math.max(14, Math.min(40, (seg * R) * 0.42, 560 / Math.max(8, pool[i].length)));
+      ctx.fillStyle = '#fff'; ctx.font = `700 ${fs}px Inter, Segoe UI, sans-serif`; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+      let t = pool[i]; while (ctx.measureText(t).width > R * 0.78 && t.length > 4) t = t.slice(0, -2) + '…';
+      ctx.shadowColor = 'rgba(0,0,0,.25)'; ctx.shadowBlur = 4; ctx.fillText(t, R - 24, 0); ctx.restore();
+    }
+    ctx.restore();
+    ctx.beginPath(); ctx.arc(W / 2, W / 2, 46, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.shadowColor = 'rgba(0,0,0,.25)'; ctx.shadowBlur = 12; ctx.fill(); ctx.shadowBlur = 0;
+  }
+  function renderPicked() { $('#picked').innerHTML = picked.length ? picked.map((p, i) => `<span class="chip">${i + 1}. ${esc(p)}</span>`).join('') + `<button class="chip" id="resetPick" style="cursor:pointer">↺ Sıfırla</button>` : ''; const r = $('#resetPick'); if (r) r.onclick = () => { pool = names(); picked = []; $('#winner').textContent = ''; drawWheel(); renderPicked(); }; }
+  let actx = null;
+  const tick = () => { try { actx = actx || new AudioContext(); const o = actx.createOscillator(), g = actx.createGain(); o.frequency.value = 900; g.gain.setValueAtTime(0.05, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + 0.04); o.connect(g).connect(actx.destination); o.start(); o.stop(actx.currentTime + 0.05); } catch {} };
+  $('#spin').onclick = () => {
+    if (spinning) return;
+    if (!pool.length) { pool = names(); picked = []; renderPicked(); }
+    if (!pool.length) return T.toast('Listeye isim ekleyin', 'error');
+    spinning = true; $('#winner').textContent = ''; $('#winner').classList.remove('flash');
+    const n = pool.length, seg = (Math.PI * 2) / n, win = rnd(n);
+    // pointer at top: segment i center sits at angle + i*seg + seg/2 (from top). Want that ≡ 0
+    const jitter = (rnd(1000) / 1000 - 0.5) * seg * 0.7;
+    const base = -(win * seg + seg / 2) + jitter;
+    const start = angle, turns = 6 + rnd(3);
+    const TAU = Math.PI * 2;
+    const target = base + TAU * Math.ceil((start + TAU * turns - base) / TAU);
+    const delta = target - start;
+    const dur = 4200 + rnd(1200), t0 = performance.now();
+    let lastSeg = -1;
+    const ease = (t) => 1 - Math.pow(1 - t, 4);
+    const step = (now) => {
+      const t = Math.min(1, (now - t0) / dur);
+      angle = start + delta * ease(t);
+      const s = Math.floor((((-angle) % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2) / seg);
+      if (s !== lastSeg) { lastSeg = s; tick(); }
+      drawWheel();
+      if (t < 1) return requestAnimationFrame(step);
+      spinning = false;
+      const name = pool[win];
+      $('#winner').textContent = '🎉 ' + name; void $('#winner').offsetWidth; $('#winner').classList.add('flash');
+      if ($('#removeWin').checked) { picked.push(name); pool.splice(win, 1); angle = 0; setTimeout(drawWheel, 1400); }
+      renderPicked();
+    };
+    requestAnimationFrame(step);
+  };
+
+  // ---------- export ----------
+  const asText = () => mode === 'groups' ? groups.map((m, i) => `${gTitle(i)}\n${m.map((x, j) => `  ${j + 1}. ${x}${$('#leader').checked && j === 0 ? ' (Başkan)' : ''}`).join('\n')}`).join('\n\n') : order.map((n, i) => `${i + 1}. ${n}`).join('\n');
+  const asCsv = () => '﻿' + (mode === 'groups' ? 'Grup;Sıra;İsim\n' + groups.flatMap((m, i) => m.map((x, j) => `${gTitle(i)};${j + 1};${x}`)).join('\n') : 'Sıra;İsim\n' + order.map((n, i) => `${i + 1};${n}`).join('\n'));
+  const has = () => (mode === 'groups' ? groups.length : order.length);
+  $('#copy').onclick = () => (has() ? T.copy(asText()) : T.toast('Önce oluşturun', 'error'));
+  $('#csv').onclick = () => (has() ? T.download(new Blob([asCsv()], { type: 'text/csv;charset=utf-8' }), mode === 'groups' ? 'gruplar.csv' : 'siralama.csv') : T.toast('Önce oluşturun', 'error'));
+  $('#print').onclick = () => (has() ? window.print() : T.toast('Önce oluşturun', 'error'));
+  $('#fs').onclick = () => { const s = $('#stage'); if (document.fullscreenElement) document.exitFullscreen(); else s.requestFullscreen?.().catch(() => T.toast('Tam ekran desteklenmiyor', 'error')); };
+  document.addEventListener('keydown', (e) => { if (e.code === 'Space' && mode === 'wheel' && !/INPUT|TEXTAREA|SELECT|BUTTON/.test(document.activeElement.tagName)) { e.preventDefault(); $('#spin').click(); } });
+
+  updCount(); pool = names(); mkGroups(); drawWheel();
+})();
+</script>
+</body>
+</html>

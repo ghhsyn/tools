@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDF OCR – Taranmış PDF&#x27;i Aranabilir PDF ve Metne Çevir (Türkçe) | Notettiklerim Tools</title>
+<meta name="description" content="Taranmış PDF belgeleri ve fotoğrafları Türkçe destekli OCR ile aranabilir, kopyalanabilir PDF&#x27;e veya düz metne dönüştürün. Ücretsiz, kayıtsız; belgeleriniz cihazınızdan çıkmaz.">
+<link rel="canonical" href="https://tools.notettiklerim.com/pdf-ocr/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="PDF OCR – Taranmış PDF&#x27;i Aranabilir PDF ve Metne Çevir (Türkçe)">
+<meta property="og:description" content="Taranmış PDF belgeleri ve fotoğrafları Türkçe destekli OCR ile aranabilir, kopyalanabilir PDF&#x27;e veya düz metne dönüştürün. Ücretsiz, kayıtsız; belgeleriniz cihazınızdan çıkmaz.">
+<meta property="og:url" content="https://tools.notettiklerim.com/pdf-ocr/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="pdf-ocr">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <style>
+    .ocr-pages { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+    .ocr-page { position: relative; border: 1px solid var(--border); border-radius: 12px; padding: 8px; background: var(--surface); display: flex; flex-direction: column; gap: 6px; align-items: center; }
+    .ocr-page .pg { width: 100%; aspect-ratio: 1 / 1.3; display: grid; place-items: center; overflow: hidden; }
+    .ocr-page canvas, .ocr-page img { max-width: 100%; max-height: 100%; box-shadow: 0 2px 8px rgba(0,0,0,.15); border-radius: 3px; background: #fff; }
+    .ocr-page .st { font-size: 11.5px; font-weight: 700; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+    .ocr-page.done { border-color: color-mix(in srgb, var(--success) 45%, var(--border)); }
+    .ocr-page.done .st { color: var(--success); }
+    .ocr-page.run { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+    .ocr-page .bar { position: absolute; left: 8px; right: 8px; bottom: 30px; height: 4px; border-radius: 4px; background: var(--surface-3); overflow: hidden; }
+    .ocr-page .bar > div { height: 100%; width: 0; background: var(--primary); transition: width .2s; }
+  </style>
+  <div class="card" id="dzCard">
+    <div id="dz"></div>
+    <div class="privacy-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Dosyalarınız tarayıcınızda işlenir, hiçbir sunucuya yüklenmez.</div>
+  </div>
+  <div class="tool-layout" id="work" hidden>
+    <div class="stack">
+      <div class="card stack">
+        <div class="row row-between">
+          <div style="min-width:0"><b id="fname" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></b><span class="muted small" id="fmeta"></span></div>
+          <div class="row" style="gap:8px"><button class="btn btn-sm" id="add"><i data-icon="plus"></i>Ekle</button><button class="btn btn-sm btn-ghost btn-danger" id="clear">Temizle</button></div>
+        </div>
+        <div id="hasText"></div>
+        <div class="ocr-pages" id="pages"></div>
+      </div>
+      <div class="card stack" id="txtCard" hidden>
+        <div class="row row-between"><div class="card-title" style="margin:0"><i data-icon="type"></i>Tanınan metin</div><span class="muted small" id="conf"></span></div>
+        <textarea class="textarea" id="txt" style="min-height:360px" spellcheck="false"></textarea>
+        <div class="row row-end" style="gap:8px"><button class="btn" data-copy-target="#txt"><i data-icon="copy"></i>Kopyala</button><button class="btn" id="dlTxt"><i data-icon="download"></i>TXT indir</button></div>
+      </div>
+    </div>
+    <aside class="side card stack">
+      <div class="card-title"><i data-icon="sliders"></i>OCR ayarları</div>
+      <div class="field"><label for="lang">Belge dili</label>
+        <select class="select" id="lang"><option value="tur">Türkçe</option><option value="tur+eng" selected>Türkçe + İngilizce</option><option value="eng">İngilizce</option></select>
+      </div>
+      <div class="field"><label>Çıktı</label><div class="seg block" id="outMode" data-value="pdf"><button data-v="pdf">Aranabilir PDF</button><button data-v="txt">Sadece metin</button></div></div>
+      <div class="field"><label for="dpi">Kalite</label>
+        <select class="select" id="dpi"><option value="150">Hızlı (150 DPI)</option><option value="200" selected>Standart (200 DPI)</option><option value="300">Yüksek (300 DPI · yavaş)</option></select>
+      </div>
+      <div class="field" id="rangeF"><label for="range">Sayfalar</label><input class="input" id="range" placeholder="Tümü (ör. 1-5, 8)"></div>
+      <button class="btn btn-primary btn-lg btn-block" id="go"><i data-icon="scanText"></i>Metni Tanı</button>
+      <button class="btn btn-block" id="cancel" hidden>İptal</button>
+      <div class="stack-sm" id="progW" hidden>
+        <div class="row row-between small"><span id="progT">Hazırlanıyor…</span><b id="progP">0%</b></div>
+        <div class="progress"><div id="progB"></div></div>
+      </div>
+      <div id="out"></div>
+      <p class="muted small" style="margin:0">İlk kullanımda OCR motoru ve dil verisi (yaklaşık 5–9 MB) bir kez indirilir; sonraki kullanımlarda önbellekten yüklenir.</p>
+    </aside>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>Taranmış PDF dosyanızı veya belge fotoğraflarınızı yükleyin.</li>
+        <li>Belge dilini ve çıktı türünü (aranabilir PDF veya metin) seçin.</li>
+        <li>"Metni Tanı" butonuna basın; işlem bitince sonucu indirin veya metni kopyalayın.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Belgelerim bir sunucuya gönderiliyor mu?</summary><p>Hayır. Metin tanıma (OCR) motoru tarayıcınızda çalışır; resmî veya gizli belgeleriniz cihazınızdan çıkmaz. İlk kullanımda yalnızca dil verisi (2–5 MB) indirilir ve önbelleğe alınır.</p></details>
+      <details class="faq"><summary>Aranabilir PDF nedir?</summary><p>Görünüşü orijinal taramayla aynı olan, ancak içinde görünmez bir metin katmanı bulunan PDF'tir. Ctrl+F ile arama yapabilir, metni seçip kopyalayabilirsiniz.</p></details>
+      <details class="faq"><summary>Tanıma doğruluğunu nasıl artırırım?</summary><p>Düz, iyi aydınlatılmış ve en az 200 DPI çözünürlükte taramalar en iyi sonucu verir. "Yüksek" kalite seçeneği küçük yazılarda doğruluğu artırır ancak işlemi yavaşlatır.</p></details>
+      <details class="faq"><summary>El yazısını tanır mı?</summary><p>Hayır. OCR motoru basılı metinler için optimize edilmiştir; el yazısında sonuçlar güvenilir değildir.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, $$, esc, icon, formatBytes } = T;
+  const TS = '/assets/vendor/tesseract/';
+  let sources = [];   // {kind:'pdf'|'img', file, doc?, pages}
+  let units = [];     // {src, page (1-based) | null, el}
+  let worker = null, workerLang = '', onLog = null, cancelled = false, running = false;
+  let resultPdf = null;
+  const outMode = T.seg($('#outMode'));
+  const ACC = '.pdf,application/pdf,image/*';
+  const dz = T.dropzone($('#dz'), { accept: ACC, multiple: true, paste: true, icon: 'scanText', title: 'Taranmış PDF veya belge fotoğrafı seçin', subtitle: 'PDF, JPG, PNG · birden fazla dosya seçebilirsiniz', onFiles: add });
+  T.pageDrop(add, ACC);
+  $('#add').onclick = () => dz.open();
+  $('#clear').onclick = () => { if (running) return; sources.forEach((s) => s.doc && s.doc.destroy()); sources = []; units = []; render(); };
+
+  async function add(files) {
+    if (running) return T.toast('İşlem sürerken dosya eklenemez', 'error');
+    for (const f of files) {
+      try {
+        if (/pdf$/i.test(f.type) || /\.pdf$/i.test(f.name)) {
+          const doc = await T.pdfjsOpen(await T.readBuffer(f));
+          sources.push({ kind: 'pdf', file: f, doc, pages: doc.numPages });
+          // detect existing text layer
+          try { const tc = await (await doc.getPage(1)).getTextContent(); if (tc.items.filter((i) => i.str && i.str.trim()).length > 20) $('#hasText').innerHTML = `<div class="alert info">${icon('info')}<span><b>${esc(f.name)}</b> zaten seçilebilir metin içeriyor. Metni doğrudan almak için <a href="/pdf-metin/">PDF'ten Metin Çıkar</a> aracı daha hızlı ve doğru olabilir.</span></div>`; } catch {}
+        } else {
+          sources.push({ kind: 'img', file: f, url: URL.createObjectURL(f), pages: 1 });
+        }
+      } catch (e) { T.toast(`${f.name}: ${T.pdfErrorMessage(e)}`, 'error', 5000); }
+    }
+    render();
+  }
+
+  function render() {
+    $('#dzCard').hidden = sources.length > 0; $('#work').hidden = !sources.length;
+    $('#out').innerHTML = ''; resultPdf = null;
+    if (!sources.length) { $('#hasText').innerHTML = ''; $('#txtCard').hidden = true; return; }
+    const total = sources.reduce((s, x) => s + x.pages, 0);
+    $('#fname').textContent = sources.length === 1 ? sources[0].file.name : `${sources.length} dosya`;
+    $('#fmeta').textContent = `${total} sayfa · ${formatBytes(sources.reduce((s, x) => s + x.file.size, 0))}`;
+    $('#rangeF').hidden = !(sources.length === 1 && sources[0].kind === 'pdf');
+    const grid = $('#pages'); grid.innerHTML = ''; units = [];
+    sources.forEach((s, si) => {
+      for (let p = 1; p <= s.pages; p++) {
+        const el = T.h(`<div class="ocr-page" data-page="${p}"><div class="pg page">${s.kind === 'img' ? `<img src="${s.url}" alt="">` : '<span class="spinner" style="color:var(--muted)"></span>'}</div><div class="bar" hidden><div></div></div><span class="st">${sources.length > 1 ? esc(s.file.name.slice(0, 10)) + ' · ' : ''}${s.kind === 'pdf' ? 'Sayfa ' + p : 'Görsel'}</span></div>`);
+        grid.appendChild(el);
+        units.push({ si, page: s.kind === 'pdf' ? p : null, el });
+      }
+      if (s.kind === 'pdf') T.lazyThumbs(s.doc, units.filter((u) => u.si === si).map((u) => u.el), { size: 120 });
+    });
+  }
+
+  async function getWorker(lang) {
+    if (worker && workerLang === lang) return worker;
+    if (worker) { await worker.terminate(); worker = null; }
+    await T.loadScript(TS + 'tesseract.min.js');
+    worker = await Tesseract.createWorker(lang.split('+'), 1, {
+      workerPath: TS + 'worker.min.js', corePath: TS + 'core', langPath: TS + 'lang', gzip: true,
+      logger: (m) => onLog && onLog(m),
+    });
+    workerLang = lang;
+    return worker;
+  }
+
+  const prog = (txt, p) => { $('#progT').textContent = txt; $('#progP').textContent = Math.round(p * 100) + '%'; $('#progB').style.width = p * 100 + '%'; };
+
+  async function unitImage(u, dpi) {
+    const s = sources[u.si];
+    let c;
+    if (s.kind === 'pdf') {
+      const page = await s.doc.getPage(u.page);
+      c = await T.renderPdfPage(page, { scale: dpi / 72 });
+    } else {
+      const img = await T.loadImage(s.url);
+      const max = 4000, k = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+      c = document.createElement('canvas'); c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+      const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height); ctx.drawImage(img, 0, 0, c.width, c.height);
+      dpi = Math.max(72, Math.min(300, Math.round(c.width / 8.27)));
+    }
+    const blob = await T.canvasToBlob(c, 'image/jpeg', 0.88);
+    c.width = c.height = 0;
+    return { blob, dpi };
+  }
+
+  $('#cancel').onclick = () => { cancelled = true; $('#cancel').disabled = true; prog('İptal ediliyor…', 0); };
+
+  $('#go').onclick = async () => {
+    if (running) return;
+    let list = units;
+    if (!$('#rangeF').hidden && $('#range').value.trim()) {
+      try { const set = new Set(T.parseRanges($('#range').value, sources[0].pages)); list = units.filter((u) => set.has(u.page)); }
+      catch (e) { return T.toast(e.message, 'error'); }
+    }
+    if (!list.length) return;
+    running = true; cancelled = false;
+    const btn = $('#go'); T.busy(btn, true, 'Çalışıyor…');
+    $('#cancel').hidden = false; $('#cancel').disabled = false; $('#progW').hidden = false; $('#out').innerHTML = '';
+    $$('.ocr-page').forEach((e) => e.classList.remove('done', 'run'));
+    const wantPdf = outMode.get() === 'pdf', dpiSel = +$('#dpi').value;
+    const texts = [], pdfs = [], confs = [];
+    try {
+      let cur = 0;
+      onLog = (m) => {
+        if (m.status === 'recognizing text') {
+          const u = list[cur]; if (u) { const b = u.el.querySelector('.bar'); b.hidden = false; b.firstElementChild.style.width = m.progress * 100 + '%'; }
+          prog(`Sayfa ${cur + 1} / ${list.length} tanınıyor…`, (cur + m.progress) / list.length);
+        } else if (/loading|initializ/i.test(m.status)) prog(m.status.includes('language') ? 'Dil verisi yükleniyor…' : 'OCR motoru hazırlanıyor…', m.progress || 0);
+      };
+      prog('OCR motoru hazırlanıyor…', 0);
+      const w = await getWorker($('#lang').value);
+      for (cur = 0; cur < list.length; cur++) {
+        if (cancelled) break;
+        const u = list[cur];
+        u.el.classList.add('run'); u.el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        const { blob, dpi } = await unitImage(u, dpiSel);
+        await w.setParameters({ user_defined_dpi: String(dpi) });
+        const { data } = await w.recognize(blob, {}, { text: true, pdf: wantPdf });
+        texts.push(data.text.trim()); confs.push(data.confidence);
+        if (wantPdf && data.pdf) pdfs.push(new Uint8Array(data.pdf));
+        u.el.classList.remove('run'); u.el.classList.add('done');
+        u.el.querySelector('.bar').hidden = true;
+        u.el.querySelector('.st').innerHTML = `${icon('check', 'width="13" height="13"')} %${Math.round(data.confidence)} güven`;
+      }
+      if (!texts.length) throw new Error('İşlem iptal edildi');
+      const multi = texts.length > 1;
+      $('#txt').value = texts.map((t, i) => (multi ? `──────── ${list[i].page ? 'Sayfa ' + list[i].page : 'Görsel ' + (i + 1)} ────────\n` : '') + t).join('\n\n');
+      $('#txtCard').hidden = false;
+      const avg = confs.reduce((a, b) => a + b, 0) / confs.length;
+      $('#conf').textContent = `Ortalama güven: %${Math.round(avg)} · ${($('#txt').value.match(/\S+/g) || []).length} kelime`;
+      prog(cancelled ? `İptal edildi · ${texts.length} sayfa işlendi` : 'Tamamlandı', 1);
+      if (wantPdf && pdfs.length) {
+        const L = await T.lib.pdfLib();
+        const out = await L.PDFDocument.create();
+        for (const b of pdfs) { const d = await L.PDFDocument.load(b); (await out.copyPages(d, d.getPageIndices())).forEach((p) => out.addPage(p)); }
+        out.setTitle(T.baseName(sources[0].file.name)); out.setCreator('Notettiklerim Tools OCR');
+        resultPdf = new Blob([await out.save()], { type: 'application/pdf' });
+        const name = T.baseName(sources[0].file.name) + '_ocr.pdf';
+        $('#out').appendChild(T.resultBox({ title: 'Aranabilir PDF hazır!', text: `${pdfs.length} sayfa · ${formatBytes(resultPdf.size)}`, actions: [{ label: 'İndir', icon: 'download', primary: true, onClick: () => T.download(resultPdf, name) }] }));
+        T.download(resultPdf, name);
+      } else {
+        $('#txtCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      if (avg < 60) T.toast('Tanıma güveni düşük; daha yüksek kalite veya daha net bir tarama deneyin', 'error', 5000);
+    } catch (e) {
+      console.error(e);
+      T.toast(e.message === 'İşlem iptal edildi' ? e.message : 'OCR başarısız: ' + (e.message || e), 'error', 5000);
+    } finally {
+      running = false; onLog = null; T.busy(btn, false); $('#cancel').hidden = true;
+      setTimeout(() => { if (!running) $('#progW').hidden = true; }, 2500);
+    }
+  };
+  $('#dlTxt').onclick = () => T.download(new Blob([$('#txt').value], { type: 'text/plain;charset=utf-8' }), T.baseName(sources[0]?.file.name || 'ocr') + '.txt');
+  window.addEventListener('pagehide', () => worker && worker.terminate());
+})();
+</script>
+</body>
+</html>

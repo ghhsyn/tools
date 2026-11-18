@@ -86,6 +86,16 @@
     tag: '<path d="M12.59 2.59A2 2 0 0 0 11.17 2H4a2 2 0 0 0-2 2v7.17a2 2 0 0 0 .59 1.42l8.7 8.7a2.43 2.43 0 0 0 3.42 0l6.58-6.58a2.43 2.43 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
     wand: '<path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72M14 7l3 3M5 6v4M19 14v4M10 2v2M7 8H3M21 16h-4M11 3H9"/>',
     calendar: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+    users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+    timer: '<path d="M10 2h4M12 14l3-3"/><circle cx="12" cy="14" r="8"/>',
+    shuffle: '<path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"/><path d="m18 2 4 4-4 4M2 6h1.9c1.5 0 2.9.9 3.6 2.2M22 18h-5.9c-1.3 0-2.6-.7-3.3-1.8l-.5-.8"/><path d="m18 14 4 4-4 4"/>',
+    scanText: '<path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 8h8M7 12h10M7 16h6"/>',
+    play: '<path d="m6 3 14 9-14 9z"/>',
+    pause: '<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>',
+    expand: '<path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/>',
+    skip: '<path d="m5 4 10 8-10 8z"/><path d="M19 5v14"/>',
+    volume: '<path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/>',
+    printer: '<path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>',
     heart: '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
   };
   const icon = (name, attrs = '') =>
@@ -98,6 +108,7 @@
     image:    { name: 'Görsel Araçları',     short: 'Görsel',     color: 'var(--c-image)',    icon: 'image' },
     text:     { name: 'Metin Araçları',      short: 'Metin',      color: 'var(--c-text)',     icon: 'type' },
     dev:      { name: 'Geliştirici Araçları', short: 'Geliştirici', color: 'var(--c-dev)',    icon: 'code' },
+    edu:      { name: 'Eğitim & Sunum',      short: 'Eğitim',     color: 'var(--c-edu)',      icon: 'users' },
     security: { name: 'Güvenlik',            short: 'Güvenlik',   color: 'var(--c-security)', icon: 'shield' },
   };
 
@@ -105,8 +116,8 @@
     // PDF
     { slug: 'pdf-birlestir', cat: 'pdf', icon: 'merge', name: 'PDF Birleştir', desc: 'Birden fazla PDF dosyasını istediğiniz sırayla tek bir PDF\'te birleştirin.', k: 'merge combine join birlestirme' },
     { slug: 'pdf-bol', cat: 'pdf', icon: 'scissors', name: 'PDF Böl', desc: 'PDF\'i sayfa aralıklarına göre bölün veya belirli sayfaları ayıklayın.', k: 'split extract ayikla ayir' },
-    { slug: 'pdf-duzenle', cat: 'pdf', icon: 'layout', name: 'PDF Sayfa Düzenle', desc: 'Sayfaları sürükleyip sıralayın, döndürün veya silin.', k: 'organize rotate delete sort dondur sil sirala', isNew: true },
-    { slug: 'pdf-imzala', cat: 'pdf', icon: 'signature', name: 'PDF İmzala', desc: 'İmzanızı çizin veya yükleyin, PDF üzerinde istediğiniz yere yerleştirin.', k: 'sign signature imza', isNew: true },
+    { slug: 'pdf-duzenle', cat: 'pdf', icon: 'layout', name: 'PDF Sayfa Düzenle', desc: 'Sayfaları sürükleyip sıralayın, döndürün veya silin.', k: 'organize rotate delete sort dondur sil sirala' },
+    { slug: 'pdf-imzala', cat: 'pdf', icon: 'signature', name: 'PDF İmzala', desc: 'İmzanızı çizin veya yükleyin, PDF üzerinde istediğiniz yere yerleştirin.', k: 'sign signature imza' },
     { slug: 'gorselden-pdf', cat: 'pdf', icon: 'images', name: 'Görselden PDF', desc: 'JPG, PNG ve WebP görsellerini tek bir PDF dosyasına dönüştürün.', k: 'jpg to pdf png image convert resim' },
     { slug: 'pdf-gorsel', cat: 'pdf', icon: 'image', name: 'PDF\'ten Görsele', desc: 'PDF sayfalarını yüksek kaliteli JPG veya PNG görsellere dönüştürün.', k: 'pdf to jpg png convert resim' },
     { slug: 'pdf-sikistir', cat: 'pdf', icon: 'compress', name: 'PDF Sıkıştır', desc: 'PDF dosya boyutunu kalite ayarıyla küçültün.', k: 'compress reduce size kucult boyut' },
@@ -114,8 +125,9 @@
     { slug: 'pdf-sayfa-numarasi', cat: 'pdf', icon: 'hash', name: 'Sayfa Numarası Ekle', desc: 'PDF sayfalarına konum ve biçim seçerek numara ekleyin.', k: 'page numbers numaralandir' },
     { slug: 'pdf-metin', cat: 'pdf', icon: 'type', name: 'PDF\'ten Metin Çıkar', desc: 'PDF içindeki metni kopyalanabilir düz metne dönüştürün.', k: 'pdf to text extract txt' },
     { slug: 'pdf-bilgi', cat: 'pdf', icon: 'info', name: 'PDF Bilgilerini Düzenle', desc: 'Başlık, yazar, konu ve anahtar kelime gibi meta verileri görün ve düzenleyin.', k: 'metadata title author meta' },
+    { slug: 'pdf-ocr', cat: 'pdf', icon: 'scanText', name: 'PDF OCR (Metin Tanıma)', desc: 'Taranmış PDF ve görselleri aranabilir PDF\'e veya düz metne dönüştürün. Türkçe destekli.', k: 'ocr tarama taranmis metin tanima scan text recognition aranabilir', isNew: true },
     // QR
-    { slug: 'qr-olustur', cat: 'qr', icon: 'qr', name: 'QR Kod Oluştur', desc: 'URL, WiFi, kartvizit ve daha fazlası için renkli, logolu QR kodlar oluşturun.', k: 'qr code generator karekod wifi vcard', isNew: true },
+    { slug: 'qr-olustur', cat: 'qr', icon: 'qr', name: 'QR Kod Oluştur', desc: 'URL, WiFi, kartvizit ve daha fazlası için renkli, logolu QR kodlar oluşturun.', k: 'qr code generator karekod wifi vcard' },
     { slug: 'qr-oku', cat: 'qr', icon: 'scan', name: 'QR Kod Okuyucu', desc: 'Kamera veya görsel dosyası ile QR kodları anında okuyun.', k: 'qr scanner reader tara karekod' },
     { slug: 'toplu-qr', cat: 'qr', icon: 'layers', name: 'Toplu QR Oluştur', desc: 'Liste veya CSV\'den yüzlerce QR kodu tek seferde ZIP olarak indirin.', k: 'bulk batch csv qr' },
     { slug: 'barkod-olustur', cat: 'qr', icon: 'barcode', name: 'Barkod Oluştur', desc: 'EAN-13, Code128, UPC ve diğer formatlarda barkod oluşturun.', k: 'barcode ean upc code128' },
@@ -134,6 +146,9 @@
     { slug: 'url-kodla', cat: 'dev', icon: 'link', name: 'URL Kodla / Çöz', desc: 'URL encode/decode yapın ve URL parametrelerini ayrıştırın.', k: 'url encode decode query params' },
     { slug: 'uuid-olustur', cat: 'dev', icon: 'idCard', name: 'UUID Oluştur', desc: 'Toplu olarak rastgele UUID v4 ve kısa ID değerleri üretin.', k: 'uuid guid id generator' },
     { slug: 'zaman-damgasi', cat: 'dev', icon: 'clock', name: 'Zaman Damgası Dönüştürücü', desc: 'Unix zaman damgası ile tarih arasında dönüşüm yapın.', k: 'unix timestamp epoch date tarih' },
+    // Education
+    { slug: 'rastgele-grup', cat: 'edu', icon: 'shuffle', name: 'Rastgele Grup & Öğrenci Seçici', desc: 'Listeden rastgele gruplar oluşturun, sunum sırası belirleyin veya çarkı çevirip öğrenci seçin.', k: 'random group picker cark carki sinif ogrenci kura cekilis takim', isNew: true },
+    { slug: 'sunum-zamanlayici', cat: 'edu', icon: 'timer', name: 'Sunum Zamanlayıcı', desc: 'Tam ekran geri sayım, renkli süre uyarıları, oturum programı ve konuşma süresi tahmini.', k: 'timer countdown sunum konusma kronometre geri sayim sure', isNew: true },
     // Security
     { slug: 'sifre-olustur', cat: 'security', icon: 'lock', name: 'Şifre Oluşturucu', desc: 'Güçlü ve rastgele şifreler oluşturun, güç seviyesini görün.', k: 'password generator sifre parola' },
     { slug: 'hash-olustur', cat: 'security', icon: 'fingerprint', name: 'Hash Oluştur', desc: 'Metin ve dosyalar için MD5, SHA-1, SHA-256, SHA-512 özetleri.', k: 'hash md5 sha256 sha1 checksum' },
