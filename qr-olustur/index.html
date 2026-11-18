@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QR Kod Oluştur – Ücretsiz, Logolu ve Renkli QR Kod | Notettiklerim Tools</title>
+<meta name="description" content="URL, WiFi, kartvizit (vCard), e-posta, SMS, WhatsApp ve konum için ücretsiz QR kod oluşturun. Renk, desen, logo ekleyin; PNG, SVG veya JPG indirin. Süresiz ve sınırsız.">
+<link rel="canonical" href="https://tools.notettiklerim.com/qr-olustur/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="QR Kod Oluştur – Ücretsiz, Logolu ve Renkli QR Kod">
+<meta property="og:description" content="URL, WiFi, kartvizit (vCard), e-posta, SMS, WhatsApp ve konum için ücretsiz QR kod oluşturun. Renk, desen, logo ekleyin; PNG, SVG veya JPG indirin. Süresiz ve sınırsız.">
+<meta property="og:url" content="https://tools.notettiklerim.com/qr-olustur/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="qr-olustur">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <style>
+    .qr-preview { display: grid; place-items: center; padding: 20px; border-radius: var(--radius-lg); background: var(--surface-2); border: 1px solid var(--border); aspect-ratio: 1; }
+    .qr-preview svg { width: 100%; height: auto; max-width: 300px; border-radius: 8px; box-shadow: var(--shadow); }
+    .opt-group { border-top: 1px solid var(--border); padding-top: 18px; }
+    .opt-group > summary { cursor: pointer; font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 8px; list-style: none; margin-bottom: 4px; }
+    .opt-group > summary::-webkit-details-marker { display: none; }
+    .opt-group > summary svg { width: 18px; height: 18px; color: var(--primary); }
+    .opt-group > summary::after { content: ""; margin-left: auto; width: 8px; height: 8px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); transition: transform .2s; }
+    .opt-group[open] > summary::after { transform: rotate(-135deg); }
+    .opt-group > .stack { margin-top: 14px; }
+    .style-pick { display: grid; grid-template-columns: repeat(4, 64px); gap: 10px; }
+    .style-pick button { width: 64px; height: 64px; border: 1.5px solid var(--border); border-radius: 12px; background: var(--surface); cursor: pointer; display: grid; place-items: center; padding: 10px; color: var(--text); }
+    .style-pick button svg { width: 100%; height: 100%; }
+    .style-pick button.active { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+    .style-pick button:hover { border-color: var(--border-strong); }
+    .style-pick.three { grid-template-columns: repeat(3, 1fr); max-width: 75%; }
+    .logo-row { display: flex; gap: 12px; align-items: center; }
+    .logo-thumb { width: 52px; height: 52px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-2); display: grid; place-items: center; overflow: hidden; flex: none; }
+    .logo-thumb img { width: 100%; height: 100%; object-fit: contain; }
+  </style>
+  <div class="tool-layout">
+    <div class="card stack">
+      <div class="tabs" id="types">
+        <button data-t="url" class="active"><i data-icon="link"></i>URL</button>
+        <button data-t="text"><i data-icon="type"></i>Metin</button>
+        <button data-t="wifi"><i data-icon="wifi"></i>WiFi</button>
+        <button data-t="vcard"><i data-icon="user"></i>Kartvizit</button>
+        <button data-t="email"><i data-icon="mail"></i>E-posta</button>
+        <button data-t="sms"><i data-icon="message"></i>SMS</button>
+        <button data-t="wa"><i data-icon="phone"></i>WhatsApp</button>
+        <button data-t="tel"><i data-icon="phone"></i>Telefon</button>
+        <button data-t="geo"><i data-icon="mapPin"></i>Konum</button>
+      </div>
+
+      <div id="forms">
+        <div data-f="url" class="stack-sm"><div class="field"><label for="url">Web sitesi adresi</label><input class="input" id="url" value="https://tools.notettiklerim.com" placeholder="https://ornek.com"></div></div>
+        <div data-f="text" class="stack-sm" hidden><div class="field"><label for="text">Metin</label><textarea class="textarea" id="text" style="min-height:110px" placeholder="QR kodda görünecek metin"></textarea></div></div>
+        <div data-f="wifi" class="stack-sm" hidden>
+          <div class="grid-2"><div class="field"><label for="ssid">Ağ adı (SSID)</label><input class="input" id="ssid" placeholder="EvAgim"></div><div class="field"><label for="wpass">Şifre</label><input class="input" id="wpass" placeholder="••••••••"></div></div>
+          <div class="grid-2"><div class="field"><label for="wenc">Güvenlik</label><select class="select" id="wenc"><option value="WPA">WPA/WPA2/WPA3</option><option value="WEP">WEP</option><option value="nopass">Şifresiz</option></select></div><div class="field" style="justify-content:flex-end"><label class="check" style="height:42px"><input type="checkbox" id="whidden">Gizli ağ</label></div></div>
+        </div>
+        <div data-f="vcard" class="stack-sm" hidden>
+          <div class="grid-2"><div class="field"><label for="vfn">Ad</label><input class="input" id="vfn"></div><div class="field"><label for="vln">Soyad</label><input class="input" id="vln"></div></div>
+          <div class="grid-2"><div class="field"><label for="vtel">Telefon</label><input class="input" id="vtel" placeholder="+90 5xx xxx xx xx"></div><div class="field"><label for="vmail">E-posta</label><input class="input" id="vmail"></div></div>
+          <div class="grid-2"><div class="field"><label for="vorg">Şirket</label><input class="input" id="vorg"></div><div class="field"><label for="vtitle">Unvan</label><input class="input" id="vtitle"></div></div>
+          <div class="grid-2"><div class="field"><label for="vweb">Web sitesi</label><input class="input" id="vweb"></div><div class="field"><label for="vadr">Adres</label><input class="input" id="vadr" placeholder="Şehir, Ülke"></div></div>
+        </div>
+        <div data-f="email" class="stack-sm" hidden>
+          <div class="field"><label for="em">E-posta adresi</label><input class="input" id="em" placeholder="ornek@mail.com"></div>
+          <div class="field"><label for="esub">Konu</label><input class="input" id="esub"></div>
+          <div class="field"><label for="ebody">Mesaj</label><textarea class="textarea" id="ebody" style="min-height:90px"></textarea></div>
+        </div>
+        <div data-f="sms" class="stack-sm" hidden>
+          <div class="field"><label for="snum">Telefon numarası</label><input class="input" id="snum" placeholder="+905xxxxxxxxx"></div>
+          <div class="field"><label for="smsg">Mesaj</label><textarea class="textarea" id="smsg" style="min-height:90px"></textarea></div>
+        </div>
+        <div data-f="wa" class="stack-sm" hidden>
+          <div class="field"><label for="wnum">WhatsApp numarası</label><input class="input" id="wnum" placeholder="905xxxxxxxxx"><span class="hint">Ülke koduyla birlikte, başında + veya 0 olmadan.</span></div>
+          <div class="field"><label for="wmsg">Hazır mesaj (isteğe bağlı)</label><textarea class="textarea" id="wmsg" style="min-height:90px"></textarea></div>
+        </div>
+        <div data-f="tel" class="stack-sm" hidden><div class="field"><label for="tnum">Telefon numarası</label><input class="input" id="tnum" placeholder="+90 5xx xxx xx xx"></div></div>
+        <div data-f="geo" class="stack-sm" hidden>
+          <div class="grid-2"><div class="field"><label for="lat">Enlem</label><input class="input" id="lat" placeholder="41.0082"></div><div class="field"><label for="lng">Boylam</label><input class="input" id="lng" placeholder="28.9784"></div></div>
+          <div><button class="btn btn-sm" id="myLoc"><i data-icon="mapPin"></i>Konumumu kullan</button></div>
+        </div>
+      </div>
+
+      <details class="opt-group" open>
+        <summary><i data-icon="palette"></i>Renkler</summary>
+        <div class="stack">
+          <div class="grid-2">
+            <div class="field"><label>Ön plan</label><div class="color-field"><input type="color" id="fg" value="#0f172a"><input class="input" id="fgHex" value="#0F172A" maxlength="7"></div></div>
+            <div class="field"><label>Arka plan</label><div class="color-field"><input type="color" id="bg" value="#ffffff"><input class="input" id="bgHex" value="#FFFFFF" maxlength="7"></div></div>
+          </div>
+          <div class="row">
+            <label class="switch"><input type="checkbox" id="grad"><span class="track"></span>Gradyan</label>
+            <div class="color-field" id="fg2W" hidden><input type="color" id="fg2" value="#6366f1"><span class="muted small">İkinci renk</span></div>
+            <label class="switch"><input type="checkbox" id="transp"><span class="track"></span>Şeffaf arka plan</label>
+          </div>
+          <div class="row"><label class="switch"><input type="checkbox" id="eyeCustom"><span class="track"></span>Köşe rengi farklı olsun</label><div class="color-field" id="eyeW" hidden><input type="color" id="eyeColor" value="#6366f1"></div></div>
+          <div class="chips" id="themes"></div>
+          <div class="alert" id="contrastWarn" hidden><i data-icon="alert"></i><span>Renk kontrastı düşük; bazı tarayıcılar kodu okuyamayabilir. Ön planı koyu, arka planı açık seçin.</span></div>
+        </div>
+      </details>
+
+      <details class="opt-group" open>
+        <summary><i data-icon="sparkles"></i>Desen ve köşeler</summary>
+        <div class="stack">
+          <div class="field"><label>Modül deseni</label><div class="style-pick" id="dotStyle"></div></div>
+          <div class="field"><label>Köşe (göz) stili</label><div class="style-pick three" id="eyeStyle"></div></div>
+        </div>
+      </details>
+
+      <details class="opt-group">
+        <summary><i data-icon="image"></i>Logo</summary>
+        <div class="stack">
+          <div class="logo-row">
+            <div class="logo-thumb" id="logoThumb"><i data-icon="image"></i></div>
+            <div class="row" style="gap:8px"><button class="btn btn-sm" id="logoBtn"><i data-icon="upload"></i>Logo yükle</button><button class="btn btn-sm btn-ghost btn-danger" id="logoRm" hidden>Kaldır</button></div>
+            <input type="file" id="logoFile" accept="image/*" hidden>
+          </div>
+          <div class="field"><div class="range-head"><label>Logo boyutu</label><output></output></div><input type="range" id="logoSize" min="12" max="30" value="22"></div>
+          <label class="check"><input type="checkbox" id="logoBg" checked>Logonun arkasını temizle</label>
+        </div>
+      </details>
+
+      <details class="opt-group">
+        <summary><i data-icon="sliders"></i>Gelişmiş</summary>
+        <div class="stack">
+          <div class="grid-2">
+            <div class="field"><label for="ecc">Hata düzeltme</label><select class="select" id="ecc"><option value="L">Düşük (L · %7)</option><option value="M" selected>Orta (M · %15)</option><option value="Q">Yüksek (Q · %25)</option><option value="H">En yüksek (H · %30)</option></select></div>
+            <div class="field"><div class="range-head"><label>Kenar boşluğu</label><output></output></div><input type="range" id="margin" min="0" max="8" value="3"></div>
+          </div>
+          <div class="field"><label for="caption">Alt yazı (isteğe bağlı)</label><input class="input" id="caption" placeholder="ör. Beni tara!" maxlength="40"></div>
+        </div>
+      </details>
+    </div>
+
+    <aside class="side card stack">
+      <div class="qr-preview" id="preview"></div>
+      <div class="center small muted" id="qrInfo"></div>
+      <div class="field"><label for="dlSize">İndirme boyutu</label><select class="select" id="dlSize"><option value="256">256 × 256 px</option><option value="512">512 × 512 px</option><option value="1024" selected>1024 × 1024 px</option><option value="2048">2048 × 2048 px</option><option value="4096">4096 × 4096 px</option></select></div>
+      <button class="btn btn-primary btn-lg btn-block" id="dlPng"><i data-icon="download"></i>PNG İndir</button>
+      <div class="grid-2" style="gap:8px">
+        <button class="btn" id="dlSvg">SVG</button>
+        <button class="btn" id="dlJpg">JPG</button>
+      </div>
+      <button class="btn btn-ghost btn-block" id="copyImg"><i data-icon="copy"></i>Görseli kopyala</button>
+    </aside>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>QR kod türünü seçin (URL, WiFi, kartvizit…) ve bilgileri girin.</li>
+        <li>Tasarım bölümünden renk, desen, köşe stili ve logo ekleyin.</li>
+        <li>Önizlemeyi kontrol edin ve PNG, SVG veya JPG olarak indirin.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Oluşturduğum QR kodların süresi doluyor mu?</summary><p>Hayır. QR kodlar statiktir; içerik doğrudan kodun içine yazılır ve sonsuza kadar çalışır.</p></details>
+      <details class="faq"><summary>Logo eklemek okunabilirliği bozar mı?</summary><p>Logo eklendiğinde hata düzeltme seviyesi otomatik olarak en yükseğe (H) çıkarılır; böylece kod %30'a kadar kapatılsa bile okunur. Logo boyutunu çok büyük seçmemenizi öneririz.</p></details>
+      <details class="faq"><summary>Baskı için hangi formatı seçmeliyim?</summary><p>SVG vektörel olduğu için her boyutta keskin kalır; baskı için en iyi seçimdir.</p></details>
+      <details class="faq"><summary>Renkli QR kodlar okunur mu?</summary><p>Evet, ancak ön plan rengi arka plandan belirgin şekilde koyu olmalıdır. Kontrast düşükse uyarı gösterilir.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, $$, esc } = T;
+  let type = 'url', logo = null, dot = 'square', eye = 'square', lastSvg = '', lastData = '';
+
+  // ---------- content builders ----------
+  const v = (id) => ($('#' + id)?.value || '').trim();
+  const wEsc = (s) => s.replace(/([\\;,:"])/g, '\\$1');
+  const vEsc = (s) => s.replace(/([\\;,])/g, '\\$1').replace(/\n/g, '\\n');
+  const builders = {
+    url: () => { const u = v('url'); return u && !/^[a-z][a-z0-9+.-]*:/i.test(u) ? 'https://' + u : u; },
+    text: () => $('#text').value,
+    wifi: () => v('ssid') ? `WIFI:T:${v('wenc')};S:${wEsc(v('ssid'))};${v('wenc') !== 'nopass' ? `P:${wEsc(v('wpass'))};` : ''}${$('#whidden').checked ? 'H:true;' : ''};` : '',
+    vcard: () => {
+      if (!v('vfn') && !v('vln') && !v('vtel') && !v('vmail')) return '';
+      return ['BEGIN:VCARD', 'VERSION:3.0', `N:${vEsc(v('vln'))};${vEsc(v('vfn'))};;;`, `FN:${vEsc((v('vfn') + ' ' + v('vln')).trim())}`,
+        v('vorg') && `ORG:${vEsc(v('vorg'))}`, v('vtitle') && `TITLE:${vEsc(v('vtitle'))}`, v('vtel') && `TEL;TYPE=CELL:${v('vtel')}`,
+        v('vmail') && `EMAIL:${v('vmail')}`, v('vweb') && `URL:${v('vweb')}`, v('vadr') && `ADR:;;${vEsc(v('vadr'))};;;;`, 'END:VCARD'].filter(Boolean).join('\n');
+    },
+    email: () => { if (!v('em')) return ''; const q = []; if (v('esub')) q.push('subject=' + encodeURIComponent(v('esub'))); if (v('ebody')) q.push('body=' + encodeURIComponent($('#ebody').value)); return `mailto:${v('em')}${q.length ? '?' + q.join('&') : ''}`; },
+    sms: () => v('snum') ? `SMSTO:${v('snum').replace(/\s/g, '')}:${$('#smsg').value}` : '',
+    wa: () => { const n = v('wnum').replace(/\D/g, ''); return n ? `https://wa.me/${n}${v('wmsg') ? '?text=' + encodeURIComponent($('#wmsg').value) : ''}` : ''; },
+    tel: () => v('tnum') ? `tel:${v('tnum').replace(/\s/g, '')}` : '',
+    geo: () => v('lat') && v('lng') ? `geo:${v('lat')},${v('lng')}` : '',
+  };
+
+  $('#types').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    type = b.dataset.t;
+    $$('#types button').forEach((x) => x.classList.toggle('active', x === b));
+    $$('#forms [data-f]').forEach((f) => (f.hidden = f.dataset.f !== type));
+    update();
+  });
+  $('#myLoc').onclick = () => {
+    if (!navigator.geolocation) return T.toast('Tarayıcınız konum desteklemiyor', 'error');
+    navigator.geolocation.getCurrentPosition((p) => { $('#lat').value = p.coords.latitude.toFixed(6); $('#lng').value = p.coords.longitude.toFixed(6); update(); }, () => T.toast('Konum alınamadı', 'error'));
+  };
+
+  // ---------- geometry helpers ----------
+  const rr = (x, y, w, h, r) => r <= 0 ? `M${x},${y}h${w}v${h}h${-w}z` :
+    `M${x + r},${y}h${w - 2 * r}a${r},${r} 0 0 1 ${r},${r}v${h - 2 * r}a${r},${r} 0 0 1 ${-r},${r}h${-(w - 2 * r)}a${r},${r} 0 0 1 ${-r},${-r}v${-(h - 2 * r)}a${r},${r} 0 0 1 ${r},${-r}z`;
+  const circ = (cx, cy, r) => `M${cx - r},${cy}a${r},${r} 0 1 0 ${2 * r},0a${r},${r} 0 1 0 ${-2 * r},0z`;
+  const f = (n) => +n.toFixed(3);
+
+  function modulePath(style, x, y, dark) {
+    if (style === 'square') return `M${x},${y}h1v1h-1z`;
+    if (style === 'dots') return circ(x + 0.5, y + 0.5, 0.42);
+    if (style === 'rounded') return rr(x + 0.06, y + 0.06, 0.88, 0.88, 0.32);
+    // smooth: connected, round free corners
+    const t = dark(x, y - 1), b = dark(x, y + 1), l = dark(x - 1, y), r = dark(x + 1, y), R = 0.5;
+    const tl = !t && !l, tr = !t && !r, br = !b && !r, bl = !b && !l;
+    let p = `M${x + (tl ? R : 0)},${y}H${x + 1 - (tr ? R : 0)}`;
+    if (tr) p += `a${R},${R} 0 0 1 ${R},${R}`;
+    p += `V${y + 1 - (br ? R : 0)}`;
+    if (br) p += `a${R},${R} 0 0 1 ${-R},${R}`;
+    p += `H${x + (bl ? R : 0)}`;
+    if (bl) p += `a${R},${R} 0 0 1 ${-R},${-R}`;
+    p += `V${y + (tl ? R : 0)}`;
+    if (tl) p += `a${R},${R} 0 0 1 ${R},${-R}`;
+    return p + 'z';
+  }
+  function eyePaths(style, x, y) {
+    if (style === 'circle') return { outer: circ(x + 3.5, y + 3.5, 3.5) + circ(x + 3.5, y + 3.5, 2.5), inner: circ(x + 3.5, y + 3.5, 1.5) };
+    if (style === 'rounded') return { outer: rr(x, y, 7, 7, 2.2) + rr(x + 1, y + 1, 5, 5, 1.4), inner: rr(x + 2, y + 2, 3, 3, 0.9) };
+    if (style === 'leaf') return { outer: leaf(x, y, 7, 2.6) + leaf(x + 1, y + 1, 5, 1.7), inner: leaf(x + 2, y + 2, 3, 1.1) };
+    return { outer: rr(x, y, 7, 7, 0) + rr(x + 1, y + 1, 5, 5, 0), inner: rr(x + 2, y + 2, 3, 3, 0) };
+  }
+  function leaf(x, y, s, r) { // rounded on top-left & bottom-right only
+    return `M${x + r},${y}H${x + s}V${y + s - r}a${r},${r} 0 0 1 ${-r},${r}H${x}V${y + r}a${r},${r} 0 0 1 ${r},${-r}z`;
+  }
+
+  // ---------- QR generation ----------
+  function buildSvg(data, opts) {
+    const qr = qrcode(0, opts.ecc);
+    qr.addData(data, 'Byte');
+    qr.make();
+    const n = qr.getModuleCount(), m = opts.margin;
+    const dark = (x, y) => x >= 0 && y >= 0 && x < n && y < n && qr.isDark(y, x) && !inEye(x, y) && !inLogo(x, y);
+    const inEye = (x, y) => (x < 7 && y < 7) || (x >= n - 7 && y < 7) || (x < 7 && y >= n - 7);
+    let lb = null;
+    if (opts.logo) {
+      const ls = Math.round(n * opts.logoSize / 100 / 2) * 2 + (n % 2);
+      const s = (n - ls) / 2;
+      lb = { x: s, y: s, s: ls };
+    }
+    function inLogo(x, y) { return lb && opts.logoBg && x >= lb.x - 0.5 && x < lb.x + lb.s + 0.5 && y >= lb.y - 0.5 && y < lb.y + lb.s + 0.5; }
+    let body = '';
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (dark(x, y)) body += modulePath(opts.dot, x, y, dark);
+    let eyesO = '', eyesI = '';
+    [[0, 0], [n - 7, 0], [0, n - 7]].forEach(([x, y]) => { const e = eyePaths(opts.eye, x, y); eyesO += e.outer; eyesI += e.inner; });
+    const W = n + m * 2, capH = opts.caption ? Math.max(4, W * 0.13) : 0, H = W + capH;
+    const fill = opts.grad ? 'url(#qg)' : opts.fg;
+    const eyeFill = opts.eyeColor || fill;
+    let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" shape-rendering="${opts.dot === 'square' ? 'crispEdges' : 'geometricPrecision'}">`;
+    if (opts.grad) svg += `<defs><linearGradient id="qg" gradientUnits="userSpaceOnUse" x1="${m}" y1="${m}" x2="${m + n}" y2="${m + n}"><stop offset="0" stop-color="${opts.fg}"/><stop offset="1" stop-color="${opts.fg2}"/></linearGradient></defs>`;
+    if (!opts.transparent) svg += `<rect width="${W}" height="${H}" fill="${opts.bg}"/>`;
+    svg += `<g transform="translate(${m},${m})">`;
+    svg += `<path d="${body}" fill="${fill}"/>`;
+    svg += `<path d="${eyesO}" fill="${eyeFill}" fill-rule="evenodd" shape-rendering="geometricPrecision"/><path d="${eyesI}" fill="${eyeFill}" shape-rendering="geometricPrecision"/>`;
+    if (lb) {
+      const pad = lb.s * 0.08;
+      if (opts.logoBg && !opts.transparent) svg += `<rect x="${f(lb.x - 0.3)}" y="${f(lb.y - 0.3)}" width="${f(lb.s + 0.6)}" height="${f(lb.s + 0.6)}" rx="${f(lb.s * 0.18)}" fill="${opts.bg}"/>`;
+      svg += `<image href="${opts.logo}" x="${f(lb.x + pad)}" y="${f(lb.y + pad)}" width="${f(lb.s - pad * 2)}" height="${f(lb.s - pad * 2)}" preserveAspectRatio="xMidYMid meet"/>`;
+    }
+    svg += '</g>';
+    if (opts.caption) svg += `<text x="${W / 2}" y="${W + capH * 0.38}" text-anchor="middle" dominant-baseline="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-weight="700" font-size="${f(capH * 0.55)}" fill="${opts.eyeColor || opts.fg}">${esc(opts.caption)}</text>`;
+    svg += '</svg>';
+    return { svg, n, version: qr.typeNumber || Math.round((n - 17) / 4) };
+  }
+
+  function opts() {
+    return {
+      ecc: logo ? 'H' : $('#ecc').value, margin: +$('#margin').value, dot, eye,
+      fg: $('#fg').value, bg: $('#bg').value, grad: $('#grad').checked, fg2: $('#fg2').value, transparent: $('#transp').checked,
+      eyeColor: $('#eyeCustom').checked ? $('#eyeColor').value : null,
+      logo, logoSize: +$('#logoSize').value, logoBg: $('#logoBg').checked, caption: $('#caption').value.trim(),
+    };
+  }
+
+  const lum = (hex) => { const c = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((x) => (x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4)); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
+  function update() {
+    const data = builders[type]();
+    lastData = data;
+    const pv = $('#preview');
+    if (!data) { pv.innerHTML = '<div class="muted small center">Önizleme için bilgileri girin</div>'; $('#qrInfo').textContent = ''; lastSvg = ''; return; }
+    try {
+      const o = opts();
+      const r = buildSvg(data, o);
+      lastSvg = r.svg;
+      pv.innerHTML = r.svg;
+      $('#qrInfo').textContent = `Sürüm ${r.version} · ${r.n}×${r.n} modül · ${o.ecc} düzeltme · ${new TextEncoder().encode(data).length} bayt`;
+      const L1 = lum(o.fg), L2 = o.transparent ? 1 : lum(o.bg);
+      const ratio = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05);
+      $('#contrastWarn').hidden = ratio >= 3 && L1 < L2;
+    } catch (e) {
+      console.warn(e);
+      pv.innerHTML = '<div class="alert error"><span>İçerik QR kod kapasitesini aşıyor. Metni kısaltın veya hata düzeltme seviyesini düşürün.</span></div>';
+      lastSvg = '';
+    }
+  }
+  const upd = T.debounce(update, 60);
+
+  // ---------- style pickers ----------
+  const mini = (fn) => `<svg viewBox="0 0 5 5"><path d="${fn}" fill="currentColor"/></svg>`;
+  const DOTS = { square: 'Kare', smooth: 'Yumuşak', rounded: 'Yuvarlak kare', dots: 'Nokta' };
+  const pattern = [[1, 1, 0, 1, 1], [1, 0, 0, 1, 0], [1, 1, 1, 1, 0], [0, 1, 0, 0, 1], [1, 1, 0, 1, 1]];
+  const pd = (x, y) => pattern[y] && pattern[y][x] === 1;
+  $('#dotStyle').innerHTML = Object.entries(DOTS).map(([k, t]) => {
+    let d = ''; for (let y = 0; y < 5; y++) for (let x = 0; x < 5; x++) if (pd(x, y)) d += modulePath(k, x, y, pd);
+    return `<button type="button" data-v="${k}" title="${t}" class="${k === dot ? 'active' : ''}">${mini(d)}</button>`;
+  }).join('');
+  const EYES = { square: 'Kare', rounded: 'Yuvarlak', circle: 'Daire', leaf: 'Yaprak' };
+  $('#eyeStyle').innerHTML = Object.entries(EYES).map(([k, t]) => { const e = eyePaths(k, 0, 0); return `<button type="button" data-v="${k}" title="${t}" class="${k === eye ? 'active' : ''}"><svg viewBox="-.5 -.5 8 8"><path d="${e.outer}" fill="currentColor" fill-rule="evenodd"/><path d="${e.inner}" fill="currentColor"/></svg></button>`; }).join('');
+  $('#eyeStyle').classList.remove('three');
+  $('#dotStyle').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; dot = b.dataset.v; $$('#dotStyle button').forEach((x) => x.classList.toggle('active', x === b)); update(); });
+  $('#eyeStyle').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; eye = b.dataset.v; $$('#eyeStyle button').forEach((x) => x.classList.toggle('active', x === b)); update(); });
+
+  // color themes
+  const THEMES = [['Klasik', '#000000', '#ffffff'], ['Gece', '#0f172a', '#ffffff'], ['İndigo', '#4338ca', '#eef2ff'], ['Orman', '#065f46', '#ecfdf5'], ['Gün batımı', '#be123c', '#fff1f2'], ['Okyanus', '#0369a1', '#f0f9ff'], ['Ters', '#ffffff', '#0f172a']];
+  $('#themes').innerHTML = THEMES.map(([n, a, b], i) => `<button type="button" class="chip" data-i="${i}" style="cursor:pointer;display:inline-flex;gap:6px;align-items:center"><span style="width:12px;height:12px;border-radius:3px;background:${a};box-shadow:0 0 0 1px var(--border)"></span>${n}</button>`).join('');
+  $('#themes').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; const [, a, c] = THEMES[+b.dataset.i]; setColor('fg', a); setColor('bg', c); update(); });
+
+  function setColor(id, val) { $('#' + id).value = val; if ($('#' + id + 'Hex')) $('#' + id + 'Hex').value = val.toUpperCase(); }
+  ['fg', 'bg'].forEach((id) => {
+    $('#' + id).addEventListener('input', () => { $('#' + id + 'Hex').value = $('#' + id).value.toUpperCase(); upd(); });
+    $('#' + id + 'Hex').addEventListener('input', () => { let h = $('#' + id + 'Hex').value.trim(); if (!h.startsWith('#')) h = '#' + h; if (/^#[0-9a-f]{6}$/i.test(h)) { $('#' + id).value = h.toLowerCase(); upd(); } });
+  });
+  $('#grad').addEventListener('change', () => { $('#fg2W').hidden = !$('#grad').checked; update(); });
+  $('#eyeCustom').addEventListener('change', () => { $('#eyeW').hidden = !$('#eyeCustom').checked; update(); });
+  T.bindRange($('#logoSize'), (v) => '%' + v);
+  T.bindRange($('#margin'));
+
+  // logo
+  $('#logoBtn').onclick = () => $('#logoFile').click();
+  $('#logoFile').onchange = async () => {
+    const file = $('#logoFile').files[0]; if (!file) return;
+    const img = await T.loadImage(file);
+    const s = Math.min(1, 512 / Math.max(img.naturalWidth, img.naturalHeight));
+    const c = document.createElement('canvas'); c.width = Math.round(img.naturalWidth * s); c.height = Math.round(img.naturalHeight * s);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    logo = c.toDataURL('image/png');
+    $('#logoThumb').innerHTML = `<img src="${logo}" alt="">`; $('#logoRm').hidden = false;
+    $('#logoFile').value = '';
+    update();
+  };
+  $('#logoRm').onclick = () => { logo = null; $('#logoThumb').innerHTML = T.icon('image'); $('#logoRm').hidden = true; update(); };
+
+  document.querySelector('.tool-layout').addEventListener('input', (e) => { if (!e.target.closest('#preview')) upd(); });
+  document.querySelector('.tool-layout').addEventListener('change', upd);
+
+  // ---------- export ----------
+  async function raster(type) {
+    if (!lastSvg) throw new Error('Önce içerik girin');
+    const size = +$('#dlSize').value;
+    const img = await T.loadImage('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(lastSvg));
+    const ratio = img.naturalHeight / img.naturalWidth || 1;
+    const c = document.createElement('canvas'); c.width = size; c.height = Math.round(size * ratio);
+    const ctx = c.getContext('2d');
+    if (type === 'image/jpeg') { ctx.fillStyle = $('#transp').checked ? '#ffffff' : $('#bg').value; ctx.fillRect(0, 0, c.width, c.height); }
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(img, 0, 0, c.width, c.height);
+    return T.canvasToBlob(c, type, 0.95);
+  }
+  const fname = () => 'qr-' + type + '-' + Date.now().toString(36);
+  const guard = (fn) => async () => { try { await fn(); } catch (e) { T.toast(e.message, 'error'); } };
+  $('#dlPng').onclick = guard(async () => T.download(await raster('image/png'), fname() + '.png'));
+  $('#dlJpg').onclick = guard(async () => T.download(await raster('image/jpeg'), fname() + '.jpg'));
+  $('#dlSvg').onclick = guard(async () => { if (!lastSvg) throw new Error('Önce içerik girin'); T.download(new Blob([lastSvg], { type: 'image/svg+xml' }), fname() + '.svg'); });
+  $('#copyImg').onclick = guard(async () => {
+    if (!window.ClipboardItem) throw new Error('Tarayıcınız görsel kopyalamayı desteklemiyor');
+    await navigator.clipboard.write([new ClipboardItem({ 'image/png': raster('image/png') })]);
+    T.toast('QR kod panoya kopyalandı', 'success');
+  });
+
+  T.lib.qrcode().then(() => {
+    if (qrcode.stringToBytesFuncs && qrcode.stringToBytesFuncs['UTF-8']) qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
+    update();
+  });
+})();
+</script>
+</body>
+</html>

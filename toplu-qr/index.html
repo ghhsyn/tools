@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toplu QR Kod Oluştur – Listeden veya CSV&#x27;den ZIP / PDF | Notettiklerim Tools</title>
+<meta name="description" content="Yüzlerce QR kodu tek seferde oluşturun. Her satıra bir içerik yazın veya CSV yükleyin; PNG/SVG olarak ZIP&#x27;te ya da baskıya hazır A4 PDF etiket sayfası olarak indirin.">
+<link rel="canonical" href="https://tools.notettiklerim.com/toplu-qr/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Toplu QR Kod Oluştur – Listeden veya CSV&#x27;den ZIP / PDF">
+<meta property="og:description" content="Yüzlerce QR kodu tek seferde oluşturun. Her satıra bir içerik yazın veya CSV yükleyin; PNG/SVG olarak ZIP&#x27;te ya da baskıya hazır A4 PDF etiket sayfası olarak indirin.">
+<meta property="og:url" content="https://tools.notettiklerim.com/toplu-qr/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="toplu-qr">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <div class="tool-layout">
+    <div class="card stack">
+      <div class="row row-between">
+        <label class="label" for="list" style="margin:0">İçerikler (her satıra bir tane)</label>
+        <div class="row" style="gap:8px"><button class="btn btn-sm" id="csvBtn"><i data-icon="upload"></i>CSV / TXT yükle</button><button class="btn btn-sm btn-ghost" id="sample">Örnek</button></div>
+        <input type="file" id="csv" accept=".csv,.txt,text/csv,text/plain" hidden>
+      </div>
+      <textarea class="textarea mono" id="list" style="min-height:340px" placeholder="https://ornek.com/urun/1;Ürün 1&#10;https://ornek.com/urun/2;Ürün 2&#10;Merhaba dünya"></textarea>
+      <div class="row row-between"><span class="muted small" id="count">0 QR kod</span><label class="check"><input type="checkbox" id="hasLabel" checked>"içerik;etiket" biçimini kullan</label></div>
+      <div class="label">Önizleme</div>
+      <div class="thumb-grid" id="pv" style="grid-template-columns:repeat(auto-fill,minmax(110px,1fr))"></div>
+    </div>
+    <aside class="side card stack">
+      <div class="card-title"><i data-icon="sliders"></i>Ayarlar</div>
+      <div class="field"><label>Çıktı</label><div class="seg block" id="out" data-value="png"><button data-v="png">PNG (ZIP)</button><button data-v="svg">SVG (ZIP)</button><button data-v="pdf">A4 PDF</button></div></div>
+      <div class="field" data-o="img"><label for="size">Boyut</label><select class="select" id="size"><option value="256">256 px</option><option value="512" selected>512 px</option><option value="1024">1024 px</option></select></div>
+      <div class="field" data-o="pdf" hidden><label for="cols">Satır başına QR</label><select class="select" id="cols"><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option></select></div>
+      <div class="grid-2">
+        <div class="field"><label>Ön plan</label><div class="color-field"><input type="color" id="fg" value="#000000"></div></div>
+        <div class="field"><label>Arka plan</label><div class="color-field"><input type="color" id="bg" value="#ffffff"></div></div>
+      </div>
+      <div class="field"><label for="ecc">Hata düzeltme</label><select class="select" id="ecc"><option value="L">L · %7</option><option value="M" selected>M · %15</option><option value="Q">Q · %25</option><option value="H">H · %30</option></select></div>
+      <button class="btn btn-primary btn-lg btn-block" id="go"><i data-icon="layers"></i>QR Kodları Oluştur</button>
+      <div class="progress" id="prog" hidden><div></div></div>
+      <div id="res"></div>
+    </aside>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>Her satıra bir içerik yazın veya CSV dosyası yükleyin. İsterseniz "içerik;dosya adı" biçimini kullanın.</li>
+        <li>Boyut, renk ve çıktı türünü (ZIP veya A4 PDF) seçin.</li>
+        <li>"QR Kodları Oluştur" butonuna basın ve dosyanızı indirin.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Kaç tane QR kod oluşturabilirim?</summary><p>Pratik bir sınır yoktur; binlerce QR kod birkaç saniyede oluşturulur.</p></details>
+      <details class="faq"><summary>CSV formatı nasıl olmalı?</summary><p>İlk sütun QR içeriği, isteğe bağlı ikinci sütun dosya adı/etiket olur. Ayraç olarak virgül, noktalı virgül veya sekme kullanılabilir.</p></details>
+      <details class="faq"><summary>PDF etiket sayfası ne işe yarar?</summary><p>QR kodlar A4 sayfaya ızgara halinde, altlarında etiketleriyle yerleştirilir; doğrudan yazdırıp kesebilirsiniz.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, $$, esc } = T;
+  const outSeg = T.seg($('#out'), (v) => { $('[data-o=img]').hidden = v === 'pdf'; $('[data-o=pdf]').hidden = v !== 'pdf'; });
+  $('#csvBtn').onclick = () => $('#csv').click();
+  $('#csv').onchange = async () => { const f = $('#csv').files[0]; if (!f) return; const t = await T.readText(f); $('#list').value = t.replace(/^﻿/, ''); $('#csv').value = ''; preview(); };
+  $('#sample').onclick = () => { $('#list').value = Array.from({ length: 12 }, (_, i) => `https://ornek.com/urun/${i + 1};Ürün ${i + 1}`).join('\n'); preview(); };
+
+  function rows() {
+    const useLabel = $('#hasLabel').checked;
+    return $('#list').value.split(/\r?\n/).map((l) => l.trim()).filter(Boolean).map((l, i) => {
+      if (useLabel) {
+        const m = l.match(/^(.*?)[;\t](.*)$/) || l.match(/^(.*),([^,]*)$/);
+        if (m && m[2].trim()) return { data: m[1].trim().replace(/^"|"$/g, ''), label: m[2].trim().replace(/^"|"$/g, '') };
+      }
+      return { data: l, label: '' };
+    }).map((r, i) => ({ ...r, label: r.label || String(i + 1) }));
+  }
+
+  function matrix(data) {
+    const qr = qrcode(0, $('#ecc').value); qr.addData(data, 'Byte'); qr.make();
+    return qr;
+  }
+  function svgOf(qr, fg, bg, m = 2) {
+    const n = qr.getModuleCount(), W = n + m * 2;
+    let d = '';
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (qr.isDark(y, x)) d += `M${x + m},${y + m}h1v1h-1z`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${W}" shape-rendering="crispEdges"><rect width="${W}" height="${W}" fill="${bg}"/><path d="${d}" fill="${fg}"/></svg>`;
+  }
+  function canvasOf(qr, size, fg, bg, m = 2) {
+    const n = qr.getModuleCount(), W = n + m * 2, s = size / W;
+    const c = document.createElement('canvas'); c.width = c.height = size;
+    const ctx = c.getContext('2d'); ctx.fillStyle = bg; ctx.fillRect(0, 0, size, size); ctx.fillStyle = fg;
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (qr.isDark(y, x)) ctx.fillRect(Math.floor((x + m) * s), Math.floor((y + m) * s), Math.ceil(s), Math.ceil(s));
+    return c;
+  }
+  const safe = (s) => s.replace(/[\\/:*?"<>|]+/g, '_').slice(0, 80) || 'qr';
+
+  const preview = T.debounce(() => {
+    const r = rows();
+    $('#count').textContent = `${r.length} QR kod`;
+    const pv = $('#pv');
+    pv.innerHTML = r.slice(0, 12).map((x) => { try { return `<div class="thumb" style="cursor:default">${svgOf(matrix(x.data), $('#fg').value, $('#bg').value).replace('<svg', '<svg style="width:100%;border-radius:6px"')}<span class="num" title="${esc(x.label)}">${esc(x.label.slice(0, 18))}</span></div>`; } catch { return `<div class="thumb"><span class="badge err">Çok uzun</span></div>`; } }).join('') +
+      (r.length > 12 ? `<div class="thumb" style="cursor:default;justify-content:center"><b>+${r.length - 12}</b><span class="num">daha</span></div>` : '');
+  }, 200);
+  ['#list', '#fg', '#bg', '#ecc', '#hasLabel'].forEach((s) => $(s).addEventListener('input', preview));
+  $('#hasLabel').addEventListener('change', preview);
+
+  $('#go').onclick = async () => {
+    const r = rows();
+    if (!r.length) return T.toast('Önce içerik girin', 'error');
+    const btn = $('#go'); T.busy(btn, true, 'Oluşturuluyor…');
+    const prog = $('#prog'), bar = prog.firstElementChild; prog.hidden = false; bar.style.width = '0';
+    const fg = $('#fg').value, bg = $('#bg').value, kind = outSeg.get();
+    try {
+      let blob, name;
+      if (kind === 'pdf') {
+        const L = await T.lib.pdfLib();
+        const pdf = await L.PDFDocument.create();
+        const labels = r.map((x) => x.label).join('');
+        const font = await T.embedTurkishFont(pdf, labels);
+        const cols = +$('#cols').value, PW = 595.28, PH = 841.89, M = 28;
+        const cell = (PW - M * 2) / cols, qs = cell * 0.82, lh = Math.min(11, cell * 0.09);
+        const rowH = qs + lh * 2.4, perPage = cols * Math.floor((PH - M * 2) / rowH);
+        let page;
+        for (let i = 0; i < r.length; i++) {
+          if (i % perPage === 0) page = pdf.addPage([PW, PH]);
+          const k = i % perPage, cx = M + (k % cols) * cell, cy = PH - M - Math.floor(k / cols) * rowH;
+          const png = await pdf.embedPng(await (await T.canvasToBlob(canvasOf(matrix(r[i].data), 600, fg, bg, 1))).arrayBuffer());
+          page.drawImage(png, { x: cx + (cell - qs) / 2, y: cy - qs, width: qs, height: qs });
+          let label = r[i].label; while (font.widthOfTextAtSize(label, lh) > cell - 6 && label.length > 3) label = label.slice(0, -2) + '…';
+          page.drawText(label, { x: cx + (cell - font.widthOfTextAtSize(label, lh)) / 2, y: cy - qs - lh * 1.4, size: lh, font, color: L.rgb(0.2, 0.2, 0.25) });
+          if (i % 10 === 0) { bar.style.width = ((i + 1) / r.length) * 100 + '%'; await T.nextFrame(); }
+        }
+        blob = new Blob([await pdf.save()], { type: 'application/pdf' }); name = 'qr-kodlar.pdf';
+      } else {
+        const Z = await T.lib.zip(); const z = new Z(); const used = {};
+        for (let i = 0; i < r.length; i++) {
+          let base = safe(r[i].label); if (used[base]) base += '_' + ++used[base]; else used[base] = 1;
+          const qr = matrix(r[i].data);
+          if (kind === 'svg') z.file(base + '.svg', svgOf(qr, fg, bg));
+          else z.file(base + '.png', await T.canvasToBlob(canvasOf(qr, +$('#size').value, fg, bg)));
+          if (i % 10 === 0) { bar.style.width = ((i + 1) / r.length) * 100 + '%'; await T.nextFrame(); }
+        }
+        blob = await z.generateAsync({ type: 'blob' }); name = 'qr-kodlar.zip';
+      }
+      bar.style.width = '100%';
+      $('#res').innerHTML = '';
+      $('#res').appendChild(T.resultBox({ title: `${r.length} QR kod hazır!`, text: T.formatBytes(blob.size), actions: [{ label: 'İndir', icon: 'download', primary: true, onClick: () => T.download(blob, name) }] }));
+      T.download(blob, name);
+    } catch (e) { console.error(e); T.toast('Hata: ' + e.message, 'error', 5000); }
+    finally { T.busy(btn, false); prog.hidden = true; }
+  };
+  T.lib.qrcode().then(() => { if (qrcode.stringToBytesFuncs?.['UTF-8']) qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8']; $('#sample').click(); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Barkod Oluştur – EAN-13, Code128, UPC Barkod (Ücretsiz) | Notettiklerim Tools</title>
+<meta name="description" content="EAN-13, EAN-8, UPC-A, Code128, Code39, ITF-14 ve Codabar formatlarında ücretsiz barkod oluşturun. Boyut ve renk ayarlayın, PNG veya SVG indirin.">
+<link rel="canonical" href="https://tools.notettiklerim.com/barkod-olustur/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Barkod Oluştur – EAN-13, Code128, UPC Barkod (Ücretsiz)">
+<meta property="og:description" content="EAN-13, EAN-8, UPC-A, Code128, Code39, ITF-14 ve Codabar formatlarında ücretsiz barkod oluşturun. Boyut ve renk ayarlayın, PNG veya SVG indirin.">
+<meta property="og:url" content="https://tools.notettiklerim.com/barkod-olustur/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="barkod-olustur">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <div class="tool-layout">
+    <div class="card stack">
+      <div class="grid-2">
+        <div class="field"><label for="fmt">Format</label>
+          <select class="select" id="fmt">
+            <option value="CODE128">Code 128 (harf + rakam)</option><option value="EAN13">EAN-13</option><option value="EAN8">EAN-8</option><option value="UPC">UPC-A</option><option value="CODE39">Code 39</option><option value="ITF14">ITF-14</option><option value="codabar">Codabar</option><option value="MSI">MSI</option><option value="pharmacode">Pharmacode</option>
+          </select>
+        </div>
+        <div class="field"><label for="val">Değer</label><input class="input mono" id="val" value="NOTETTIKLERIM-2026"><span class="hint" id="hint"></span></div>
+      </div>
+      <div class="preview-box" style="min-height:260px" id="pvBox"><svg id="bc"></svg></div>
+      <div class="alert error" id="err" hidden><i data-icon="alert"></i><span id="errMsg"></span></div>
+    </div>
+    <aside class="side card stack">
+      <div class="card-title"><i data-icon="sliders"></i>Görünüm</div>
+      <div class="field"><div class="range-head"><label>Çubuk genişliği</label><output></output></div><input type="range" id="w" min="1" max="5" value="2"></div>
+      <div class="field"><div class="range-head"><label>Yükseklik</label><output></output></div><input type="range" id="h" min="30" max="200" value="90"></div>
+      <div class="field"><div class="range-head"><label>Kenar boşluğu</label><output></output></div><input type="range" id="m" min="0" max="40" value="12"></div>
+      <label class="switch"><input type="checkbox" id="text" checked><span class="track"></span>Değeri altında göster</label>
+      <div class="field"><div class="range-head"><label>Yazı boyutu</label><output></output></div><input type="range" id="fs" min="10" max="36" value="18"></div>
+      <div class="grid-2">
+        <div class="field"><label>Çubuk rengi</label><div class="color-field"><input type="color" id="fg" value="#000000"></div></div>
+        <div class="field"><label>Arka plan</label><div class="color-field"><input type="color" id="bg" value="#ffffff"></div></div>
+      </div>
+      <button class="btn btn-primary btn-lg btn-block" id="png"><i data-icon="download"></i>PNG İndir</button>
+      <button class="btn btn-block" id="svg">SVG İndir</button>
+    </aside>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>Barkod formatını seçin ve değeri girin.</li>
+        <li>Çubuk genişliği, yükseklik, renk ve yazı seçeneklerini ayarlayın.</li>
+        <li>Barkodu PNG veya SVG olarak indirin.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Ürünlerim için hangi formatı kullanmalıyım?</summary><p>Perakende ürünlerde Türkiye ve Avrupa'da EAN-13, Kuzey Amerika'da UPC-A kullanılır. Ancak resmi ürün barkodu için GS1 Türkiye'den firma numarası almanız gerekir.</p></details>
+      <details class="faq"><summary>EAN-13 kontrol hanesi nedir?</summary><p>13. hane, ilk 12 haneden hesaplanan doğrulama hanesidir. 12 hane girerseniz otomatik hesaplanır.</p></details>
+      <details class="faq"><summary>Code128 ne zaman kullanılır?</summary><p>Harf ve rakam içeren değerler, kargo ve depo etiketleri için en yaygın ve esnek formattır.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $ } = T;
+  const HINTS = { CODE128: 'Tüm ASCII karakterler', EAN13: '12 veya 13 rakam (kontrol hanesi otomatik)', EAN8: '7 veya 8 rakam', UPC: '11 veya 12 rakam', CODE39: 'Büyük harf, rakam ve - . $ / + % boşluk', ITF14: '13 veya 14 rakam', codabar: 'Rakam ve - $ : / . + (başta/sonda A-D)', MSI: 'Yalnızca rakam', pharmacode: '3 – 131070 arası sayı' };
+  const SAMPLES = { CODE128: 'NOTETTIKLERIM-2026', EAN13: '869012345678', EAN8: '1234567', UPC: '12345678901', CODE39: 'TOOLS-2026', ITF14: '1869012345678', codabar: 'A123456B', MSI: '123456', pharmacode: '1234' };
+  ['#w', '#h', '#m', '#fs'].forEach((s) => T.bindRange($(s), (v) => v + (s === '#w' ? '' : ' px')));
+  let ok = false;
+  function render() {
+    const fmt = $('#fmt').value;
+    $('#hint').textContent = HINTS[fmt];
+    let val = $('#val').value.trim();
+    if (fmt === 'CODE39') val = val.toUpperCase();
+    ok = true;
+    try {
+      JsBarcode('#bc', val || ' ', {
+        format: fmt, width: +$('#w').value, height: +$('#h').value, margin: +$('#m').value, displayValue: $('#text').checked,
+        fontSize: +$('#fs').value, lineColor: $('#fg').value, background: $('#bg').value, font: 'Inter, Segoe UI, Arial, sans-serif', textMargin: 4,
+        valid: (v) => { ok = v; },
+      });
+    } catch (e) { ok = false; }
+    $('#err').hidden = ok; $('#bc').style.visibility = ok ? 'visible' : 'hidden';
+    if (!ok) $('#errMsg').textContent = `Bu değer ${$('#fmt').selectedOptions[0].text} formatı için geçersiz. Beklenen: ${HINTS[fmt]}.`;
+  }
+  $('#fmt').addEventListener('change', () => { $('#val').value = SAMPLES[$('#fmt').value]; render(); });
+  document.querySelector('.tool-layout').addEventListener('input', render);
+  const svgText = () => new XMLSerializer().serializeToString($('#bc'));
+  const name = () => 'barkod-' + ($('#val').value.trim().replace(/[^\w-]+/g, '_') || 'kod');
+  $('#svg').onclick = () => { if (!ok) return T.toast('Geçersiz barkod', 'error'); T.download(new Blob([svgText()], { type: 'image/svg+xml' }), name() + '.svg'); };
+  $('#png').onclick = async () => {
+    if (!ok) return T.toast('Geçersiz barkod', 'error');
+    const svg = $('#bc'), w = svg.width.baseVal.value, h = svg.height.baseVal.value, s = 3;
+    const img = await T.loadImage('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgText()));
+    const c = document.createElement('canvas'); c.width = w * s; c.height = h * s;
+    const ctx = c.getContext('2d'); ctx.imageSmoothingEnabled = false; ctx.drawImage(img, 0, 0, c.width, c.height);
+    T.download(await T.canvasToBlob(c), name() + '.png');
+  };
+  T.lib.barcode().then(render);
+})();
+</script>
+</body>
+</html>
