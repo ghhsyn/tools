@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDF Birleştir – Ücretsiz Online PDF Birleştirme | Notettiklerim Tools</title>
+<meta name="description" content="Birden fazla PDF dosyasını ücretsiz ve güvenli şekilde tek PDF'te birleştirin. Sürükle-bırak ile sıralayın, dosyalarınız cihazınızdan çıkmaz.">
+<link rel="canonical" href="https://tools.notettiklerim.com/pdf-birlestir/">
+<meta property="og:title" content="PDF Birleştir – Ücretsiz Online"><meta property="og:description" content="PDF dosyalarını saniyeler içinde birleştirin."><meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="pdf-birlestir">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+
+  <div class="card">
+    <div id="dz"></div>
+    <div id="work" class="stack" hidden>
+      <div class="row row-between">
+        <div class="row" style="gap:8px">
+          <button class="btn btn-sm" id="add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Dosya ekle</button>
+          <button class="btn btn-sm btn-ghost" id="sort">A→Z sırala</button>
+          <button class="btn btn-sm btn-ghost" id="reverse">Ters çevir</button>
+          <button class="btn btn-sm btn-ghost btn-danger" id="clear">Temizle</button>
+        </div>
+        <span class="muted small" id="summary"></span>
+      </div>
+      <p class="muted small" style="margin:0">Sıralamayı değiştirmek için dosyaları sürükleyip bırakın.</p>
+      <div class="file-list" id="list"></div>
+      <div class="row row-end">
+        <button class="btn btn-primary btn-lg" id="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg>PDF'leri Birleştir</button>
+      </div>
+      <div id="out"></div>
+    </div>
+    <div class="privacy-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Dosyalarınız tarayıcınızda işlenir, hiçbir sunucuya yüklenmez.</div>
+  </div>
+
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>Birleştirmek istediğiniz PDF dosyalarını seçin veya sürükleyip bırakın.</li>
+        <li>Dosyaları sürükleyerek istediğiniz sıraya getirin.</li>
+        <li>"PDF'leri Birleştir" butonuna basın ve sonucu indirin.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Dosya sayısı veya boyut sınırı var mı?</summary><p>Hayır. Sınır yalnızca cihazınızın belleğidir. Yüzlerce sayfalık dosyaları rahatlıkla birleştirebilirsiniz.</p></details>
+      <details class="faq"><summary>Dosyalarım güvende mi?</summary><p>Evet. Birleştirme işlemi tamamen tarayıcınızda yapılır; dosyalarınız internete gönderilmez.</p></details>
+      <details class="faq"><summary>Şifreli PDF'leri birleştirebilir miyim?</summary><p>Şifreli PDF'lerin önce şifresinin kaldırılması gerekir. Şifresiz dosyalar sorunsuz birleştirilir.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, icon, esc, formatBytes } = T;
+  let items = []; // {id, file, buf, pages}
+  let uid = 0, result = null;
+  const list = $('#list');
+
+  const dz = T.dropzone($('#dz'), {
+    accept: '.pdf,application/pdf', multiple: true, icon: 'fileText',
+    title: 'PDF dosyalarını seçin', subtitle: 'veya buraya sürükleyip bırakın',
+    onFiles: add,
+  });
+  T.pageDrop(add, '.pdf,application/pdf');
+  $('#add').onclick = () => dz.open();
+  $('#clear').onclick = () => { items = []; render(); };
+  $('#sort').onclick = () => { syncOrder(); items.sort((a, b) => a.file.name.localeCompare(b.file.name, 'tr', { numeric: true })); render(); };
+  $('#reverse').onclick = () => { syncOrder(); items.reverse(); render(); };
+  T.sortable(list, { items: '.file-item', onEnd: () => { syncOrder(); updateSummary(); clearOut(); } });
+
+  async function add(files) {
+    for (const file of files) {
+      const it = { id: ++uid, file, buf: null, pages: null, error: null };
+      items.push(it);
+      render();
+      try {
+        it.buf = await T.readBuffer(file);
+        const doc = await T.pdfjsOpen(it.buf);
+        it.pages = doc.numPages;
+        const page = await doc.getPage(1);
+        it.thumb = await T.renderPdfPage(page, { maxSize: 40 });
+        doc.destroy();
+      } catch (e) {
+        it.error = /password/i.test(e && e.message) ? 'Şifreli PDF' : 'Okunamadı';
+      }
+      render();
+    }
+  }
+
+  function syncOrder() {
+    const order = [...list.children].map((el) => +el.dataset.id);
+    items.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+  }
+
+  function clearOut() { $('#out').innerHTML = ''; result = null; }
+
+  function updateSummary() {
+    const pages = items.reduce((s, i) => s + (i.pages || 0), 0);
+    const size = items.reduce((s, i) => s + i.file.size, 0);
+    $('#summary').textContent = `${items.length} dosya · ${pages} sayfa · ${formatBytes(size)}`;
+  }
+
+  function render() {
+    $('#dz').hidden = items.length > 0;
+    $('#work').hidden = items.length === 0;
+    clearOut();
+    list.innerHTML = '';
+    items.forEach((it, idx) => {
+      const el = T.h(`
+        <div class="file-item" data-id="${it.id}" style="--c:var(--c-pdf)">
+          <span class="drag-handle" title="Sürükle">${icon('grip')}</span>
+          <div class="fi-icon">${it.thumb ? '' : icon('fileText')}</div>
+          <div class="fi-meta">
+            <div class="fi-name">${esc(it.file.name)}</div>
+            <div class="fi-sub">${formatBytes(it.file.size)} · ${it.error ? `<span style="color:var(--danger)">${it.error}</span>` : it.pages == null ? 'okunuyor…' : it.pages + ' sayfa'}</div>
+          </div>
+          <div class="fi-actions">
+            <button class="btn btn-ghost btn-icon btn-sm" data-act="up" title="Yukarı" ${idx === 0 ? 'disabled' : ''}>${icon('arrowUp')}</button>
+            <button class="btn btn-ghost btn-icon btn-sm" data-act="down" title="Aşağı" ${idx === items.length - 1 ? 'disabled' : ''}>${icon('arrowDown')}</button>
+            <button class="btn btn-ghost btn-icon btn-sm" data-act="del" title="Kaldır">${icon('x')}</button>
+          </div>
+        </div>`);
+      if (it.thumb) el.querySelector('.fi-icon').appendChild(it.thumb);
+      list.appendChild(el);
+    });
+    updateSummary();
+  }
+
+  list.addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-act]'); if (!b) return;
+    syncOrder();
+    const id = +b.closest('.file-item').dataset.id;
+    const i = items.findIndex((x) => x.id === id);
+    if (b.dataset.act === 'del') items.splice(i, 1);
+    if (b.dataset.act === 'up' && i > 0) [items[i - 1], items[i]] = [items[i], items[i - 1]];
+    if (b.dataset.act === 'down' && i < items.length - 1) [items[i + 1], items[i]] = [items[i], items[i + 1]];
+    render();
+  });
+
+  $('#go').onclick = async () => {
+    syncOrder();
+    const valid = items.filter((i) => i.buf && !i.error);
+    if (valid.length < 1) return T.toast('Birleştirilecek geçerli PDF yok', 'error');
+    if (valid.length < 2) T.toast('Tek dosya var; yine de yeniden kaydedilecek');
+    const btn = $('#go');
+    T.busy(btn, true, 'Birleştiriliyor…');
+    try {
+      const L = await T.lib.pdfLib();
+      const out = await L.PDFDocument.create();
+      for (const it of valid) {
+        const src = await T.pdfLibOpen(it.buf);
+        const pages = await out.copyPages(src, src.getPageIndices());
+        pages.forEach((p) => out.addPage(p));
+        await T.nextFrame();
+      }
+      out.setProducer('tools.notettiklerim.com');
+      out.setCreator('Notettiklerim Tools');
+      const bytes = await out.save();
+      result = new Blob([bytes], { type: 'application/pdf' });
+      const name = 'birlestirilmis.pdf';
+      $('#out').innerHTML = '';
+      $('#out').appendChild(T.resultBox({
+        title: 'PDF hazır!',
+        text: `${valid.length} dosya · ${out.getPageCount()} sayfa · ${formatBytes(result.size)}`,
+        actions: [{ label: 'İndir', icon: 'download', primary: true, onClick: () => T.download(result, name) }],
+      }));
+      T.download(result, name);
+    } catch (e) {
+      console.error(e);
+      T.toast(T.pdfErrorMessage(e), 'error', 5000);
+    } finally {
+      T.busy(btn, false);
+    }
+  };
+})();
+</script>
+</body>
+</html>
