@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Görselden PDF – JPG, PNG&#x27;yi PDF&#x27;e Dönüştür (Ücretsiz) | Notettiklerim Tools</title>
+<meta name="description" content="JPG, PNG, WebP ve diğer görselleri tek bir PDF dosyasına dönüştürün. Sayfa boyutu, yön ve kenar boşluğu seçin. Ücretsiz ve dosyalarınız cihazınızdan çıkmaz.">
+<link rel="canonical" href="https://tools.notettiklerim.com/gorselden-pdf/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Görselden PDF – JPG, PNG&#x27;yi PDF&#x27;e Dönüştür (Ücretsiz)">
+<meta property="og:description" content="JPG, PNG, WebP ve diğer görselleri tek bir PDF dosyasına dönüştürün. Sayfa boyutu, yön ve kenar boşluğu seçin. Ücretsiz ve dosyalarınız cihazınızdan çıkmaz.">
+<meta property="og:url" content="https://tools.notettiklerim.com/gorselden-pdf/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="gorselden-pdf">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <div class="card" id="dzCard">
+    <div id="dz"></div>
+    <div class="privacy-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Dosyalarınız tarayıcınızda işlenir, hiçbir sunucuya yüklenmez.</div>
+  </div>
+
+  <div class="tool-layout" id="work" hidden>
+    <div class="card stack">
+      <div class="row row-between">
+        <div class="row" style="gap:8px">
+          <button class="btn btn-sm" id="add"><i data-icon="plus"></i>Görsel ekle</button>
+          <button class="btn btn-sm btn-ghost" id="sort">A→Z sırala</button>
+          <button class="btn btn-sm btn-ghost btn-danger" id="clear">Temizle</button>
+        </div>
+        <span class="muted small" id="summary"></span>
+      </div>
+      <div class="thumb-grid" id="grid"></div>
+    </div>
+    <aside class="side card stack">
+      <div class="card-title"><i data-icon="sliders"></i>PDF ayarları</div>
+      <div class="field"><label>Sayfa boyutu</label>
+        <select class="select" id="size"><option value="a4">A4 (210 × 297 mm)</option><option value="letter">Letter (8.5 × 11 in)</option><option value="a5">A5 (148 × 210 mm)</option><option value="a3">A3 (297 × 420 mm)</option><option value="fit">Görsel boyutunda</option></select>
+      </div>
+      <div class="field" id="orientF"><label>Yön</label>
+        <div class="seg block" id="orient" data-value="auto"><button data-v="auto">Otomatik</button><button data-v="p">Dikey</button><button data-v="l">Yatay</button></div>
+      </div>
+      <div class="field" id="marginF"><label>Kenar boşluğu</label>
+        <div class="seg block" id="margin" data-value="0"><button data-v="0">Yok</button><button data-v="20">Küçük</button><button data-v="45">Büyük</button></div>
+      </div>
+      <div class="field"><label>Kalite</label>
+        <select class="select" id="quality"><option value="orig">Orijinal kalite</option><option value="0.85">Yüksek (küçültülmüş)</option><option value="0.65">Orta (daha küçük dosya)</option></select>
+      </div>
+      <button class="btn btn-primary btn-lg btn-block" id="go"><i data-icon="fileText"></i>PDF Oluştur</button>
+      <div id="out"></div>
+    </aside>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>Görsellerinizi seçin veya sürükleyip bırakın (çoklu seçim desteklenir).</li>
+        <li>Sürükleyerek sıralayın, sayfa boyutu ve kenar boşluğunu ayarlayın.</li>
+        <li>"PDF Oluştur" butonuna basın ve dosyanızı indirin.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Hangi formatlar destekleniyor?</summary><p>JPG, PNG, WebP, GIF, BMP, AVIF ve tarayıcınızın açabildiği tüm görsel formatları.</p></details>
+      <details class="faq"><summary>Telefon fotoğraflarım yan dönüyor mu?</summary><p>Hayır. Fotoğraflardaki EXIF yön bilgisi otomatik olarak dikkate alınır.</p></details>
+      <details class="faq"><summary>Kalite düşer mi?</summary><p>"Orijinal kalite" seçiliyken JPG ve PNG görseller yeniden sıkıştırılmadan eklenir.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, $$, icon, esc, formatBytes } = T;
+  let items = []; let uid = 0;
+  const grid = $('#grid');
+  const ACC = 'image/*,.heic,.avif';
+
+  const dz = T.dropzone($('#dz'), { accept: 'image/*', multiple: true, paste: true, icon: 'images', title: 'Görselleri seçin', subtitle: 'JPG, PNG, WebP… · Sürükleyin, seçin veya yapıştırın (Ctrl+V)', onFiles: add });
+  T.pageDrop(add, 'image/*');
+  $('#add').onclick = () => dz.open();
+  $('#clear').onclick = () => { items.forEach((i) => URL.revokeObjectURL(i.url)); items = []; render(); };
+  $('#sort').onclick = () => { sync(); items.sort((a, b) => a.file.name.localeCompare(b.file.name, 'tr', { numeric: true })); render(); };
+  const orient = T.seg($('#orient')); const margin = T.seg($('#margin'));
+  $('#size').onchange = () => { const fit = $('#size').value === 'fit'; $('#orientF').hidden = fit; };
+  document.addEventListener('paste', (e) => {
+    if ($('#work').hidden) return;
+    const f = [...(e.clipboardData?.files || [])].filter((x) => x.type.startsWith('image/'));
+    if (f.length) add(f);
+  });
+
+  function add(files) {
+    files.forEach((file) => items.push({ id: ++uid, file, url: URL.createObjectURL(file) }));
+    render();
+  }
+  function sync() { const o = $$('.thumb', grid).map((e) => +e.dataset.id); items.sort((a, b) => o.indexOf(a.id) - o.indexOf(b.id)); }
+  T.sortable(grid, { items: '.thumb', onEnd: () => { sync(); render(); } });
+  grid.addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-act]'); if (!b) return;
+    const id = +b.closest('.thumb').dataset.id;
+    const it = items.find((i) => i.id === id);
+    if (b.dataset.act === 'd') { URL.revokeObjectURL(it.url); items = items.filter((i) => i !== it); }
+    if (b.dataset.act === 'r') { it.rot = ((it.rot || 0) + 90) % 360; }
+    render();
+  });
+
+  function render() {
+    $('#dzCard').hidden = items.length > 0; $('#work').hidden = !items.length; $('#out').innerHTML = '';
+    grid.innerHTML = items.map((it, i) => `
+      <div class="thumb" data-id="${it.id}">
+        <span class="t-grip">${icon('grip')}</span>
+        <div class="t-actions"><button data-act="r" title="Döndür">${icon('rotateCw')}</button><button data-act="d" class="del" title="Kaldır">${icon('trash')}</button></div>
+        <div class="page"><img src="${it.url}" alt="" style="transform:rotate(${it.rot || 0}deg)" draggable="false"></div>
+        <span class="num" title="${esc(it.file.name)}">${i + 1}. ${esc(it.file.name.length > 16 ? it.file.name.slice(0, 14) + '…' : it.file.name)}</span>
+      </div>`).join('');
+    $('#summary').textContent = `${items.length} görsel · ${formatBytes(items.reduce((s, i) => s + i.file.size, 0))}`;
+  }
+
+  // Read JPEG EXIF orientation (1 = normal)
+  function exifOrientation(buf) {
+    const v = new DataView(buf);
+    if (v.byteLength < 4 || v.getUint16(0) !== 0xFFD8) return 1;
+    let off = 2;
+    while (off + 4 < v.byteLength) {
+      const marker = v.getUint16(off); off += 2;
+      if (marker === 0xFFE1) {
+        if (v.getUint32(off + 2) !== 0x45786966) return 1;
+        const t = off + 8; const le = v.getUint16(t) === 0x4949;
+        const ifd = t + v.getUint32(t + 4, le); const cnt = v.getUint16(ifd, le);
+        for (let i = 0; i < cnt; i++) { const e = ifd + 2 + i * 12; if (e + 10 > v.byteLength) break; if (v.getUint16(e, le) === 0x0112) return v.getUint16(e + 8, le); }
+        return 1;
+      } else if ((marker & 0xFF00) !== 0xFF00) break;
+      else off += v.getUint16(off);
+    }
+    return 1;
+  }
+
+  async function prepare(it, quality, PDFDoc) {
+    const buf = await T.readBuffer(it.file);
+    const type = it.file.type;
+    const rot = it.rot || 0;
+    if (quality === 'orig' && !rot) {
+      if (type === 'image/jpeg' && exifOrientation(buf) === 1) return PDFDoc.embedJpg(buf);
+      if (type === 'image/png') return PDFDoc.embedPng(buf);
+    }
+    const img = await T.loadImage(it.url);
+    let w = img.naturalWidth, h = img.naturalHeight;
+    const max = quality === 'orig' ? 6000 : quality >= 0.8 ? 2400 : 1600;
+    const s = Math.min(1, max / Math.max(w, h)); w = Math.round(w * s); h = Math.round(h * s);
+    const c = document.createElement('canvas');
+    const swap = rot % 180 !== 0;
+    c.width = swap ? h : w; c.height = swap ? w : h;
+    const ctx = c.getContext('2d');
+    const png = type === 'image/png' || type === 'image/gif' || type === 'image/webp';
+    if (!png || quality !== 'orig') { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height); }
+    ctx.translate(c.width / 2, c.height / 2); ctx.rotate((rot * Math.PI) / 180); ctx.drawImage(img, -w / 2, -h / 2, w, h);
+    if (png && quality === 'orig') return PDFDoc.embedPng(await (await T.canvasToBlob(c, 'image/png')).arrayBuffer());
+    return PDFDoc.embedJpg(await (await T.canvasToBlob(c, 'image/jpeg', quality === 'orig' ? 0.95 : +quality)).arrayBuffer());
+  }
+
+  const SIZES = { a4: [595.28, 841.89], letter: [612, 792], a5: [419.53, 595.28], a3: [841.89, 1190.55] };
+  $('#go').onclick = async () => {
+    sync();
+    if (!items.length) return;
+    const btn = $('#go'); T.busy(btn, true, 'Oluşturuluyor…');
+    try {
+      const L = await T.lib.pdfLib();
+      const pdf = await L.PDFDocument.create();
+      const size = $('#size').value, m = +margin.get(), q = $('#quality').value;
+      let i = 0;
+      for (const it of items) {
+        btn.querySelector('span:last-child') && (btn.querySelector('span:last-child').textContent = `${++i}/${items.length} işleniyor…`);
+        let img;
+        try { img = await prepare(it, q, pdf); } catch (e) { console.warn(e); T.toast(`${it.file.name} eklenemedi`, 'error'); continue; }
+        let pw, ph;
+        if (size === 'fit') { pw = img.width * 0.75 + m * 2; ph = img.height * 0.75 + m * 2; }
+        else {
+          [pw, ph] = SIZES[size];
+          const o = orient.get();
+          const land = o === 'l' || (o === 'auto' && img.width > img.height);
+          if (land) [pw, ph] = [ph, pw];
+        }
+        const page = pdf.addPage([pw, ph]);
+        const aw = pw - m * 2, ah = ph - m * 2;
+        const s = Math.min(aw / img.width, ah / img.height);
+        const w = img.width * s, h = img.height * s;
+        page.drawImage(img, { x: (pw - w) / 2, y: (ph - h) / 2, width: w, height: h });
+        await T.nextFrame();
+      }
+      if (!pdf.getPageCount()) throw new Error('Hiçbir görsel eklenemedi');
+      pdf.setCreator('Notettiklerim Tools');
+      const blob = new Blob([await pdf.save()], { type: 'application/pdf' });
+      const name = items.length === 1 ? T.baseName(items[0].file.name) + '.pdf' : 'gorseller.pdf';
+      $('#out').innerHTML = '';
+      $('#out').appendChild(T.resultBox({ title: 'PDF hazır!', text: `${pdf.getPageCount()} sayfa · ${formatBytes(blob.size)}`, actions: [{ label: 'İndir', icon: 'download', primary: true, onClick: () => T.download(blob, name) }] }));
+      T.download(blob, name);
+    } catch (e) { console.error(e); T.toast('Hata: ' + e.message, 'error', 5000); }
+    finally { T.busy(btn, false); }
+  };
+})();
+</script>
+</body>
+</html>

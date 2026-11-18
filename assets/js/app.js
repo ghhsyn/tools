@@ -454,6 +454,34 @@
     return doc.embedFont(trFontBytes, { subset: true });
   }
 
+  /** Lazily render pdf.js thumbnails into elements having data-page and a .page child. */
+  function lazyThumbs(doc, els, { size = 160 } = {}) {
+    const queue = [];
+    let running = false;
+    const run = async () => {
+      if (running) return;
+      running = true;
+      while (queue.length) {
+        const el = queue.shift();
+        if (el._done || !el.isConnected) continue;
+        el._done = true;
+        try {
+          const page = await doc.getPage(+el.dataset.page);
+          const c = await renderPdfPage(page, { maxSize: size });
+          el.querySelector('.page').replaceChildren(c);
+          el.dispatchEvent(new CustomEvent('thumb', { detail: c }));
+        } catch (e) { console.warn(e); }
+      }
+      running = false;
+    };
+    const io = new IntersectionObserver((es) => {
+      es.forEach((e) => { if (e.isIntersecting) { queue.push(e.target); io.unobserve(e.target); } });
+      run();
+    }, { rootMargin: '400px' });
+    els.forEach((el) => io.observe(el));
+    return io;
+  }
+
   function canvasToBlob(canvas, type = 'image/png', quality) {
     return new Promise((res) => canvas.toBlob(res, type, quality));
   }
@@ -721,8 +749,13 @@
   window.T = {
     SITE, CATS, TOOLS, icon, $, $$, esc, h, trLower, norm, formatBytes, baseName, debounce, sleep, nextFrame,
     download, copy, toast, busy, readBuffer, readDataURL, readText, loadImage, loadScript, lib,
-    parseRanges, dropzone, pageDrop, sortable, seg, bindRange, resultBox, renderPdfPage, pdfjsOpen, pdfLibOpen, embedTurkishFont, canvasToBlob, pdfErrorMessage, setTheme,
+    parseRanges, dropzone, pageDrop, sortable, seg, bindRange, resultBox, renderPdfPage, lazyThumbs, hydrateIcons, pdfjsOpen, pdfLibOpen, embedTurkishFont, canvasToBlob, pdfErrorMessage, setTheme,
   };
+
+  function hydrateIcons(root = document) {
+    $$('i[data-icon]', root).forEach((el) => { el.outerHTML = icon(el.dataset.icon); });
+  }
+  hydrateIcons();
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDF Sıkıştır – PDF Boyutunu Küçült (Ücretsiz) | Notettiklerim Tools</title>
+<meta name="description" content="PDF dosya boyutunu online ve ücretsiz küçültün. Sıkıştırma seviyesini seçin, önce/sonra boyutlarını görün. Dosyanız hiçbir sunucuya yüklenmez.">
+<link rel="canonical" href="https://tools.notettiklerim.com/pdf-sikistir/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="PDF Sıkıştır – PDF Boyutunu Küçült (Ücretsiz)">
+<meta property="og:description" content="PDF dosya boyutunu online ve ücretsiz küçültün. Sıkıştırma seviyesini seçin, önce/sonra boyutlarını görün. Dosyanız hiçbir sunucuya yüklenmez.">
+<meta property="og:url" content="https://tools.notettiklerim.com/pdf-sikistir/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="pdf-sikistir">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <div class="card" id="dzCard">
+    <div id="dz"></div>
+    <div class="privacy-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Dosyalarınız tarayıcınızda işlenir, hiçbir sunucuya yüklenmez.</div>
+  </div>
+  <div class="card stack" id="work" hidden>
+    <div class="row row-between">
+      <div class="row" style="gap:12px;min-width:0">
+        <div style="width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--c-pdf) 12%,transparent);color:var(--c-pdf);flex:none"><i data-icon="fileText"></i></div>
+        <div style="min-width:0"><b id="fname" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></b><span class="muted small" id="fmeta"></span></div>
+      </div>
+      <button class="btn btn-sm" id="change"><i data-icon="refresh"></i>Dosyayı değiştir</button>
+    </div>
+    <div class="label">Sıkıştırma seviyesi</div>
+    <div class="grid-4" id="levels">
+      <button type="button" class="panel level" data-l="lossless"><b>Kayıpsız</b><span>Yapı optimizasyonu, metin korunur</span></button>
+      <button type="button" class="panel level" data-l="low"><b>Hafif</b><span>Yüksek kalite · 150 DPI</span></button>
+      <button type="button" class="panel level active" data-l="mid"><b>Önerilen</b><span>Dengeli · 110 DPI</span></button>
+      <button type="button" class="panel level" data-l="high"><b>Güçlü</b><span>En küçük dosya · 75 DPI</span></button>
+    </div>
+    <label class="check" id="grayL"><input type="checkbox" id="gray">Gri tonlamaya çevir (daha da küçültür)</label>
+    <div class="alert" id="warn"><i data-icon="alert"></i><span>Görüntü tabanlı sıkıştırmada sayfalar görsele dönüştürülür; metin seçilemez hale gelir.</span></div>
+    <div class="row row-end"><button class="btn btn-primary btn-lg" id="go"><i data-icon="compress"></i>PDF'i Sıkıştır</button></div>
+    <div class="progress" id="prog" hidden><div></div></div>
+    <div id="out"></div>
+  </div>
+  <style>
+    .level { text-align: left; cursor: pointer; font: inherit; color: var(--text); display: flex; flex-direction: column; gap: 4px; transition: border-color .15s, box-shadow .15s, background .15s; }
+    .level span { font-size: 12.5px; color: var(--muted); }
+    .level:hover { border-color: var(--border-strong); }
+    .level.active { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); background: var(--surface); }
+    .cmp { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .cmp .big { font-size: 32px; font-weight: 800; letter-spacing: -.02em; color: var(--success); }
+  </style>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>PDF dosyanızı seçin.</li>
+        <li>Sıkıştırma seviyesini seçin (kayıpsız, önerilen veya güçlü).</li>
+        <li>"PDF'i Sıkıştır" butonuna basın ve küçültülmüş dosyayı indirin.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Sıkıştırma nasıl çalışıyor?</summary><p>Kayıpsız modda PDF yapısı optimize edilir. Diğer modlarda sayfalar seçilen çözünürlükte yeniden görüntülenir ve JPEG olarak sıkıştırılır; bu, taranmış ve görsel ağırlıklı PDF'lerde büyük kazanç sağlar.</p></details>
+      <details class="faq"><summary>Metinler seçilebilir kalır mı?</summary><p>Kayıpsız modda evet. Görüntü tabanlı sıkıştırmada sayfalar görsele dönüştüğü için metin seçimi kaybolur.</p></details>
+      <details class="faq"><summary>Dosya küçülmedi, neden?</summary><p>Zaten optimize edilmiş, metin ağırlıklı PDF'lerde kazanç az olabilir. Bu durumda size orijinal dosyayı kullanmanızı öneririz.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, $$, formatBytes } = T;
+  let file, buf, level = 'mid';
+  const P = { low: { dpi: 150, q: 0.8 }, mid: { dpi: 110, q: 0.65 }, high: { dpi: 75, q: 0.5 } };
+  const dz = T.dropzone($('#dz'), { accept: '.pdf,application/pdf', icon: 'fileText', title: 'Sıkıştırılacak PDF dosyasını seçin', subtitle: 'veya buraya sürükleyip bırakın', onFiles: (f) => load(f[0]) });
+  T.pageDrop((f) => load(f[0]), '.pdf,application/pdf');
+  $('#change').onclick = () => dz.open();
+  $('#levels').addEventListener('click', (e) => {
+    const b = e.target.closest('.level'); if (!b) return;
+    level = b.dataset.l; $$('.level').forEach((x) => x.classList.toggle('active', x === b));
+    $('#warn').hidden = $('#grayL').hidden = level === 'lossless';
+    $('#out').innerHTML = '';
+  });
+
+  async function load(f) {
+    file = f; buf = await T.readBuffer(f);
+    try { const d = await T.pdfjsOpen(buf); $('#fmeta').textContent = `${d.numPages} sayfa · ${formatBytes(f.size)}`; d.destroy(); }
+    catch (e) { return T.toast(T.pdfErrorMessage(e), 'error', 5000); }
+    $('#fname').textContent = f.name;
+    $('#dzCard').hidden = true; $('#work').hidden = false; $('#out').innerHTML = '';
+  }
+
+  $('#go').onclick = async () => {
+    const btn = $('#go'); T.busy(btn, true, 'Sıkıştırılıyor…');
+    const prog = $('#prog'), bar = prog.firstElementChild; bar.style.width = '0'; prog.hidden = level === 'lossless';
+    try {
+      const L = await T.lib.pdfLib();
+      let bytes;
+      if (level === 'lossless') {
+        const d = await T.pdfLibOpen(buf);
+        bytes = await d.save({ useObjectStreams: true });
+      } else {
+        const { dpi, q } = P[level];
+        const gray = $('#gray').checked;
+        const js = await T.pdfjsOpen(buf);
+        const out = await L.PDFDocument.create();
+        for (let i = 1; i <= js.numPages; i++) {
+          const page = await js.getPage(i);
+          const vp = page.getViewport({ scale: 1, rotation: page.rotate });
+          const c = await T.renderPdfPage(page, { scale: dpi / 72 });
+          if (gray) {
+            const ctx = c.getContext('2d'); const id = ctx.getImageData(0, 0, c.width, c.height); const d = id.data;
+            for (let k = 0; k < d.length; k += 4) { const g = d[k] * 0.299 + d[k + 1] * 0.587 + d[k + 2] * 0.114; d[k] = d[k + 1] = d[k + 2] = g; }
+            ctx.putImageData(id, 0, 0);
+          }
+          const jpg = await (await T.canvasToBlob(c, 'image/jpeg', q)).arrayBuffer();
+          c.width = c.height = 0;
+          const img = await out.embedJpg(jpg);
+          const p = out.addPage([vp.width, vp.height]);
+          p.drawImage(img, { x: 0, y: 0, width: vp.width, height: vp.height });
+          bar.style.width = (i / js.numPages) * 100 + '%';
+        }
+        js.destroy();
+        bytes = await out.save({ useObjectStreams: true });
+      }
+      const blob = new Blob([bytes], { type: 'application/pdf' });
+      const saved = 1 - blob.size / file.size;
+      const name = T.baseName(file.name) + '_sikistirilmis.pdf';
+      const o = $('#out'); o.innerHTML = '';
+      if (saved > 0.01) {
+        o.appendChild(T.resultBox({ title: `%${Math.round(saved * 100)} daha küçük!`, text: `${formatBytes(file.size)} → ${formatBytes(blob.size)}`, actions: [{ label: 'İndir', icon: 'download', primary: true, onClick: () => T.download(blob, name) }] }));
+        T.download(blob, name);
+      } else {
+        o.appendChild(T.h(`<div class="alert"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span>Bu dosya zaten iyi optimize edilmiş görünüyor (${formatBytes(file.size)} → ${formatBytes(blob.size)}). Daha güçlü bir seviye deneyebilir veya orijinal dosyayı kullanabilirsiniz.</span></div>`));
+        const b = T.h('<button class="btn btn-sm" style="margin-top:10px">Yine de indir</button>'); b.onclick = () => T.download(blob, name); o.appendChild(b);
+      }
+    } catch (e) { console.error(e); T.toast(T.pdfErrorMessage(e), 'error', 5000); }
+    finally { T.busy(btn, false); prog.hidden = true; }
+  };
+})();
+</script>
+</body>
+</html>

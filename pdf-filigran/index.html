@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDF Filigran Ekle – Ücretsiz Online Watermark | Notettiklerim Tools</title>
+<meta name="description" content="PDF dosyalarınıza metin filigranı ekleyin. Yazı, boyut, renk, saydamlık, açı ve konumu canlı önizleme ile ayarlayın. Ücretsiz ve güvenli.">
+<link rel="canonical" href="https://tools.notettiklerim.com/pdf-filigran/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="PDF Filigran Ekle – Ücretsiz Online Watermark">
+<meta property="og:description" content="PDF dosyalarınıza metin filigranı ekleyin. Yazı, boyut, renk, saydamlık, açı ve konumu canlı önizleme ile ayarlayın. Ücretsiz ve güvenli.">
+<meta property="og:url" content="https://tools.notettiklerim.com/pdf-filigran/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="pdf-filigran">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <div class="card" id="dzCard">
+    <div id="dz"></div>
+    <div class="privacy-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Dosyalarınız tarayıcınızda işlenir, hiçbir sunucuya yüklenmez.</div>
+  </div>
+  <div class="tool-layout" id="work" hidden>
+    <div class="card stack">
+      <div class="row row-between">
+        <div style="min-width:0"><b id="fname" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></b><span class="muted small" id="fmeta"></span></div>
+        <button class="btn btn-sm" id="change"><i data-icon="refresh"></i>Dosyayı değiştir</button>
+      </div>
+      <div class="preview-box" style="min-height:420px"><canvas id="pv"></canvas></div>
+      <p class="muted small center" style="margin:0">Önizleme: 1. sayfa</p>
+    </div>
+    <aside class="side card stack">
+      <div class="card-title"><i data-icon="droplet"></i>Filigran ayarları</div>
+      <div class="field"><label for="text">Metin</label><input class="input" id="text" value="GİZLİ" maxlength="80"></div>
+      <div class="field"><label>Yerleşim</label><div class="seg block" id="pos" data-value="center"><button data-v="center">Orta</button><button data-v="tile">Döşe</button><button data-v="top">Üst</button><button data-v="bottom">Alt</button></div></div>
+      <div class="field"><div class="range-head"><label>Yazı boyutu</label><output></output></div><input type="range" id="size" min="10" max="160" value="72"></div>
+      <div class="field"><div class="range-head"><label>Saydamlık</label><output></output></div><input type="range" id="op" min="5" max="100" value="25"></div>
+      <div class="field"><div class="range-head"><label>Açı</label><output></output></div><input type="range" id="ang" min="-90" max="90" value="45"></div>
+      <div class="field"><label>Renk</label><div class="color-field"><input type="color" id="color" value="#ef4444"><div class="row" style="gap:6px" id="presets"></div></div></div>
+      <div class="field"><label for="pages">Sayfalar</label><input class="input" id="pages" placeholder="Tümü (ör. 1-3, 5)"></div>
+      <button class="btn btn-primary btn-lg btn-block" id="go"><i data-icon="droplet"></i>Filigran Ekle</button>
+      <div id="out"></div>
+    </aside>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>PDF dosyanızı seçin.</li>
+        <li>Filigran metnini yazın; boyut, renk, saydamlık ve açıyı canlı önizlemede ayarlayın.</li>
+        <li>"Filigran Ekle" butonuna basın ve dosyanızı indirin.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Türkçe karakterler destekleniyor mu?</summary><p>Evet. Ğ, Ş, İ gibi karakterler için otomatik olarak uygun yazı tipi gömülür.</p></details>
+      <details class="faq"><summary>Filigran sonradan silinebilir mi?</summary><p>Filigran sayfa içeriğine eklenir. Gelişmiş PDF düzenleyicilerle kaldırılabilir; bu nedenle hassas belgeler için döşeme (tekrarlı) modunu öneririz.</p></details>
+      <details class="faq"><summary>Sadece bazı sayfalara ekleyebilir miyim?</summary><p>Evet. "Sayfalar" alanına örneğin "1-3, 5" yazabilirsiniz.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, formatBytes } = T;
+  let file, buf, doc, n, pageCanvas, pageSize;
+  const dz = T.dropzone($('#dz'), { accept: '.pdf,application/pdf', icon: 'fileText', title: 'PDF dosyası seçin', subtitle: 'veya buraya sürükleyip bırakın', onFiles: (f) => load(f[0]) });
+  T.pageDrop((f) => load(f[0]), '.pdf,application/pdf');
+  $('#change').onclick = () => dz.open();
+  const pos = T.seg($('#pos'), draw);
+  T.bindRange($('#size'), (v) => v + ' pt'); T.bindRange($('#op'), (v) => '%' + v); T.bindRange($('#ang'), (v) => v + '°');
+  ['#text', '#size', '#op', '#ang', '#color'].forEach((s) => $(s).addEventListener('input', draw));
+  ['#ef4444', '#0f172a', '#6366f1', '#10b981', '#94a3b8'].forEach((c) => {
+    const b = T.h(`<button type="button" title="${c}" style="width:26px;height:26px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--border);background:${c};cursor:pointer"></button>`);
+    b.onclick = () => { $('#color').value = c; draw(); }; $('#presets').appendChild(b);
+  });
+
+  async function load(f) {
+    try { file = f; buf = await T.readBuffer(f); if (doc) doc.destroy(); doc = await T.pdfjsOpen(buf); n = doc.numPages; }
+    catch (e) { return T.toast(T.pdfErrorMessage(e), 'error', 5000); }
+    $('#dzCard').hidden = true; $('#work').hidden = false; $('#out').innerHTML = '';
+    $('#fname').textContent = f.name; $('#fmeta').textContent = `${n} sayfa · ${formatBytes(f.size)}`;
+    const page = await doc.getPage(1);
+    const vp = page.getViewport({ scale: 1, rotation: page.rotate });
+    pageSize = [vp.width, vp.height];
+    pageCanvas = await T.renderPdfPage(page, { maxSize: 900 });
+    draw();
+  }
+
+  const hex2rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255);
+  /** Positions (centers) in PDF space (y up) */
+  function layout(W, H, w, size, angDeg, mode) {
+    const a = (angDeg * Math.PI) / 180;
+    if (mode === 'center') return [[W / 2, H / 2]];
+    if (mode === 'top') return [[W / 2, H - size * 1.2 - Math.abs(Math.sin(a)) * w / 2]];
+    if (mode === 'bottom') return [[W / 2, size * 1.2 + Math.abs(Math.sin(a)) * w / 2]];
+    const sx = w + size * 2, sy = size * 3.2, R = Math.hypot(W, H);
+    const pts = [];
+    for (let gy = -R; gy <= R; gy += sy) {
+      const row = Math.round(gy / sy);
+      for (let gx = -R + (row % 2 ? sx / 2 : 0); gx <= R; gx += sx) {
+        const cx = W / 2 + gx * Math.cos(a) - gy * Math.sin(a), cy = H / 2 + gx * Math.sin(a) + gy * Math.cos(a);
+        if (cx > -w && cx < W + w && cy > -w && cy < H + w) pts.push([cx, cy]);
+      }
+    }
+    return pts;
+  }
+
+  function draw() {
+    if (!pageCanvas) return;
+    const c = $('#pv'), ctx = c.getContext('2d');
+    c.width = pageCanvas.width; c.height = pageCanvas.height;
+    ctx.drawImage(pageCanvas, 0, 0);
+    const k = c.width / pageSize[0];
+    const text = $('#text').value || ' ', size = +$('#size').value, ang = +$('#ang').value;
+    ctx.font = `bold ${size * k}px "DejaVu Sans", Helvetica, Arial, sans-serif`;
+    const w = ctx.measureText(text).width / k;
+    ctx.fillStyle = $('#color').value; ctx.globalAlpha = +$('#op').value / 100;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    for (const [x, y] of layout(pageSize[0], pageSize[1], w, size, ang, pos.get())) {
+      ctx.save(); ctx.translate(x * k, (pageSize[1] - y) * k); ctx.rotate((-ang * Math.PI) / 180); ctx.fillText(text, 0, 0); ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  $('#go').onclick = async () => {
+    const text = $('#text').value.trim();
+    if (!text) return T.toast('Filigran metni girin', 'error');
+    let list;
+    try { list = $('#pages').value.trim() ? new Set(T.parseRanges($('#pages').value, n)) : null; } catch (e) { return T.toast(e.message, 'error'); }
+    const btn = $('#go'); T.busy(btn, true, 'Ekleniyor…');
+    try {
+      const L = await T.lib.pdfLib();
+      const pdf = await T.pdfLibOpen(buf);
+      const font = await T.embedTurkishFont(pdf, text);
+      const size = +$('#size').value, ang = +$('#ang').value, [r, g, b] = hex2rgb($('#color').value), op = +$('#op').value / 100;
+      const w = font.widthOfTextAtSize(text, size), hh = font.heightAtSize(size, { descender: false }) * 0.5;
+      pdf.getPages().forEach((page, i) => {
+        if (list && !list.has(i + 1)) return;
+        const box = page.getCropBox();
+        const rot = page.getRotation().angle % 360;
+        const swap = rot % 180 !== 0;
+        const W = swap ? box.height : box.width, H = swap ? box.width : box.height;
+        for (const [cx, cy] of layout(W, H, w, size, ang, pos.get())) {
+          // map display coords -> user space for rotated pages
+          let ux = cx, uy = cy, A = ang;
+          if (rot === 90) { ux = box.width - cy; uy = cx; }
+          else if (rot === 180) { ux = box.width - cx; uy = box.height - cy; }
+          else if (rot === 270) { ux = cy; uy = box.height - cx; }
+          A = ang + rot;
+          const a = (A * Math.PI) / 180;
+          const x = ux - (w / 2) * Math.cos(a) + hh * Math.sin(a);
+          const y = uy - (w / 2) * Math.sin(a) - hh * Math.cos(a);
+          page.drawText(text, { x: x + box.x, y: y + box.y, size, font, color: L.rgb(r, g, b), opacity: op, rotate: L.degrees(A) });
+        }
+      });
+      const blob = new Blob([await pdf.save()], { type: 'application/pdf' });
+      const name = T.baseName(file.name) + '_filigranli.pdf';
+      $('#out').innerHTML = '';
+      $('#out').appendChild(T.resultBox({ title: 'Filigran eklendi!', text: formatBytes(blob.size), actions: [{ label: 'İndir', icon: 'download', primary: true, onClick: () => T.download(blob, name) }] }));
+      T.download(blob, name);
+    } catch (e) { console.error(e); T.toast(T.pdfErrorMessage(e), 'error', 5000); }
+    finally { T.busy(btn, false); }
+  };
+})();
+</script>
+</body>
+</html>

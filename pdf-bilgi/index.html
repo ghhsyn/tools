@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDF Meta Verilerini Görüntüle ve Düzenle | Notettiklerim Tools</title>
+<meta name="description" content="PDF dosyasının başlık, yazar, konu, anahtar kelime ve oluşturucu bilgilerini görüntüleyin, düzenleyin veya tamamen temizleyin. Ücretsiz ve güvenli.">
+<link rel="canonical" href="https://tools.notettiklerim.com/pdf-bilgi/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="PDF Meta Verilerini Görüntüle ve Düzenle">
+<meta property="og:description" content="PDF dosyasının başlık, yazar, konu, anahtar kelime ve oluşturucu bilgilerini görüntüleyin, düzenleyin veya tamamen temizleyin. Ücretsiz ve güvenli.">
+<meta property="og:url" content="https://tools.notettiklerim.com/pdf-bilgi/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="pdf-bilgi">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <div class="card" id="dzCard">
+    <div id="dz"></div>
+    <div class="privacy-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Dosyalarınız tarayıcınızda işlenir, hiçbir sunucuya yüklenmez.</div>
+  </div>
+  <div class="tool-layout" id="work" hidden>
+    <div class="card stack">
+      <div class="row row-between">
+        <div style="min-width:0"><b id="fname" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></b><span class="muted small" id="fmeta"></span></div>
+        <button class="btn btn-sm" id="change"><i data-icon="refresh"></i>Dosyayı değiştir</button>
+      </div>
+      <div class="field"><label for="title">Başlık</label><input class="input" id="title"></div>
+      <div class="grid-2">
+        <div class="field"><label for="author">Yazar</label><input class="input" id="author"></div>
+        <div class="field"><label for="subject">Konu</label><input class="input" id="subject"></div>
+      </div>
+      <div class="field"><label for="keywords">Anahtar kelimeler</label><input class="input" id="keywords" placeholder="virgülle ayırın"></div>
+      <div class="grid-2">
+        <div class="field"><label for="creator">Oluşturan uygulama</label><input class="input" id="creator"></div>
+        <div class="field"><label for="producer">Üretici</label><input class="input" id="producer"></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label for="cdate">Oluşturma tarihi</label><input class="input" type="datetime-local" id="cdate"></div>
+        <div class="field"><label for="mdate">Değiştirme tarihi</label><input class="input" type="datetime-local" id="mdate"></div>
+      </div>
+      <div class="row row-between">
+        <button class="btn btn-danger" id="wipe"><i data-icon="trash"></i>Tümünü temizle</button>
+        <button class="btn btn-primary btn-lg" id="save"><i data-icon="download"></i>Kaydet ve İndir</button>
+      </div>
+      <div id="out"></div>
+    </div>
+    <aside class="side card">
+      <div class="card-title"><i data-icon="info"></i>Belge bilgileri</div>
+      <dl class="kv" id="kv"></dl>
+    </aside>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>PDF dosyanızı seçin.</li>
+        <li>Mevcut meta verileri inceleyin ve istediğiniz alanları düzenleyin.</li>
+        <li>"Kaydet ve İndir" ile güncellenmiş PDF'i indirin.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Meta veriler neden önemli?</summary><p>Başlık ve yazar bilgisi arama motorlarında, PDF okuyucularda ve dosya yöneticilerinde görünür. Doğru meta veriler belgenizin profesyonel görünmesini sağlar.</p></details>
+      <details class="faq"><summary>Gizlilik için meta verileri silebilir miyim?</summary><p>Evet. "Tümünü temizle" butonu yazar, oluşturucu ve tarih gibi kişisel bilgileri kaldırır.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, esc, formatBytes } = T;
+  let file, buf;
+  const F = ['title', 'author', 'subject', 'keywords', 'creator', 'producer'];
+  const dz = T.dropzone($('#dz'), { accept: '.pdf,application/pdf', icon: 'fileText', title: 'PDF dosyası seçin', subtitle: 'veya buraya sürükleyip bırakın', onFiles: (f) => load(f[0]) });
+  T.pageDrop((f) => load(f[0]), '.pdf,application/pdf');
+  $('#change').onclick = () => dz.open();
+  const toLocal = (d) => { if (!d) return ''; const z = new Date(d.getTime() - d.getTimezoneOffset() * 60000); return z.toISOString().slice(0, 16); };
+
+  async function load(f) {
+    let pdf, js;
+    try { file = f; buf = await T.readBuffer(f); pdf = await T.pdfLibOpen(buf); js = await T.pdfjsOpen(buf); }
+    catch (e) { return T.toast(T.pdfErrorMessage(e), 'error', 5000); }
+    $('#dzCard').hidden = true; $('#work').hidden = false; $('#out').innerHTML = '';
+    $('#fname').textContent = f.name; $('#fmeta').textContent = `${pdf.getPageCount()} sayfa · ${formatBytes(f.size)}`;
+    $('#title').value = pdf.getTitle() || '';
+    $('#author').value = pdf.getAuthor() || '';
+    $('#subject').value = pdf.getSubject() || '';
+    $('#keywords').value = pdf.getKeywords() || '';
+    $('#creator').value = pdf.getCreator() || '';
+    $('#producer').value = pdf.getProducer() || '';
+    $('#cdate').value = toLocal(pdf.getCreationDate());
+    $('#mdate').value = toLocal(pdf.getModificationDate());
+    const p1 = pdf.getPage(0).getSize();
+    const meta = await js.getMetadata().catch(() => ({ info: {} }));
+    const mm = (pt) => Math.round((pt / 72) * 25.4);
+    const rows = [
+      ['Dosya adı', f.name], ['Boyut', formatBytes(f.size)], ['Sayfa sayısı', pdf.getPageCount()],
+      ['Sayfa boyutu', `${mm(p1.width)} × ${mm(p1.height)} mm`], ['PDF sürümü', meta.info.PDFFormatVersion || '-'],
+      ['Formlar', meta.info.IsAcroFormPresent ? 'Var' : 'Yok'], ['Linearize', meta.info.IsLinearized ? 'Evet' : 'Hayır'],
+    ];
+    $('#kv').innerHTML = rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('');
+    js.destroy();
+  }
+  $('#wipe').onclick = () => { F.forEach((k) => ($('#' + k).value = '')); $('#cdate').value = $('#mdate').value = ''; T.toast('Alanlar temizlendi; kaydetmeyi unutmayın'); };
+  $('#save').onclick = async () => {
+    const btn = $('#save'); T.busy(btn, true, 'Kaydediliyor…');
+    try {
+      const pdf = await T.pdfLibOpen(buf);
+      pdf.setTitle($('#title').value); pdf.setAuthor($('#author').value); pdf.setSubject($('#subject').value);
+      pdf.setKeywords($('#keywords').value.split(',').map((s) => s.trim()).filter(Boolean));
+      pdf.setCreator($('#creator').value); pdf.setProducer($('#producer').value);
+      if ($('#cdate').value) pdf.setCreationDate(new Date($('#cdate').value));
+      if ($('#mdate').value) pdf.setModificationDate(new Date($('#mdate').value));
+      let bytes = await pdf.save();
+      if (!$('#cdate').value || !$('#mdate').value) {
+        // remove empty date entries entirely
+        const p2 = await T.pdfLibOpen(bytes);
+        const L = await T.lib.pdfLib();
+        const info = p2.getInfoDict();
+        if (!$('#cdate').value) info.delete(L.PDFName.of('CreationDate'));
+        if (!$('#mdate').value) info.delete(L.PDFName.of('ModDate'));
+        bytes = await p2.save();
+      }
+      const blob = new Blob([bytes], { type: 'application/pdf' });
+      $('#out').innerHTML = '';
+      $('#out').appendChild(T.resultBox({ title: 'Meta veriler güncellendi!', text: formatBytes(blob.size), actions: [{ label: 'İndir', icon: 'download', primary: true, onClick: () => T.download(blob, file.name) }] }));
+      T.download(blob, file.name);
+    } catch (e) { console.error(e); T.toast(T.pdfErrorMessage(e), 'error', 5000); }
+    finally { T.busy(btn, false); }
+  };
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDF&#x27;ten JPG / PNG&#x27;ye Dönüştür – Ücretsiz | Notettiklerim Tools</title>
+<meta name="description" content="PDF sayfalarını yüksek çözünürlüklü JPG veya PNG görsellere dönüştürün. Çözünürlük ve sayfa seçimi yapın, tümünü ZIP olarak indirin.">
+<link rel="canonical" href="https://tools.notettiklerim.com/pdf-gorsel/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="PDF&#x27;ten JPG / PNG&#x27;ye Dönüştür – Ücretsiz">
+<meta property="og:description" content="PDF sayfalarını yüksek çözünürlüklü JPG veya PNG görsellere dönüştürün. Çözünürlük ve sayfa seçimi yapın, tümünü ZIP olarak indirin.">
+<meta property="og:url" content="https://tools.notettiklerim.com/pdf-gorsel/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="pdf-gorsel">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <div class="card" id="dzCard">
+    <div id="dz"></div>
+    <div class="privacy-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Dosyalarınız tarayıcınızda işlenir, hiçbir sunucuya yüklenmez.</div>
+  </div>
+  <div class="tool-layout" id="work" hidden>
+    <div class="card">
+      <div class="row row-between" style="margin-bottom:16px">
+        <div style="min-width:0"><b id="fname" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></b><span class="muted small" id="fmeta"></span></div>
+        <button class="btn btn-sm" id="change"><i data-icon="refresh"></i>Dosyayı değiştir</button>
+      </div>
+      <div class="thumb-grid" id="grid"></div>
+    </div>
+    <aside class="side card stack">
+      <div class="card-title"><i data-icon="sliders"></i>Dönüştürme ayarları</div>
+      <div class="field"><label>Format</label><div class="seg block" id="fmt" data-value="jpg"><button data-v="jpg">JPG</button><button data-v="png">PNG</button><button data-v="webp">WebP</button></div></div>
+      <div class="field"><label>Çözünürlük</label>
+        <select class="select" id="dpi"><option value="72">72 DPI · Küçük</option><option value="150" selected>150 DPI · Standart</option><option value="200">200 DPI · Yüksek</option><option value="300">300 DPI · Baskı</option></select>
+      </div>
+      <div class="field" id="qF"><div class="range-head"><label>Kalite</label><output></output></div><input type="range" id="q" min="40" max="100" value="90"></div>
+      <div class="field"><label for="pages">Sayfalar</label><input class="input" id="pages" placeholder="Tümü (ör. 1-3, 5)"><span class="hint">Boş bırakırsanız tüm sayfalar dönüştürülür.</span></div>
+      <button class="btn btn-primary btn-lg btn-block" id="go"><i data-icon="image"></i>Görsellere Dönüştür</button>
+      <div class="progress" id="prog" hidden><div></div></div>
+      <div id="out"></div>
+    </aside>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>PDF dosyanızı seçin.</li>
+        <li>Çıktı formatını (JPG/PNG), çözünürlüğü ve sayfaları seçin.</li>
+        <li>"Görsellere Dönüştür" butonuna basın; birden fazla sayfa ZIP olarak iner.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Hangi çözünürlüğü seçmeliyim?</summary><p>Ekranda görüntüleme için 150 DPI yeterlidir. Baskı için 300 DPI önerilir.</p></details>
+      <details class="faq"><summary>Tek bir sayfayı indirebilir miyim?</summary><p>Evet. Sayfa küçük resminin üzerindeki indirme butonunu kullanabilir veya sayfa alanına yalnızca o sayfanın numarasını yazabilirsiniz.</p></details>
+      <details class="faq"><summary>PNG mi JPG mi?</summary><p>PNG kayıpsızdır ve metin ağırlıklı sayfalarda daha nettir; JPG fotoğraflı sayfalarda daha küçük dosya üretir.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, $$, icon, formatBytes } = T;
+  let file, doc, n = 0;
+  const dz = T.dropzone($('#dz'), { accept: '.pdf,application/pdf', icon: 'fileText', title: 'PDF dosyası seçin', subtitle: 'veya buraya sürükleyip bırakın', onFiles: (f) => load(f[0]) });
+  T.pageDrop((f) => load(f[0]), '.pdf,application/pdf');
+  $('#change').onclick = () => dz.open();
+  const fmt = T.seg($('#fmt'), (v) => ($('#qF').hidden = v === 'png'));
+  T.bindRange($('#q'), (v) => v + '%');
+
+  async function load(f) {
+    try { file = f; if (doc) doc.destroy(); doc = await T.pdfjsOpen(await T.readBuffer(f)); n = doc.numPages; }
+    catch (e) { return T.toast(T.pdfErrorMessage(e), 'error', 5000); }
+    $('#dzCard').hidden = true; $('#work').hidden = false; $('#out').innerHTML = '';
+    $('#fname').textContent = f.name; $('#fmeta').textContent = `${n} sayfa · ${formatBytes(f.size)}`;
+    const grid = $('#grid'); grid.innerHTML = '';
+    const els = [];
+    for (let i = 1; i <= n; i++) {
+      const el = T.h(`<div class="thumb" data-page="${i}" style="cursor:default"><div class="t-actions"><button data-dl="${i}" title="Bu sayfayı indir">${icon('download')}</button></div><div class="page"><span class="spinner" style="color:var(--muted)"></span></div><span class="num">${i}</span></div>`);
+      grid.appendChild(el); els.push(el);
+    }
+    T.lazyThumbs(doc, els, { size: 150 });
+  }
+
+  const mime = () => ({ jpg: 'image/jpeg', png: 'image/png', webp: 'image/webp' }[fmt.get()]);
+  async function renderOne(i) {
+    const page = await doc.getPage(i);
+    const c = await T.renderPdfPage(page, { scale: +$('#dpi').value / 72 });
+    const blob = await T.canvasToBlob(c, mime(), +$('#q').value / 100);
+    c.width = c.height = 0;
+    return blob;
+  }
+  const fname = (i) => `${T.baseName(file.name)}_sayfa-${String(i).padStart(String(n).length, '0')}.${fmt.get()}`;
+
+  $('#grid').addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-dl]'); if (!b) return;
+    const i = +b.dataset.dl; b.innerHTML = '<span class="spinner" style="width:14px;height:14px"></span>';
+    try { T.download(await renderOne(i), fname(i)); } finally { b.innerHTML = icon('download'); }
+  });
+
+  $('#go').onclick = async () => {
+    let list;
+    try { list = $('#pages').value.trim() ? [...new Set(T.parseRanges($('#pages').value, n))] : Array.from({ length: n }, (_, i) => i + 1); }
+    catch (e) { return T.toast(e.message, 'error'); }
+    const btn = $('#go'); T.busy(btn, true, 'Dönüştürülüyor…');
+    const prog = $('#prog'); prog.hidden = false; const bar = prog.firstElementChild; bar.style.width = '0';
+    try {
+      const outs = [];
+      for (let k = 0; k < list.length; k++) {
+        outs.push({ name: fname(list[k]), blob: await renderOne(list[k]) });
+        bar.style.width = ((k + 1) / list.length) * 100 + '%';
+      }
+      let blob, name;
+      if (outs.length === 1) ({ blob, name } = outs[0]);
+      else {
+        const Z = await T.lib.zip(); const z = new Z();
+        outs.forEach((o) => z.file(o.name, o.blob));
+        blob = await z.generateAsync({ type: 'blob' }); name = T.baseName(file.name) + '_gorseller.zip';
+      }
+      $('#out').innerHTML = '';
+      $('#out').appendChild(T.resultBox({ title: `${outs.length} görsel hazır!`, text: formatBytes(blob.size), actions: [{ label: 'İndir', icon: 'download', primary: true, onClick: () => T.download(blob, name) }] }));
+      T.download(blob, name);
+    } catch (e) { console.error(e); T.toast(T.pdfErrorMessage(e), 'error', 5000); }
+    finally { T.busy(btn, false); prog.hidden = true; }
+  };
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDF Böl – Sayfa Ayıkla ve PDF Ayır, Ücretsiz | Notettiklerim Tools</title>
+<meta name="description" content="PDF dosyalarını sayfa aralıklarına göre bölün, belirli sayfaları ayıklayın veya her sayfayı ayrı PDF yapın. Ücretsiz ve güvenli, dosyanız cihazınızdan çıkmaz.">
+<link rel="canonical" href="https://tools.notettiklerim.com/pdf-bol/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="PDF Böl – Sayfa Ayıkla ve PDF Ayır, Ücretsiz">
+<meta property="og:description" content="PDF dosyalarını sayfa aralıklarına göre bölün, belirli sayfaları ayıklayın veya her sayfayı ayrı PDF yapın. Ücretsiz ve güvenli, dosyanız cihazınızdan çıkmaz.">
+<meta property="og:url" content="https://tools.notettiklerim.com/pdf-bol/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="pdf-bol">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <div class="card" id="dzCard">
+    <div id="dz"></div>
+    <div class="privacy-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Dosyalarınız tarayıcınızda işlenir, hiçbir sunucuya yüklenmez.</div>
+  </div>
+
+  <div class="tool-layout" id="work" hidden>
+    <div class="card">
+      <div class="row row-between" style="margin-bottom:16px">
+        <div class="row" style="gap:12px;min-width:0">
+          <div class="fi-icon" style="width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--c-pdf) 12%,transparent);color:var(--c-pdf)"><i data-icon="fileText"></i></div>
+          <div style="min-width:0"><b id="fname" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></b><span class="muted small" id="fmeta"></span></div>
+        </div>
+        <button class="btn btn-sm" id="change"><i data-icon="refresh"></i>Dosyayı değiştir</button>
+      </div>
+      <div class="thumb-grid" id="grid"></div>
+    </div>
+
+    <aside class="side card stack">
+      <div class="card-title"><i data-icon="sliders"></i>Bölme ayarları</div>
+      <div class="seg block" id="mode" data-value="ranges">
+        <button data-v="ranges">Aralık</button><button data-v="extract">Ayıkla</button><button data-v="every">Her N</button><button data-v="all">Tümü</button>
+      </div>
+      <div class="field" data-m="ranges">
+        <label for="ranges">Sayfa aralıkları</label>
+        <input id="ranges" class="input" placeholder="ör. 1-3, 4-6, 7-">
+        <span class="hint">Her aralık ayrı bir PDF dosyası olur.</span>
+      </div>
+      <div class="field" data-m="extract" hidden>
+        <label for="pick">Ayıklanacak sayfalar</label>
+        <input id="pick" class="input" placeholder="ör. 1, 3, 5-8">
+        <span class="hint">Soldaki sayfalara tıklayarak da seçebilirsiniz. Seçilenler tek PDF olur.</span>
+        <div class="row" style="gap:6px"><button class="btn btn-sm" id="selAll">Tümünü seç</button><button class="btn btn-sm btn-ghost" id="selNone">Temizle</button><button class="btn btn-sm btn-ghost" id="selOdd">Tekler</button><button class="btn btn-sm btn-ghost" id="selEven">Çiftler</button></div>
+      </div>
+      <div class="field" data-m="every" hidden>
+        <label for="every">Kaç sayfada bir bölünsün?</label>
+        <input id="every" type="number" min="1" value="2" class="input">
+        <span class="hint" id="everyHint"></span>
+      </div>
+      <div data-m="all" hidden><div class="alert info"><i data-icon="info"></i><span>Her sayfa ayrı bir PDF dosyası olarak kaydedilir ve ZIP halinde indirilir.</span></div></div>
+      <button class="btn btn-primary btn-lg btn-block" id="go"><i data-icon="scissors"></i>PDF'i Böl</button>
+      <div id="out"></div>
+    </aside>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>PDF dosyanızı seçin veya sürükleyip bırakın.</li>
+        <li>Bölme yöntemini seçin: aralık, ayıklama, her N sayfa veya tüm sayfalar.</li>
+        <li>"PDF'i Böl" butonuna basın; birden fazla dosya ZIP olarak indirilir.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Aralıkları nasıl yazmalıyım?</summary><p>Virgülle ayırın: "1-3, 4-6, 9". Açık uçlu aralık da kullanabilirsiniz: "5-" 5. sayfadan sona kadar demektir.</p></details>
+      <details class="faq"><summary>Orijinal dosyam değişir mi?</summary><p>Hayır. Orijinal dosyanız olduğu gibi kalır, yeni dosyalar oluşturulur.</p></details>
+      <details class="faq"><summary>Kalite kaybı olur mu?</summary><p>Hayır. Sayfalar kopyalanır, yeniden sıkıştırma yapılmaz.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, $$, esc, formatBytes } = T;
+  let file, buf, doc, n = 0;
+  const sel = new Set();
+  const grid = $('#grid');
+
+  const dz = T.dropzone($('#dz'), { accept: '.pdf,application/pdf', icon: 'fileText', title: 'PDF dosyası seçin', subtitle: 'veya buraya sürükleyip bırakın', onFiles: (f) => load(f[0]) });
+  T.pageDrop((f) => load(f[0]), '.pdf,application/pdf');
+  $('#change').onclick = () => dz.open();
+
+  const mode = T.seg($('#mode'), (v) => {
+    $$('[data-m]').forEach((el) => (el.hidden = el.dataset.m !== v));
+    $('#out').innerHTML = '';
+    paintSel();
+  });
+
+  async function load(f) {
+    try {
+      file = f; buf = await T.readBuffer(f);
+      if (doc) doc.destroy();
+      doc = await T.pdfjsOpen(buf);
+      n = doc.numPages;
+    } catch (e) { return T.toast(T.pdfErrorMessage(e), 'error', 5000); }
+    sel.clear();
+    $('#dzCard').hidden = true; $('#work').hidden = false;
+    $('#fname').textContent = f.name;
+    $('#fmeta').textContent = `${n} sayfa · ${formatBytes(f.size)}`;
+    $('#ranges').value = n > 1 ? `1-${Math.ceil(n / 2)}, ${Math.ceil(n / 2) + 1}-${n}` : '1';
+    $('#pick').value = '';
+    $('#out').innerHTML = '';
+    updEvery();
+    grid.innerHTML = '';
+    const els = [];
+    for (let i = 1; i <= n; i++) {
+      const el = T.h(`<div class="thumb" data-page="${i}" style="cursor:pointer"><div class="page"><span class="spinner" style="color:var(--muted)"></span></div><span class="num">${i}</span></div>`);
+      grid.appendChild(el); els.push(el);
+    }
+    T.lazyThumbs(doc, els, { size: 150 });
+  }
+
+  grid.addEventListener('click', (e) => {
+    const t = e.target.closest('.thumb'); if (!t) return;
+    if (mode.get() !== 'extract') mode.set('extract');
+    const p = +t.dataset.page;
+    sel.has(p) ? sel.delete(p) : sel.add(p);
+    $('#pick').value = compact([...sel].sort((a, b) => a - b));
+    paintSel();
+  });
+  $('#pick').addEventListener('input', () => {
+    sel.clear();
+    try { T.parseRanges($('#pick').value, n).forEach((p) => sel.add(p)); } catch {}
+    paintSel();
+  });
+  const setSel = (fn) => { sel.clear(); for (let i = 1; i <= n; i++) if (fn(i)) sel.add(i); $('#pick').value = compact([...sel]); paintSel(); };
+  $('#selAll').onclick = () => setSel(() => true);
+  $('#selNone').onclick = () => setSel(() => false);
+  $('#selOdd').onclick = () => setSel((i) => i % 2 === 1);
+  $('#selEven').onclick = () => setSel((i) => i % 2 === 0);
+  $('#every').addEventListener('input', updEvery);
+  function updEvery() { const k = Math.max(1, +$('#every').value || 1); $('#everyHint').textContent = `${Math.ceil(n / k)} dosya oluşturulacak.`; }
+
+  function paintSel() {
+    const on = mode.get() === 'extract';
+    $$('.thumb', grid).forEach((el) => el.classList.toggle('selected', on && sel.has(+el.dataset.page)));
+  }
+  function compact(arr) {
+    const out = []; let i = 0;
+    while (i < arr.length) { let j = i; while (j + 1 < arr.length && arr[j + 1] === arr[j] + 1) j++; out.push(j > i ? `${arr[i]}-${arr[j]}` : `${arr[i]}`); i = j + 1; }
+    return out.join(', ');
+  }
+
+  function groups() {
+    const m = mode.get();
+    if (m === 'ranges') {
+      const parts = $('#ranges').value.split(',').map((s) => s.trim()).filter(Boolean);
+      if (!parts.length) throw new Error('Lütfen en az bir aralık girin');
+      return parts.map((p) => ({ label: p.replace(/\s/g, ''), pages: T.parseRanges(p, n) }));
+    }
+    if (m === 'extract') {
+      const pages = T.parseRanges($('#pick').value, n);
+      return [{ label: 'secilen', pages }];
+    }
+    const k = m === 'all' ? 1 : Math.max(1, +$('#every').value || 1);
+    const g = [];
+    for (let i = 1; i <= n; i += k) {
+      const pages = []; for (let j = i; j < i + k && j <= n; j++) pages.push(j);
+      g.push({ label: pages.length > 1 ? `${pages[0]}-${pages[pages.length - 1]}` : `${pages[0]}`, pages });
+    }
+    return g;
+  }
+
+  $('#go').onclick = async () => {
+    let gs;
+    try { gs = groups(); } catch (e) { return T.toast(e.message, 'error'); }
+    const btn = $('#go');
+    T.busy(btn, true, 'Bölünüyor…');
+    try {
+      const L = await T.lib.pdfLib();
+      const src = await T.pdfLibOpen(buf);
+      const base = T.baseName(file.name);
+      const outs = [];
+      for (const g of gs) {
+        const d = await L.PDFDocument.create();
+        const pages = await d.copyPages(src, g.pages.map((p) => p - 1));
+        pages.forEach((p) => d.addPage(p));
+        outs.push({ name: `${base}_${g.label}.pdf`, bytes: await d.save(), count: g.pages.length });
+        await T.nextFrame();
+      }
+      let blob, name;
+      if (outs.length === 1) {
+        blob = new Blob([outs[0].bytes], { type: 'application/pdf' }); name = outs[0].name;
+      } else {
+        const Z = await T.lib.zip(); const z = new Z();
+        outs.forEach((o) => z.file(o.name, o.bytes));
+        blob = await z.generateAsync({ type: 'blob' }); name = `${base}_bolunmus.zip`;
+      }
+      $('#out').innerHTML = '';
+      $('#out').appendChild(T.resultBox({
+        title: outs.length === 1 ? 'PDF hazır!' : `${outs.length} PDF hazır!`,
+        text: `${outs.length === 1 ? outs[0].count + ' sayfa' : 'ZIP arşivi'} · ${formatBytes(blob.size)}`,
+        actions: [{ label: 'İndir', icon: 'download', primary: true, onClick: () => T.download(blob, name) }],
+      }));
+      T.download(blob, name);
+    } catch (e) {
+      console.error(e); T.toast(T.pdfErrorMessage(e), 'error', 5000);
+    } finally { T.busy(btn, false); }
+  };
+})();
+</script>
+</body>
+</html>

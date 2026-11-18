@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDF İmzala – Online Ücretsiz PDF İmza Ekleme | Notettiklerim Tools</title>
+<meta name="description" content="PDF belgelerinize imzanızı çizin, yazın veya görsel olarak yükleyin ve istediğiniz sayfaya yerleştirin. Ücretsiz, kayıtsız ve tamamen tarayıcınızda.">
+<link rel="canonical" href="https://tools.notettiklerim.com/pdf-imzala/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="PDF İmzala – Online Ücretsiz PDF İmza Ekleme">
+<meta property="og:description" content="PDF belgelerinize imzanızı çizin, yazın veya görsel olarak yükleyin ve istediğiniz sayfaya yerleştirin. Ücretsiz, kayıtsız ve tamamen tarayıcınızda.">
+<meta property="og:url" content="https://tools.notettiklerim.com/pdf-imzala/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="pdf-imzala">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <style>
+    @font-face { font-family: "Dancing Script"; font-display: swap; src: url(/assets/vendor/fonts/dancing-script-latin-400-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+    @font-face { font-family: "Dancing Script"; font-display: swap; src: url(/assets/vendor/fonts/dancing-script-latin-ext-400-normal.woff2) format("woff2"); unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+    @font-face { font-family: "Great Vibes"; font-display: swap; src: url(/assets/vendor/fonts/great-vibes-latin-400-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+    @font-face { font-family: "Great Vibes"; font-display: swap; src: url(/assets/vendor/fonts/great-vibes-latin-ext-400-normal.woff2) format("woff2"); unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+    .viewer { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; display: grid; place-items: center; overflow: auto; }
+    .page-wrap { position: relative; box-shadow: var(--shadow-lg); background: #fff; line-height: 0; user-select: none; touch-action: none; }
+    .page-wrap canvas { display: block; width: 100%; height: auto; }
+    .sig-box { position: absolute; border: 1.5px dashed transparent; cursor: move; touch-action: none; }
+    .sig-box img { width: 100%; height: 100%; display: block; pointer-events: none; object-fit: contain; }
+    .sig-box:hover, .sig-box.active { border-color: var(--primary); background: rgba(99,102,241,.06); }
+    .sig-box .h { position: absolute; right: -8px; bottom: -8px; width: 16px; height: 16px; border-radius: 50%; background: var(--primary); border: 2px solid #fff; cursor: nwse-resize; display: none; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+    .sig-box .rm { position: absolute; right: -10px; top: -10px; width: 22px; height: 22px; border-radius: 50%; background: var(--danger); color: #fff; border: 2px solid #fff; display: none; place-items: center; cursor: pointer; padding: 0; }
+    .sig-box .rm svg { width: 12px; height: 12px; }
+    .sig-box:hover .h, .sig-box.active .h { display: block; }
+    .sig-box:hover .rm, .sig-box.active .rm { display: grid; }
+    @media (hover: none) { .sig-box .h { display: block; } .sig-box .rm { display: grid; } }
+    .pad { width: 100%; height: 170px; background: #fff; border: 1px solid var(--border); border-radius: 12px; touch-action: none; cursor: crosshair; display: block; }
+    .pad-wrap { position: relative; }
+    .pad-wrap .base { position: absolute; left: 18px; right: 18px; bottom: 36px; border-bottom: 1.5px dashed #cbd5e1; pointer-events: none; }
+    .pad-wrap .ph { position: absolute; inset: 0; display: grid; place-items: center; color: #94a3b8; font-size: 14px; pointer-events: none; }
+    .sig-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; }
+    .sig-list button { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 6px; height: 56px; cursor: pointer; display: grid; place-items: center; }
+    .sig-list button:hover { border-color: var(--primary); }
+    .sig-list img { max-width: 100%; max-height: 42px; }
+    .swatches { display: flex; gap: 8px; }
+    .swatches button { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--border); cursor: pointer; }
+    .swatches button.active { box-shadow: 0 0 0 2px var(--primary); }
+  </style>
+  <div class="card" id="dzCard">
+    <div id="dz"></div>
+    <div class="privacy-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Dosyalarınız tarayıcınızda işlenir, hiçbir sunucuya yüklenmez.</div>
+  </div>
+
+  <div class="tool-layout" id="work" hidden>
+    <div class="card stack">
+      <div class="row row-between">
+        <div class="row" style="gap:6px">
+          <button class="btn btn-sm btn-icon" id="prev" title="Önceki sayfa"><i data-icon="arrowUp"></i></button>
+          <span class="small" style="font-weight:600;min-width:90px;text-align:center" id="pageInfo"></span>
+          <button class="btn btn-sm btn-icon" id="next" title="Sonraki sayfa"><i data-icon="arrowDown"></i></button>
+        </div>
+        <button class="btn btn-sm" id="change"><i data-icon="refresh"></i>Dosyayı değiştir</button>
+      </div>
+      <div class="viewer"><div class="page-wrap" id="pageWrap"><canvas id="pageCanvas"></canvas></div></div>
+      <p class="muted small" style="margin:0">İmzayı sürükleyerek taşıyın, sağ alt köşedeki tutamaçtan boyutlandırın.</p>
+    </div>
+
+    <aside class="side card stack">
+      <div class="card-title"><i data-icon="signature"></i>İmza oluştur</div>
+      <div class="seg block" id="sigMode" data-value="draw"><button data-v="draw"><i data-icon="pen"></i>Çiz</button><button data-v="type"><i data-icon="type"></i>Yaz</button><button data-v="upload"><i data-icon="upload"></i>Yükle</button></div>
+
+      <div data-sm="draw" class="stack-sm">
+        <div class="pad-wrap"><canvas class="pad" id="pad"></canvas><div class="base"></div><div class="ph" id="padPh">Buraya imzanızı çizin</div></div>
+        <div class="row row-between">
+          <div class="swatches" id="sw"><button style="background:#0f172a" data-c="#0f172a" class="active" title="Siyah"></button><button style="background:#1d4ed8" data-c="#1d4ed8" title="Mavi"></button><button style="background:#b91c1c" data-c="#b91c1c" title="Kırmızı"></button></div>
+          <button class="btn btn-sm btn-ghost" id="padClear"><i data-icon="trash"></i>Temizle</button>
+        </div>
+        <div class="field"><div class="range-head"><label>Kalem kalınlığı</label><output></output></div><input type="range" id="thick" min="1" max="8" value="3"></div>
+      </div>
+
+      <div data-sm="type" class="stack-sm" hidden>
+        <input class="input" id="typed" placeholder="Adınız Soyadınız" maxlength="40">
+        <div class="seg block" id="fontSel" data-value="Dancing Script"><button data-v="Dancing Script" style="font-family:'Dancing Script';font-size:17px">İmza</button><button data-v="Great Vibes" style="font-family:'Great Vibes';font-size:19px">İmza</button><button data-v="Georgia" style="font-family:Georgia;font-style:italic">İmza</button></div>
+      </div>
+
+      <div data-sm="upload" class="stack-sm" hidden>
+        <div id="sigDz"></div>
+        <label class="check"><input type="checkbox" id="rmBg" checked>Beyaz arka planı kaldır</label>
+      </div>
+
+      <button class="btn btn-primary btn-block" id="place"><i data-icon="plus"></i>Sayfaya ekle</button>
+      <button class="btn btn-block btn-sm" id="addDate"><i data-icon="calendar"></i>Tarih ekle</button>
+
+      <div id="savedWrap" hidden>
+        <div class="label" style="margin-bottom:8px">Oluşturulan imzalar</div>
+        <div class="sig-list" id="saved"></div>
+      </div>
+      <hr class="divider">
+      <button class="btn btn-primary btn-lg btn-block" id="save"><i data-icon="download"></i>İmzalı PDF'i İndir</button>
+      <div id="out"></div>
+    </aside>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>PDF dosyanızı yükleyin.</li>
+        <li>Sağ panelden imzanızı çizin, yazın veya imza görselinizi yükleyin.</li>
+        <li>"Sayfaya ekle" ile imzayı yerleştirin, sürükleyerek taşıyın ve köşesinden boyutlandırın.</li>
+        <li>"İmzalı PDF'i İndir" butonuna basın.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Bu e-imza yerine geçer mi?</summary><p>Hayır. Bu araç görsel (ıslak imza benzeri) imza ekler. Yasal geçerliliği olan nitelikli elektronik imza için e-imza sertifikası gerekir.</p></details>
+      <details class="faq"><summary>Birden fazla imza ekleyebilir miyim?</summary><p>Evet. Aynı imzayı veya farklı imzaları istediğiniz sayfalara, istediğiniz sayıda ekleyebilirsiniz.</p></details>
+      <details class="faq"><summary>İmzam kaydediliyor mu?</summary><p>Hayır. İmzanız yalnızca bu sayfa açıkken tarayıcı belleğinde tutulur.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, $$, icon, formatBytes } = T;
+  let file, buf, doc, cur = 1, n = 0;
+  let placements = []; // {id, page, x, y, w, h (fractions), src(dataURL), ratio}
+  const saved = [];    // dataURLs
+  let uid = 0, color = '#0f172a';
+  const wrap = $('#pageWrap'), canvas = $('#pageCanvas');
+
+  const dz = T.dropzone($('#dz'), { accept: '.pdf,application/pdf', icon: 'fileText', title: 'İmzalanacak PDF dosyasını seçin', subtitle: 'veya buraya sürükleyip bırakın', onFiles: (f) => load(f[0]) });
+  $('#change').onclick = () => dz.open();
+
+  async function load(f) {
+    try {
+      file = f; buf = await T.readBuffer(f);
+      if (doc) doc.destroy();
+      doc = await T.pdfjsOpen(buf); n = doc.numPages; cur = 1; placements = [];
+    } catch (e) { return T.toast(T.pdfErrorMessage(e), 'error', 5000); }
+    $('#dzCard').hidden = true; $('#work').hidden = false;
+    $('#out').innerHTML = '';
+    await showPage();
+    sizePad();
+  }
+
+  async function showPage() {
+    const page = await doc.getPage(cur);
+    const vp1 = page.getViewport({ scale: 1, rotation: page.rotate });
+    const avail = Math.min(wrap.parentElement.clientWidth - 40, 900);
+    const cssW = Math.max(200, Math.min(avail, (window.innerHeight - 140) * (vp1.width / vp1.height)));
+    wrap.style.width = cssW + 'px';
+    await T.renderPdfPage(page, { scale: (cssW / vp1.width) * Math.min(devicePixelRatio || 1, 2), canvas });
+    $('#pageInfo').textContent = `Sayfa ${cur} / ${n}`;
+    $('#prev').disabled = cur <= 1; $('#next').disabled = cur >= n;
+    drawBoxes();
+  }
+  $('#prev').onclick = () => { if (cur > 1) { cur--; showPage(); } };
+  $('#next').onclick = () => { if (cur < n) { cur++; showPage(); } };
+  window.addEventListener('resize', T.debounce(() => { if (doc && !$('#work').hidden) showPage(); }, 200));
+
+  function drawBoxes() {
+    $$('.sig-box', wrap).forEach((el) => el.remove());
+    placements.filter((p) => p.page === cur).forEach((p) => {
+      const el = T.h(`<div class="sig-box" data-id="${p.id}"><img alt="" src="${p.src}"><span class="h"></span><button class="rm" title="Kaldır">${icon('x')}</button></div>`);
+      Object.assign(el.style, { left: p.x * 100 + '%', top: p.y * 100 + '%', width: p.w * 100 + '%', height: p.h * 100 + '%' });
+      wrap.appendChild(el);
+    });
+  }
+
+  // drag & resize
+  let act = null;
+  wrap.addEventListener('pointerdown', (e) => {
+    const box = e.target.closest('.sig-box');
+    $$('.sig-box', wrap).forEach((b) => b.classList.toggle('active', b === box));
+    if (!box) return;
+    if (e.target.closest('.rm')) { placements = placements.filter((p) => p.id !== +box.dataset.id); drawBoxes(); return; }
+    const p = placements.find((x) => x.id === +box.dataset.id);
+    const r = wrap.getBoundingClientRect();
+    act = { p, box, mode: e.target.classList.contains('h') ? 'resize' : 'move', sx: e.clientX, sy: e.clientY, o: { ...p }, W: r.width, H: r.height };
+    box.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+  wrap.addEventListener('pointermove', (e) => {
+    if (!act) return;
+    const { p, o, W, H } = act;
+    const dx = (e.clientX - act.sx) / W, dy = (e.clientY - act.sy) / H;
+    if (act.mode === 'move') {
+      p.x = Math.min(Math.max(0, o.x + dx), 1 - p.w);
+      p.y = Math.min(Math.max(0, o.y + dy), 1 - p.h);
+    } else {
+      const w = Math.min(Math.max(0.03, o.w + dx), 1 - p.x);
+      const h = (w * W) / p.ratio / H; // keep aspect
+      if (p.y + h <= 1) { p.w = w; p.h = h; }
+    }
+    Object.assign(act.box.style, { left: p.x * 100 + '%', top: p.y * 100 + '%', width: p.w * 100 + '%', height: p.h * 100 + '%' });
+  });
+  const end = () => { act = null; };
+  wrap.addEventListener('pointerup', end); wrap.addEventListener('pointercancel', end);
+
+  function place(src, ratio, widthFrac = 0.28) {
+    if (!doc) return;
+    const W = wrap.clientWidth, H = wrap.clientHeight;
+    const w = widthFrac, h = (w * W) / ratio / H;
+    const k = placements.filter((p) => p.page === cur).length % 6;
+    placements.push({ id: ++uid, page: cur, x: Math.min(1 - w, 0.5 - w / 2 + k * 0.03), y: Math.max(0, Math.min(0.72, 1 - h - 0.05) - k * 0.09), w, h, src, ratio });
+    drawBoxes();
+    $('#out').innerHTML = '';
+  }
+
+  // ----- signature sources -----
+  const sigMode = T.seg($('#sigMode'), (v) => $$('[data-sm]').forEach((el) => (el.hidden = el.dataset.sm !== v)));
+  const fontSel = T.seg($('#fontSel'));
+  T.bindRange($('#thick'));
+
+  const pad = $('#pad'), pctx = pad.getContext('2d');
+  let strokes = [], drawing = null;
+  function sizePad() {
+    const r = pad.getBoundingClientRect(); if (!r.width) return;
+    const d = 2; pad.width = r.width * d; pad.height = r.height * d; pctx.setTransform(d, 0, 0, d, 0, 0); redrawPad();
+  }
+  function redrawPad() {
+    pctx.clearRect(0, 0, pad.width, pad.height);
+    pctx.lineCap = 'round'; pctx.lineJoin = 'round';
+    for (const s of strokes) {
+      pctx.strokeStyle = s.c; pctx.lineWidth = s.w;
+      pctx.beginPath();
+      const pts = s.pts;
+      pctx.moveTo(pts[0][0], pts[0][1]);
+      if (pts.length === 1) pctx.lineTo(pts[0][0] + 0.1, pts[0][1]);
+      for (let i = 1; i < pts.length - 1; i++) {
+        const mx = (pts[i][0] + pts[i + 1][0]) / 2, my = (pts[i][1] + pts[i + 1][1]) / 2;
+        pctx.quadraticCurveTo(pts[i][0], pts[i][1], mx, my);
+      }
+      if (pts.length > 1) pctx.lineTo(pts[pts.length - 1][0], pts[pts.length - 1][1]);
+      pctx.stroke();
+    }
+    $('#padPh').hidden = strokes.length > 0;
+  }
+  const pt = (e) => { const r = pad.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  pad.addEventListener('pointerdown', (e) => { pad.setPointerCapture(e.pointerId); drawing = { c: color, w: +$('#thick').value, pts: [pt(e)] }; strokes.push(drawing); redrawPad(); });
+  pad.addEventListener('pointermove', (e) => { if (!drawing) return; drawing.pts.push(pt(e)); redrawPad(); });
+  pad.addEventListener('pointerup', () => (drawing = null));
+  $('#padClear').onclick = () => { strokes = []; redrawPad(); };
+  $('#sw').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    color = b.dataset.c; $$('#sw button').forEach((x) => x.classList.toggle('active', x === b));
+    strokes.forEach((s) => (s.c = color)); redrawPad();
+  });
+  new ResizeObserver(() => sizePad()).observe(pad);
+
+  /** Crop transparent margins of a canvas, return {src, ratio} */
+  function trim(c) {
+    const ctx = c.getContext('2d');
+    const { width: w, height: h } = c;
+    const d = ctx.getImageData(0, 0, w, h).data;
+    let x0 = w, y0 = h, x1 = -1, y1 = -1;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (d[(y * w + x) * 4 + 3] > 8) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+    if (x1 < 0) return null;
+    const pad = 6; x0 = Math.max(0, x0 - pad); y0 = Math.max(0, y0 - pad); x1 = Math.min(w - 1, x1 + pad); y1 = Math.min(h - 1, y1 + pad);
+    const o = document.createElement('canvas'); o.width = x1 - x0 + 1; o.height = y1 - y0 + 1;
+    o.getContext('2d').drawImage(c, x0, y0, o.width, o.height, 0, 0, o.width, o.height);
+    return { src: o.toDataURL('image/png'), ratio: o.width / o.height };
+  }
+
+  async function textToSig(text, font, size = 120, style = '') {
+    await document.fonts.load(`${style} ${size}px "${font}"`, text).catch(() => {});
+    const c = document.createElement('canvas'); const ctx = c.getContext('2d');
+    ctx.font = `${style} ${size}px "${font}"`;
+    const w = Math.ceil(ctx.measureText(text).width) + 60;
+    c.width = w; c.height = size * 1.8;
+    ctx.font = `${style} ${size}px "${font}"`; ctx.fillStyle = color; ctx.textBaseline = 'middle';
+    ctx.fillText(text, 30, c.height / 2);
+    return trim(c);
+  }
+
+  let uploaded = null;
+  T.dropzone($('#sigDz'), { accept: 'image/*', compact: true, icon: 'image', title: 'İmza görseli seçin', subtitle: 'PNG, JPG', onFiles: async (f) => {
+    const img = await T.loadImage(f[0]);
+    const scale = Math.min(1, 1200 / img.naturalWidth);
+    const c = document.createElement('canvas'); c.width = img.naturalWidth * scale; c.height = img.naturalHeight * scale;
+    const ctx = c.getContext('2d'); ctx.drawImage(img, 0, 0, c.width, c.height);
+    if ($('#rmBg').checked) {
+      const id = ctx.getImageData(0, 0, c.width, c.height); const d = id.data;
+      for (let i = 0; i < d.length; i += 4) { const l = (d[i] + d[i + 1] + d[i + 2]) / 3; if (l > 225) d[i + 3] = 0; else if (l > 180) d[i + 3] = Math.round(d[i + 3] * (225 - l) / 45); }
+      ctx.putImageData(id, 0, 0);
+    }
+    uploaded = trim(c);
+    if (uploaded) { T.toast('İmza görseli hazır, "Sayfaya ekle" ile yerleştirin', 'success'); remember(uploaded); }
+  } });
+
+  function remember(sig) {
+    if (saved.some((s) => s.src === sig.src)) return;
+    saved.push(sig);
+    $('#savedWrap').hidden = false;
+    const b = T.h(`<button type="button" title="Tekrar ekle"><img alt="" src="${sig.src}"></button>`);
+    b.onclick = () => place(sig.src, sig.ratio);
+    $('#saved').appendChild(b);
+  }
+
+  $('#place').onclick = async () => {
+    let sig = null;
+    const m = sigMode.get();
+    if (m === 'draw') {
+      if (!strokes.length) return T.toast('Önce imzanızı çizin', 'error');
+      sig = trim(pad);
+    } else if (m === 'type') {
+      const t = $('#typed').value.trim();
+      if (!t) return T.toast('Önce adınızı yazın', 'error');
+      const f = fontSel.get();
+      sig = await textToSig(t, f, 120, f === 'Georgia' ? 'italic' : '');
+    } else {
+      if (!uploaded) return T.toast('Önce bir imza görseli yükleyin', 'error');
+      sig = uploaded;
+    }
+    if (!sig) return;
+    remember(sig);
+    place(sig.src, sig.ratio);
+  };
+  $('#addDate').onclick = async () => {
+    const d = new Date().toLocaleDateString('tr-TR');
+    const sig = await textToSig(d, 'Segoe UI', 64, '600');
+    if (sig) place(sig.src, sig.ratio, 0.16);
+  };
+
+  // ----- save -----
+  $('#save').onclick = async () => {
+    if (!placements.length) return T.toast('Önce en az bir imza ekleyin', 'error');
+    const btn = $('#save'); T.busy(btn, true, 'Hazırlanıyor…');
+    try {
+      const L = await T.lib.pdfLib();
+      const pdf = await T.pdfLibOpen(buf);
+      const cache = new Map();
+      for (const p of placements) {
+        let img = cache.get(p.src);
+        if (!img) { img = await pdf.embedPng(p.src); cache.set(p.src, img); }
+        const page = pdf.getPage(p.page - 1);
+        const box = page.getCropBox();
+        const W = box.width, H = box.height, ox = box.x, oy = box.y;
+        const rot = ((page.getRotation().angle % 360) + 360) % 360;
+        const DW = rot % 180 ? H : W, DH = rot % 180 ? W : H;
+        const dx = p.x * DW, dy = p.y * DH, dw = p.w * DW, dh = p.h * DH;
+        let x, y;
+        if (rot === 0) { x = dx; y = H - dy - dh; }
+        else if (rot === 90) { x = dy + dh; y = dx; }
+        else if (rot === 180) { x = W - dx; y = dy + dh; }
+        else { x = W - dy - dh; y = H - dx; }
+        page.drawImage(img, { x: x + ox, y: y + oy, width: dw, height: dh, rotate: L.degrees(rot) });
+      }
+      const bytes = await pdf.save();
+      const blob = new Blob([bytes], { type: 'application/pdf' });
+      const name = T.baseName(file.name) + '_imzali.pdf';
+      $('#out').innerHTML = '';
+      $('#out').appendChild(T.resultBox({ title: 'İmzalı PDF hazır!', text: formatBytes(blob.size), actions: [{ label: 'İndir', icon: 'download', primary: true, onClick: () => T.download(blob, name) }] }));
+      T.download(blob, name);
+    } catch (e) { console.error(e); T.toast(T.pdfErrorMessage(e), 'error', 5000); }
+    finally { T.busy(btn, false); }
+  };
+})();
+</script>
+</body>
+</html>

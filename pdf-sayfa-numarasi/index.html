@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDF Sayfa Numarası Ekle – Ücretsiz Online | Notettiklerim Tools</title>
+<meta name="description" content="PDF dosyalarınıza istediğiniz konum ve biçimde sayfa numarası ekleyin. Başlangıç numarası, yazı boyutu ve kenar boşluğunu canlı önizleme ile ayarlayın.">
+<link rel="canonical" href="https://tools.notettiklerim.com/pdf-sayfa-numarasi/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="PDF Sayfa Numarası Ekle – Ücretsiz Online">
+<meta property="og:description" content="PDF dosyalarınıza istediğiniz konum ve biçimde sayfa numarası ekleyin. Başlangıç numarası, yazı boyutu ve kenar boşluğunu canlı önizleme ile ayarlayın.">
+<meta property="og:url" content="https://tools.notettiklerim.com/pdf-sayfa-numarasi/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="pdf-sayfa-numarasi">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <div class="card" id="dzCard">
+    <div id="dz"></div>
+    <div class="privacy-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Dosyalarınız tarayıcınızda işlenir, hiçbir sunucuya yüklenmez.</div>
+  </div>
+  <div class="tool-layout" id="work" hidden>
+    <div class="card stack">
+      <div class="row row-between">
+        <div style="min-width:0"><b id="fname" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></b><span class="muted small" id="fmeta"></span></div>
+        <button class="btn btn-sm" id="change"><i data-icon="refresh"></i>Dosyayı değiştir</button>
+      </div>
+      <div class="preview-box" style="min-height:420px"><canvas id="pv"></canvas></div>
+      <p class="muted small center" style="margin:0" id="pvLabel">Önizleme</p>
+    </div>
+    <aside class="side card stack">
+      <div class="card-title"><i data-icon="hash"></i>Numara ayarları</div>
+      <div class="field"><label>Konum</label>
+        <div class="pos-grid" id="pos">
+          <button data-v="tl" title="Sol üst"></button><button data-v="tc" title="Orta üst"></button><button data-v="tr" title="Sağ üst"></button>
+          <button data-v="bl" title="Sol alt"></button><button data-v="bc" title="Orta alt" class="active"></button><button data-v="br" title="Sağ alt"></button>
+        </div>
+      </div>
+      <div class="field"><label for="fmt">Biçim</label>
+        <select class="select" id="fmt"><option value="{n}">1</option><option value="Sayfa {n}">Sayfa 1</option><option value="{n} / {t}">1 / 10</option><option value="Sayfa {n} / {t}">Sayfa 1 / 10</option><option value="- {n} -">- 1 -</option><option value="Page {n} of {t}">Page 1 of 10</option></select>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label for="start">Başlangıç no.</label><input class="input" type="number" id="start" value="1"></div>
+        <div class="field"><label for="fs">Yazı boyutu</label><input class="input" type="number" id="fs" value="11" min="6" max="48"></div>
+      </div>
+      <div class="field"><div class="range-head"><label>Kenar boşluğu</label><output></output></div><input type="range" id="margin" min="10" max="80" value="28"></div>
+      <div class="field"><label>Renk</label><div class="color-field"><input type="color" id="color" value="#334155"><span class="muted small">Numara rengi</span></div></div>
+      <label class="check"><input type="checkbox" id="skip">İlk sayfayı atla (kapak)</label>
+      <button class="btn btn-primary btn-lg btn-block" id="go"><i data-icon="hash"></i>Numaraları Ekle</button>
+      <div id="out"></div>
+    </aside>
+  </div>
+  <style>
+    .pos-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 30px 30px; gap: 70px 8px; padding: 10px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; }
+    .pos-grid button { border: 1px dashed var(--border-strong); background: var(--surface); border-radius: 8px; cursor: pointer; position: relative; }
+    .pos-grid button::after { content: ""; position: absolute; left: 50%; top: 50%; width: 16px; height: 6px; border-radius: 3px; transform: translate(-50%, -50%); background: var(--border-strong); }
+    .pos-grid button.active { border: 1.5px solid var(--primary); background: var(--primary-soft); }
+    .pos-grid button.active::after { background: var(--primary); }
+  </style>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>PDF dosyanızı seçin.</li>
+        <li>Numaranın konumunu, biçimini ve boyutunu seçin; önizlemede kontrol edin.</li>
+        <li>"Numaraları Ekle" butonuna basın ve dosyanızı indirin.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Kapak sayfasını atlayabilir miyim?</summary><p>Evet. "İlk sayfayı atla" seçeneğini işaretleyin; numaralandırma ikinci sayfadan başlar.</p></details>
+      <details class="faq"><summary>Numaralandırmayı 1 dışında bir sayıdan başlatabilir miyim?</summary><p>Evet. "Başlangıç numarası" alanından istediğiniz sayıyı girebilirsiniz.</p></details>
+      <details class="faq"><summary>"Sayfa 3 / 10" gibi biçim mümkün mü?</summary><p>Evet. Biçim listesinden toplam sayfa sayısını içeren seçenekleri kullanabilirsiniz.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, $$, formatBytes } = T;
+  let file, buf, doc, n, pv = null, pvSize, pvIndex = 1, posV = 'bc';
+  const dz = T.dropzone($('#dz'), { accept: '.pdf,application/pdf', icon: 'fileText', title: 'PDF dosyası seçin', subtitle: 'veya buraya sürükleyip bırakın', onFiles: (f) => load(f[0]) });
+  T.pageDrop((f) => load(f[0]), '.pdf,application/pdf');
+  $('#change').onclick = () => dz.open();
+  T.bindRange($('#margin'), (v) => v + ' pt');
+  $('#pos').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; posV = b.dataset.v; $$('#pos button').forEach((x) => x.classList.toggle('active', x === b)); draw(); });
+  ['#fmt', '#start', '#fs', '#margin', '#color'].forEach((s) => $(s).addEventListener('input', draw));
+  $('#skip').addEventListener('change', async () => { await loadPreview(); });
+
+  async function load(f) {
+    try { file = f; buf = await T.readBuffer(f); if (doc) doc.destroy(); doc = await T.pdfjsOpen(buf); n = doc.numPages; }
+    catch (e) { return T.toast(T.pdfErrorMessage(e), 'error', 5000); }
+    $('#dzCard').hidden = true; $('#work').hidden = false; $('#out').innerHTML = '';
+    $('#fname').textContent = f.name; $('#fmeta').textContent = `${n} sayfa · ${formatBytes(f.size)}`;
+    await loadPreview();
+  }
+  async function loadPreview() {
+    pvIndex = $('#skip').checked && n > 1 ? 2 : 1;
+    const page = await doc.getPage(pvIndex);
+    const vp = page.getViewport({ scale: 1, rotation: page.rotate });
+    pvSize = [vp.width, vp.height];
+    pv = await T.renderPdfPage(page, { maxSize: 900 });
+    $('#pvLabel').textContent = `Önizleme: ${pvIndex}. sayfa`;
+    draw();
+  }
+  const label = (i) => {
+    const skip = $('#skip').checked;
+    const num = i - (skip ? 1 : 0) + (+$('#start').value || 1) - 1;
+    const total = n - (skip ? 1 : 0) + (+$('#start').value || 1) - 1;
+    return $('#fmt').value.replace('{n}', num).replace('{t}', total);
+  };
+  function anchor(W, H, w, size) {
+    const m = +$('#margin').value;
+    const x = posV[1] === 'l' ? m : posV[1] === 'r' ? W - m - w : (W - w) / 2;
+    const y = posV[0] === 't' ? H - m - size * 0.75 : m;
+    return [x, y];
+  }
+  function draw() {
+    if (!pv) return;
+    const c = $('#pv'), ctx = c.getContext('2d');
+    c.width = pv.width; c.height = pv.height;
+    ctx.drawImage(pv, 0, 0);
+    const k = c.width / pvSize[0], size = +$('#fs').value || 11, text = label(pvIndex);
+    ctx.font = `${size * k}px Helvetica, Arial, sans-serif`;
+    const w = ctx.measureText(text).width / k;
+    const [x, y] = anchor(pvSize[0], pvSize[1], w, size);
+    ctx.fillStyle = $('#color').value; ctx.textBaseline = 'alphabetic';
+    ctx.fillText(text, x * k, (pvSize[1] - y) * k);
+  }
+
+  $('#go').onclick = async () => {
+    const btn = $('#go'); T.busy(btn, true, 'Ekleniyor…');
+    try {
+      const L = await T.lib.pdfLib();
+      const pdf = await T.pdfLibOpen(buf);
+      const sample = $('#fmt').value;
+      const font = await T.embedTurkishFont(pdf, sample);
+      const size = +$('#fs').value || 11;
+      const hex = $('#color').value, col = L.rgb(...[1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255));
+      pdf.getPages().forEach((page, idx) => {
+        const i = idx + 1;
+        if ($('#skip').checked && i === 1) return;
+        const text = label(i);
+        const box = page.getCropBox(), rot = page.getRotation().angle % 360, swap = rot % 180 !== 0;
+        const W = swap ? box.height : box.width, H = swap ? box.width : box.height;
+        const w = font.widthOfTextAtSize(text, size);
+        const [dx, dy] = anchor(W, H, w, size);
+        let x = dx, y = dy;
+        if (rot === 90) { x = box.width - dy; y = dx; }
+        else if (rot === 180) { x = box.width - dx; y = box.height - dy; }
+        else if (rot === 270) { x = dy; y = box.height - dx; }
+        page.drawText(text, { x: x + box.x, y: y + box.y, size, font, color: col, rotate: L.degrees(rot) });
+      });
+      const blob = new Blob([await pdf.save()], { type: 'application/pdf' });
+      const name = T.baseName(file.name) + '_numarali.pdf';
+      $('#out').innerHTML = '';
+      $('#out').appendChild(T.resultBox({ title: 'Numaralar eklendi!', text: formatBytes(blob.size), actions: [{ label: 'İndir', icon: 'download', primary: true, onClick: () => T.download(blob, name) }] }));
+      T.download(blob, name);
+    } catch (e) { console.error(e); T.toast(T.pdfErrorMessage(e), 'error', 5000); }
+    finally { T.busy(btn, false); }
+  };
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDF&#x27;ten Metin Çıkar – PDF&#x27;i TXT&#x27;ye Dönüştür | Notettiklerim Tools</title>
+<meta name="description" content="PDF dosyalarındaki metni saniyeler içinde düz metne dönüştürün, kopyalayın veya TXT olarak indirin. Ücretsiz ve dosyanız cihazınızdan çıkmaz.">
+<link rel="canonical" href="https://tools.notettiklerim.com/pdf-metin/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="PDF&#x27;ten Metin Çıkar – PDF&#x27;i TXT&#x27;ye Dönüştür">
+<meta property="og:description" content="PDF dosyalarındaki metni saniyeler içinde düz metne dönüştürün, kopyalayın veya TXT olarak indirin. Ücretsiz ve dosyanız cihazınızdan çıkmaz.">
+<meta property="og:url" content="https://tools.notettiklerim.com/pdf-metin/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="pdf-metin">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <div class="card" id="dzCard">
+    <div id="dz"></div>
+    <div class="privacy-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Dosyalarınız tarayıcınızda işlenir, hiçbir sunucuya yüklenmez.</div>
+  </div>
+  <div class="card stack" id="work" hidden>
+    <div class="row row-between">
+      <div style="min-width:0"><b id="fname" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></b><span class="muted small" id="fmeta"></span></div>
+      <div class="row" style="gap:8px">
+        <label class="switch"><input type="checkbox" id="sep" checked><span class="track"></span>Sayfa ayraçları</label>
+        <button class="btn btn-sm" id="change"><i data-icon="refresh"></i>Dosyayı değiştir</button>
+      </div>
+    </div>
+    <div class="progress" id="prog" hidden><div></div></div>
+    <textarea class="textarea mono" id="txt" style="min-height:460px" spellcheck="false" placeholder="Metin burada görünecek…"></textarea>
+    <div class="row row-between">
+      <span class="muted small" id="stats"></span>
+      <div class="row" style="gap:8px">
+        <button class="btn" data-copy-target="#txt"><i data-icon="copy"></i>Kopyala</button>
+        <button class="btn btn-primary" id="dl"><i data-icon="download"></i>TXT İndir</button>
+      </div>
+    </div>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>PDF dosyanızı seçin.</li>
+        <li>Metin otomatik olarak çıkarılır; isterseniz sayfa ayraçlarını açıp kapatın.</li>
+        <li>Metni kopyalayın veya TXT dosyası olarak indirin.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Taranmış PDF'lerde çalışır mı?</summary><p>Taranmış (görüntü) PDF'lerde metin katmanı bulunmadığı için metin çıkarılamaz; bu durumda OCR gerekir.</p></details>
+      <details class="faq"><summary>Biçimlendirme korunur mu?</summary><p>Satır yapısı korunmaya çalışılır, ancak yazı tipi, renk ve tablo yapısı gibi biçimlendirmeler düz metinde yer almaz.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, formatBytes } = T;
+  let file, pagesText = [];
+  const dz = T.dropzone($('#dz'), { accept: '.pdf,application/pdf', icon: 'fileText', title: 'PDF dosyası seçin', subtitle: 'veya buraya sürükleyip bırakın', onFiles: (f) => load(f[0]) });
+  T.pageDrop((f) => load(f[0]), '.pdf,application/pdf');
+  $('#change').onclick = () => dz.open();
+  $('#sep').onchange = compose;
+  $('#txt').addEventListener('input', stats);
+
+  async function load(f) {
+    let doc;
+    try { file = f; doc = await T.pdfjsOpen(await T.readBuffer(f)); }
+    catch (e) { return T.toast(T.pdfErrorMessage(e), 'error', 5000); }
+    $('#dzCard').hidden = true; $('#work').hidden = false;
+    $('#fname').textContent = f.name; $('#fmeta').textContent = `${doc.numPages} sayfa · ${formatBytes(f.size)}`;
+    const prog = $('#prog'), bar = prog.firstElementChild; prog.hidden = false;
+    pagesText = []; $('#txt').value = '';
+    for (let i = 1; i <= doc.numPages; i++) {
+      const page = await doc.getPage(i);
+      const tc = await page.getTextContent();
+      let out = '', lastY = null;
+      for (const it of tc.items) {
+        if (!('str' in it)) continue;
+        const y = it.transform[5];
+        if (lastY !== null && Math.abs(y - lastY) > Math.max(2, (it.height || 10) * 0.5) && !out.endsWith('\n')) out += '\n';
+        out += it.str;
+        if (it.hasEOL) out += '\n';
+        lastY = y;
+      }
+      pagesText.push(out.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim());
+      bar.style.width = (i / doc.numPages) * 100 + '%';
+    }
+    prog.hidden = true;
+    doc.destroy();
+    compose();
+    if (!pagesText.join('').trim()) T.toast('Bu PDF\'te metin katmanı bulunamadı (taranmış belge olabilir)', 'error', 5000);
+  }
+  function compose() {
+    $('#txt').value = $('#sep').checked
+      ? pagesText.map((t, i) => `──────── Sayfa ${i + 1} ────────\n${t}`).join('\n\n')
+      : pagesText.join('\n\n');
+    stats();
+  }
+  function stats() {
+    const v = $('#txt').value;
+    const words = (v.match(/[\p{L}\p{N}]+/gu) || []).length;
+    $('#stats').textContent = `${v.length.toLocaleString('tr-TR')} karakter · ${words.toLocaleString('tr-TR')} kelime`;
+  }
+  $('#dl').onclick = () => T.download(new Blob([$('#txt').value], { type: 'text/plain;charset=utf-8' }), T.baseName(file.name) + '.txt');
+})();
+</script>
+</body>
+</html>
