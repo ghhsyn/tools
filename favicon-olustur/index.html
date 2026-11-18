@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Favicon Oluşturucu – ICO, PNG ve Apple Touch Icon | Notettiklerim Tools</title>
+<meta name="description" content="Görselinizden veya metin/emoji&#x27;den tüm boyutlarda favicon üretin: favicon.ico, PNG simgeler, Apple Touch Icon, Android simgeleri ve web manifest. Tek tıkla ZIP indirin.">
+<link rel="canonical" href="https://tools.notettiklerim.com/favicon-olustur/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Favicon Oluşturucu – ICO, PNG ve Apple Touch Icon">
+<meta property="og:description" content="Görselinizden veya metin/emoji&#x27;den tüm boyutlarda favicon üretin: favicon.ico, PNG simgeler, Apple Touch Icon, Android simgeleri ve web manifest. Tek tıkla ZIP indirin.">
+<meta property="og:url" content="https://tools.notettiklerim.com/favicon-olustur/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="favicon-olustur">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <style>
+    .fav-prev { display: flex; gap: 18px; align-items: flex-end; flex-wrap: wrap; padding: 20px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); }
+    .fav-prev figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+    .fav-prev canvas { image-rendering: auto; box-shadow: var(--shadow-sm); }
+    .tab-mock { display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px 10px 0 0; padding: 8px 14px; width: 240px; font-size: 13px; }
+    .tab-mock canvas { width: 16px; height: 16px; box-shadow: none; }
+  </style>
+  <div class="tool-layout">
+    <div class="card stack">
+      <div class="seg block" id="src" data-value="text"><button data-v="image"><i data-icon="image"></i>Görselden</button><button data-v="text"><i data-icon="type"></i>Metin / Emoji</button></div>
+      <div data-s="image" hidden><div id="dz"></div></div>
+      <div data-s="text" class="grid-2">
+        <div class="field"><label for="txt">Metin veya emoji</label><input class="input" id="txt" value="N" maxlength="3"></div>
+        <div class="field"><label>Yazı rengi</label><div class="color-field"><input type="color" id="tc" value="#ffffff"><select class="select" id="tf"><option value="800">Kalın</option><option value="500">Normal</option></select></div></div>
+      </div>
+      <div class="label">Önizleme</div>
+      <div class="fav-prev" id="prev"></div>
+      <div class="tab-mock"><canvas id="tabIco" width="32" height="32"></canvas><span>Sitenizin başlığı</span></div>
+      <div class="field"><label>HTML kodu (&lt;head&gt; içine ekleyin)</label>
+        <div class="output-box"><pre class="code" id="html"></pre><button class="btn btn-sm copy-btn" data-copy-target="#html"><i data-icon="copy"></i>Kopyala</button></div>
+      </div>
+    </div>
+    <aside class="side card stack">
+      <div class="card-title"><i data-icon="sliders"></i>Tasarım</div>
+      <div class="field"><label>Arka plan</label>
+        <div class="seg block" id="bgMode" data-value="color"><button data-v="none">Şeffaf</button><button data-v="color">Renk</button><button data-v="grad">Gradyan</button></div>
+      </div>
+      <div class="row"><input type="color" id="c1" value="#6366f1"><input type="color" id="c2" value="#ec4899"></div>
+      <div class="field"><div class="range-head"><label>Köşe yuvarlaklığı</label><output></output></div><input type="range" id="rad" min="0" max="50" value="22"></div>
+      <div class="field"><div class="range-head"><label>İç boşluk</label><output></output></div><input type="range" id="pad" min="0" max="35" value="12"></div>
+      <div class="field"><label for="appName">Uygulama adı (manifest)</label><input class="input" id="appName" value="Sitem"></div>
+      <button class="btn btn-primary btn-lg btn-block" id="go"><i data-icon="download"></i>Favicon Paketini İndir</button>
+      <button class="btn btn-block" id="ico">Sadece favicon.ico</button>
+    </aside>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>Bir görsel yükleyin veya metin/emoji ile simge tasarlayın.</li>
+        <li>Arka plan, köşe yuvarlaklığı ve iç boşluğu ayarlayın.</li>
+        <li>ZIP paketini indirin ve HTML kodunu sitenizin &lt;head&gt; bölümüne ekleyin.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Hangi dosyalar oluşturuluyor?</summary><p>favicon.ico (16, 32, 48 px), favicon-16x16.png, favicon-32x32.png, apple-touch-icon.png (180 px), android-chrome 192 ve 512 px simgeleri ve site.webmanifest.</p></details>
+      <details class="faq"><summary>Görselim kare değilse ne olur?</summary><p>Görsel, seçtiğiniz iç boşlukla kare tuvalin ortasına sığdırılır; kesilmez.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, $$ } = T;
+  let img = null;
+  const src = T.seg($('#src'), (v) => { $$('[data-s]').forEach((e) => (e.hidden = e.dataset.s !== v)); draw(); });
+  const bgMode = T.seg($('#bgMode'), draw);
+  T.bindRange($('#rad'), (v) => '%' + v); T.bindRange($('#pad'), (v) => '%' + v);
+  T.dropzone($('#dz'), { accept: 'image/*', compact: true, paste: true, icon: 'image', title: 'Görsel seçin (kare önerilir)', subtitle: 'PNG, JPG, SVG, WebP · en az 512 px', onFiles: async (f) => { img = await T.loadImage(f[0]); draw(); } });
+  document.querySelector('.tool-layout').addEventListener('input', draw);
+
+  function render(size) {
+    const c = document.createElement('canvas'); c.width = c.height = size;
+    const ctx = c.getContext('2d');
+    const r = (+$('#rad').value / 100) * size, p = (+$('#pad').value / 100) * size;
+    const mode = bgMode.get();
+    ctx.save();
+    ctx.beginPath(); ctx.roundRect ? ctx.roundRect(0, 0, size, size, r) : ctx.rect(0, 0, size, size); ctx.clip();
+    if (mode === 'color') { ctx.fillStyle = $('#c1').value; ctx.fillRect(0, 0, size, size); }
+    if (mode === 'grad') { const g = ctx.createLinearGradient(0, 0, size, size); g.addColorStop(0, $('#c1').value); g.addColorStop(1, $('#c2').value); ctx.fillStyle = g; ctx.fillRect(0, 0, size, size); }
+    const inner = size - p * 2;
+    if (src.get() === 'image' && img) {
+      const s = Math.min(inner / img.naturalWidth, inner / img.naturalHeight);
+      const w = img.naturalWidth * s, h = img.naturalHeight * s;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
+    } else if (src.get() === 'text') {
+      const t = $('#txt').value || ' ';
+      ctx.fillStyle = $('#tc').value; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      let fs = inner * (t.length > 1 ? 0.62 : 0.8);
+      ctx.font = `${$('#tf').value} ${fs}px Inter, "Segoe UI", "Apple Color Emoji", "Segoe UI Emoji", Arial, sans-serif`;
+      const m = ctx.measureText(t); if (m.width > inner) { fs *= inner / m.width; ctx.font = `${$('#tf').value} ${fs}px Inter, "Segoe UI", "Segoe UI Emoji", Arial, sans-serif`; }
+      ctx.textBaseline = 'alphabetic';
+      const mm = ctx.measureText(t);
+      const yAdj = (mm.actualBoundingBoxAscent - mm.actualBoundingBoxDescent) / 2;
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillText(t, size / 2, size / 2 + yAdj);
+    }
+    ctx.restore();
+    return c;
+  }
+
+  const SIZES = [16, 32, 48, 64, 180, 192];
+  function draw() {
+    const prev = $('#prev'); prev.innerHTML = '';
+    SIZES.forEach((s) => {
+      const c = render(s);
+      c.style.width = c.style.height = ({ 16: 32, 32: 48, 48: 64, 64: 72, 180: 96, 192: 96 }[s]) + 'px';
+      const fig = T.h(`<figure><figcaption>${s}×${s}</figcaption></figure>`); fig.prepend(c); prev.appendChild(fig);
+    });
+    const t = $('#tabIco').getContext('2d'); t.clearRect(0, 0, 32, 32); t.drawImage(render(32), 0, 0);
+    $('#html').textContent = `<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="${$('#c1').value}">`;
+  }
+
+  const png = async (s) => new Uint8Array(await (await T.canvasToBlob(render(s))).arrayBuffer());
+  async function ico(sizes = [16, 32, 48]) {
+    const imgs = await Promise.all(sizes.map(png));
+    const head = 6 + 16 * sizes.length;
+    const total = head + imgs.reduce((a, b) => a + b.length, 0);
+    const buf = new Uint8Array(total), v = new DataView(buf.buffer);
+    v.setUint16(0, 0, true); v.setUint16(2, 1, true); v.setUint16(4, sizes.length, true);
+    let off = head;
+    sizes.forEach((s, i) => {
+      const e = 6 + i * 16;
+      v.setUint8(e, s >= 256 ? 0 : s); v.setUint8(e + 1, s >= 256 ? 0 : s); v.setUint8(e + 2, 0); v.setUint8(e + 3, 0);
+      v.setUint16(e + 4, 1, true); v.setUint16(e + 6, 32, true); v.setUint32(e + 8, imgs[i].length, true); v.setUint32(e + 12, off, true);
+      buf.set(imgs[i], off); off += imgs[i].length;
+    });
+    return new Blob([buf], { type: 'image/x-icon' });
+  }
+  const hasSrc = () => src.get() === 'text' || img;
+  $('#ico').onclick = async () => { if (!hasSrc()) return T.toast('Önce bir görsel yükleyin', 'error'); T.download(await ico(), 'favicon.ico'); };
+  $('#go').onclick = async () => {
+    if (!hasSrc()) return T.toast('Önce bir görsel yükleyin', 'error');
+    const btn = $('#go'); T.busy(btn, true, 'Hazırlanıyor…');
+    try {
+      const Z = await T.lib.zip(); const z = new Z();
+      z.file('favicon.ico', await ico());
+      z.file('favicon-16x16.png', await png(16)); z.file('favicon-32x32.png', await png(32));
+      z.file('apple-touch-icon.png', await png(180));
+      z.file('android-chrome-192x192.png', await png(192)); z.file('android-chrome-512x512.png', await png(512));
+      const name = $('#appName').value || 'Sitem';
+      z.file('site.webmanifest', JSON.stringify({ name, short_name: name, icons: [{ src: '/android-chrome-192x192.png', sizes: '192x192', type: 'image/png' }, { src: '/android-chrome-512x512.png', sizes: '512x512', type: 'image/png' }], theme_color: $('#c1').value, background_color: '#ffffff', display: 'standalone' }, null, 2));
+      z.file('kullanim.html', $('#html').textContent);
+      T.download(await z.generateAsync({ type: 'blob' }), 'favicon-paketi.zip');
+      T.toast('Favicon paketi indirildi', 'success');
+    } finally { T.busy(btn, false); }
+  };
+  draw();
+})();
+</script>
+</body>
+</html>

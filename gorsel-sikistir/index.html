@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Görsel Sıkıştır, Boyutlandır ve Dönüştür – JPG, PNG, WebP | Notettiklerim Tools</title>
+<meta name="description" content="Görsellerinizi kaliteyi koruyarak sıkıştırın, yeniden boyutlandırın ve JPG, PNG, WebP formatları arasında dönüştürün. Toplu işlem, önce/sonra karşılaştırma ve ZIP indirme.">
+<link rel="canonical" href="https://tools.notettiklerim.com/gorsel-sikistir/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Görsel Sıkıştır, Boyutlandır ve Dönüştür – JPG, PNG, WebP">
+<meta property="og:description" content="Görsellerinizi kaliteyi koruyarak sıkıştırın, yeniden boyutlandırın ve JPG, PNG, WebP formatları arasında dönüştürün. Toplu işlem, önce/sonra karşılaştırma ve ZIP indirme.">
+<meta property="og:url" content="https://tools.notettiklerim.com/gorsel-sikistir/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="gorsel-sikistir">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <style>
+    .img-row { display: grid; grid-template-columns: 56px 1fr auto auto; gap: 14px; align-items: center; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); cursor: pointer; transition: border-color .15s; }
+    .img-row:hover { border-color: var(--border-strong); }
+    .img-row.active { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+    .img-row img { width: 56px; height: 56px; object-fit: cover; border-radius: 9px; background: var(--surface-2); }
+    .img-row .nm { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .img-row .sz { font-size: 12.5px; color: var(--muted); }
+    @media (max-width: 600px) { .img-row { grid-template-columns: 48px 1fr auto; } .img-row .pct { display: none; } }
+    .compare { position: relative; border-radius: var(--radius); overflow: hidden; background: repeating-conic-gradient(var(--surface-3) 0 25%, var(--surface-2) 0 50%) 0 0 / 20px 20px; user-select: none; touch-action: none; cursor: ew-resize; }
+    .compare img { display: block; width: 100%; max-height: 520px; object-fit: contain; }
+    .compare .after { position: absolute; inset: 0; clip-path: inset(0 0 0 50%); }
+    .compare .after img { height: 100%; }
+    .compare .bar { position: absolute; top: 0; bottom: 0; left: 50%; width: 3px; background: #fff; box-shadow: 0 0 8px rgba(0,0,0,.4); transform: translateX(-50%); }
+    .compare .bar::after { content: "⟷"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 36px; height: 36px; border-radius: 50%; background: #fff; color: #334155; display: grid; place-items: center; font-weight: 800; box-shadow: var(--shadow); }
+    .compare .tag { position: absolute; top: 10px; padding: 3px 10px; border-radius: 99px; background: rgba(15,23,42,.75); color: #fff; font-size: 12px; font-weight: 700; }
+  </style>
+  <div class="card" id="dzCard">
+    <div id="dz"></div>
+    <div class="privacy-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Dosyalarınız tarayıcınızda işlenir, hiçbir sunucuya yüklenmez.</div>
+  </div>
+  <div class="tool-layout" id="work" hidden>
+    <div class="stack">
+      <div class="card stack">
+        <div class="row row-between">
+          <div class="row" style="gap:8px"><button class="btn btn-sm" id="add"><i data-icon="plus"></i>Görsel ekle</button><button class="btn btn-sm btn-ghost btn-danger" id="clear">Temizle</button></div>
+          <span class="small" id="total"></span>
+        </div>
+        <div class="stack-sm" id="list"></div>
+      </div>
+      <div class="card stack" id="cmpCard" hidden>
+        <div class="row row-between"><div class="card-title" style="margin:0"><i data-icon="eye"></i>Karşılaştır</div><span class="muted small" id="cmpInfo"></span></div>
+        <div class="compare" id="cmp"><img id="cmpA" alt="Önce"><div class="after"><img id="cmpB" alt="Sonra"></div><div class="bar"></div><span class="tag" style="left:10px">Önce</span><span class="tag" style="right:10px">Sonra</span></div>
+      </div>
+    </div>
+    <aside class="side card stack">
+      <div class="card-title"><i data-icon="sliders"></i>Ayarlar</div>
+      <div class="field"><label>Çıktı formatı</label><div class="seg block" id="fmt" data-value="webp"><button data-v="same">Aynı</button><button data-v="jpeg">JPG</button><button data-v="webp">WebP</button><button data-v="png">PNG</button></div></div>
+      <div class="field" id="qF"><div class="range-head"><label>Kalite</label><output></output></div><input type="range" id="q" min="10" max="100" value="80"></div>
+      <div class="field"><label>Boyutlandırma</label><div class="seg block" id="rs" data-value="none"><button data-v="none">Yok</button><button data-v="max">Maks. boyut</button><button data-v="pct">Yüzde</button></div></div>
+      <div class="grid-2" data-r="max" hidden><div class="field"><label for="mw">Maks. genişlik</label><input class="input" type="number" id="mw" value="1920" min="1"></div><div class="field"><label for="mh">Maks. yükseklik</label><input class="input" type="number" id="mh" value="1920" min="1"></div></div>
+      <div class="field" data-r="pct" hidden><div class="range-head"><label>Ölçek</label><output></output></div><input type="range" id="pct" min="5" max="100" value="50"></div>
+      <div class="field"><label>Şeffaf alanlar (JPG için)</label><div class="color-field"><input type="color" id="bgc" value="#ffffff"><span class="muted small">Arka plan rengi</span></div></div>
+      <button class="btn btn-primary btn-lg btn-block" id="zip"><i data-icon="download"></i>Tümünü İndir (ZIP)</button>
+    </aside>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>Görsellerinizi seçin, sürükleyin veya yapıştırın.</li>
+        <li>Format, kalite ve boyut ayarlarını yapın; sonuçlar anında hesaplanır.</li>
+        <li>Görsele tıklayarak önce/sonra karşılaştırın, tek tek veya ZIP olarak indirin.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>Hangi formatı seçmeliyim?</summary><p>WebP, aynı kalitede JPG'den genellikle %25–35 daha küçüktür ve tüm modern tarayıcılarda desteklenir. Şeffaflık gerekiyorsa PNG veya WebP kullanın.</p></details>
+      <details class="faq"><summary>Konum gibi EXIF bilgileri silinir mi?</summary><p>Evet. Görseller yeniden işlendiğinde konum, cihaz ve tarih gibi EXIF meta verileri otomatik olarak temizlenir.</p></details>
+      <details class="faq"><summary>Kalite kaybı olur mu?</summary><p>%75–85 kalite aralığı gözle neredeyse fark edilmeyen kayıpla büyük boyut kazancı sağlar. Karşılaştırma aracıyla kontrol edebilirsiniz.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, $$, esc, formatBytes, icon } = T;
+  let items = [], uid = 0, active = null, gen = 0;
+  const dz = T.dropzone($('#dz'), { accept: 'image/*', multiple: true, paste: true, icon: 'images', title: 'Görselleri seçin', subtitle: 'JPG, PNG, WebP, GIF, BMP, AVIF · sürükleyin veya yapıştırın', onFiles: add });
+  T.pageDrop(add, 'image/*');
+  document.addEventListener('paste', (e) => { if ($('#work').hidden) return; const f = [...(e.clipboardData?.files || [])].filter((x) => x.type.startsWith('image/')); if (f.length) add(f); });
+  $('#add').onclick = () => dz.open();
+  $('#clear').onclick = () => { items.forEach(revoke); items = []; active = null; render(); };
+  const fmt = T.seg($('#fmt'), () => { $('#qF').hidden = fmt.get() === 'png'; reprocess(); });
+  const rs = T.seg($('#rs'), (v) => { $$('[data-r]').forEach((e) => (e.hidden = e.dataset.r !== v)); reprocess(); });
+  T.bindRange($('#q'), (v) => '%' + v); T.bindRange($('#pct'), (v) => '%' + v);
+  ['#q', '#mw', '#mh', '#pct', '#bgc'].forEach((s) => $(s).addEventListener('input', T.debounce(reprocess, 250)));
+
+  function revoke(it) { URL.revokeObjectURL(it.src); if (it.outUrl) URL.revokeObjectURL(it.outUrl); }
+  function add(files) {
+    files.forEach((file) => items.push({ id: ++uid, file, src: URL.createObjectURL(file) }));
+    if (!active && items.length) active = items[0].id;
+    render(); reprocess();
+  }
+
+  const extOf = (t) => ({ 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' }[t] || 'png');
+  async function processOne(it, g) {
+    const img = it.img || (it.img = await T.loadImage(it.src));
+    let w = img.naturalWidth, h = img.naturalHeight;
+    it.w0 = w; it.h0 = h;
+    if (rs.get() === 'max') { const s = Math.min(1, (+$('#mw').value || w) / w, (+$('#mh').value || h) / h); w = Math.round(w * s); h = Math.round(h * s); }
+    if (rs.get() === 'pct') { const s = +$('#pct').value / 100; w = Math.max(1, Math.round(w * s)); h = Math.max(1, Math.round(h * s)); }
+    let type = fmt.get() === 'same' ? it.file.type : 'image/' + fmt.get();
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(type)) type = 'image/png';
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const ctx = c.getContext('2d');
+    if (type === 'image/jpeg') { ctx.fillStyle = $('#bgc').value; ctx.fillRect(0, 0, w, h); }
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, 0, 0, w, h);
+    const blob = await T.canvasToBlob(c, type, +$('#q').value / 100);
+    if (g !== gen) return;
+    if (it.outUrl) URL.revokeObjectURL(it.outUrl);
+    it.out = blob; it.outUrl = URL.createObjectURL(blob); it.w = w; it.h = h; it.type = blob.type;
+  }
+  async function reprocess() {
+    const g = ++gen;
+    items.forEach((it) => (it.out = null));
+    render();
+    for (const it of items) {
+      try { await processOne(it, g); } catch (e) { it.err = true; }
+      if (g !== gen) return;
+      renderRow(it);
+      if (it.id === active) showCompare();
+    }
+    renderTotal();
+  }
+
+  function rowHTML(it) {
+    const done = it.out;
+    const pct = done ? Math.round((1 - it.out.size / it.file.size) * 100) : 0;
+    return `<img src="${it.src}" alt="">
+      <div style="min-width:0"><div class="nm">${esc(it.file.name)}</div>
+        <div class="sz">${formatBytes(it.file.size)}${done ? ` → <b style="color:var(--text)">${formatBytes(it.out.size)}</b> · ${it.w}×${it.h} · ${extOf(it.type).toUpperCase()}` : it.err ? ' · <span style="color:var(--danger)">işlenemedi</span>' : ' · işleniyor…'}</div></div>
+      <span class="pct">${done ? `<span class="badge ${pct > 0 ? 'ok' : 'warn'}">${pct > 0 ? '−' + pct : '+' + -pct}%</span>` : '<span class="spinner" style="width:16px;height:16px;color:var(--muted)"></span>'}</span>
+      <div class="row" style="gap:2px"><button class="btn btn-ghost btn-icon btn-sm" data-act="dl" title="İndir" ${done ? '' : 'disabled'}>${icon('download')}</button><button class="btn btn-ghost btn-icon btn-sm" data-act="rm" title="Kaldır">${icon('x')}</button></div>`;
+  }
+  function renderRow(it) { const el = $(`.img-row[data-id="${it.id}"]`); if (el) el.innerHTML = rowHTML(it); }
+  function render() {
+    $('#dzCard').hidden = items.length > 0; $('#work').hidden = !items.length;
+    $('#list').innerHTML = items.map((it) => `<div class="img-row ${it.id === active ? 'active' : ''}" data-id="${it.id}">${rowHTML(it)}</div>`).join('');
+    renderTotal();
+    if (!items.length) $('#cmpCard').hidden = true;
+  }
+  function renderTotal() {
+    const a = items.reduce((s, i) => s + i.file.size, 0), b = items.reduce((s, i) => s + (i.out ? i.out.size : 0), 0);
+    const done = items.every((i) => i.out);
+    $('#total').innerHTML = done && items.length ? `${items.length} görsel · ${formatBytes(a)} → <b>${formatBytes(b)}</b> <span class="badge ${b < a ? 'ok' : 'warn'}">${b < a ? '−' : '+'}${Math.abs(Math.round((1 - b / a) * 100))}%</span>` : `${items.length} görsel`;
+  }
+  const outName = (it) => T.baseName(it.file.name) + '.' + extOf(it.type);
+  $('#list').addEventListener('click', (e) => {
+    const row = e.target.closest('.img-row'); if (!row) return;
+    const it = items.find((i) => i.id === +row.dataset.id);
+    const b = e.target.closest('button[data-act]');
+    if (b?.dataset.act === 'dl') return T.download(it.out, outName(it));
+    if (b?.dataset.act === 'rm') { revoke(it); items = items.filter((i) => i !== it); if (active === it.id) active = items[0]?.id; render(); showCompare(); return; }
+    active = it.id; $$('.img-row').forEach((r) => r.classList.toggle('active', r === row)); showCompare();
+  });
+
+  function showCompare() {
+    const it = items.find((i) => i.id === active);
+    if (!it || !it.out) { $('#cmpCard').hidden = !it; return; }
+    $('#cmpCard').hidden = false;
+    $('#cmpA').src = it.src; $('#cmpB').src = it.outUrl;
+    $('#cmpInfo').textContent = `${it.w0}×${it.h0} · ${formatBytes(it.file.size)}  →  ${it.w}×${it.h} · ${formatBytes(it.out.size)}`;
+  }
+  const cmp = $('#cmp');
+  const setPos = (x) => { const r = cmp.getBoundingClientRect(); const p = Math.min(100, Math.max(0, ((x - r.left) / r.width) * 100)); cmp.querySelector('.after').style.clipPath = `inset(0 0 0 ${p}%)`; cmp.querySelector('.bar').style.left = p + '%'; };
+  cmp.addEventListener('pointerdown', (e) => { cmp.setPointerCapture(e.pointerId); setPos(e.clientX); });
+  cmp.addEventListener('pointermove', (e) => { if (e.buttons) setPos(e.clientX); });
+
+  $('#zip').onclick = async () => {
+    const ready = items.filter((i) => i.out);
+    if (!ready.length) return T.toast('İşlenmiş görsel yok', 'error');
+    if (ready.length === 1) return T.download(ready[0].out, outName(ready[0]));
+    const btn = $('#zip'); T.busy(btn, true, 'Hazırlanıyor…');
+    try {
+      const Z = await T.lib.zip(); const z = new Z(); const used = {};
+      ready.forEach((it) => { let n = outName(it); if (used[n]) n = T.baseName(n) + '_' + ++used[n] + '.' + extOf(it.type); else used[n] = 1; z.file(n, it.out); });
+      T.download(await z.generateAsync({ type: 'blob' }), 'gorseller.zip');
+    } finally { T.busy(btn, false); }
+  };
+})();
+</script>
+</body>
+</html>

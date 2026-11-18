@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Renk Dönüştürücü, Palet ve Kontrast Kontrolü – HEX, RGB, HSL | Notettiklerim Tools</title>
+<meta name="description" content="HEX, RGB, HSL, HSV ve CMYK renk kodları arasında dönüşüm yapın, ton paleti ve renk uyumları oluşturun, WCAG kontrast oranını kontrol edin. Ekrandan renk seçme desteği.">
+<link rel="canonical" href="https://tools.notettiklerim.com/renk-araclari/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Renk Dönüştürücü, Palet ve Kontrast Kontrolü – HEX, RGB, HSL">
+<meta property="og:description" content="HEX, RGB, HSL, HSV ve CMYK renk kodları arasında dönüşüm yapın, ton paleti ve renk uyumları oluşturun, WCAG kontrast oranını kontrol edin. Ekrandan renk seçme desteği.">
+<meta property="og:url" content="https://tools.notettiklerim.com/renk-araclari/">
+<meta property="og:image" content="https://tools.notettiklerim.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
+</head>
+<body data-tool="renk-araclari">
+<div id="site-header"></div>
+<main class="container">
+  <div id="tool-hero"></div>
+  <style>
+    .swatch-big { height: 150px; border-radius: var(--radius-lg); border: 1px solid var(--border); display: flex; align-items: flex-end; padding: 16px; font-weight: 800; font-size: 22px; font-family: var(--mono); transition: background .15s; }
+    .codes { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+    .code-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 11px; background: var(--surface); cursor: pointer; text-align: left; font: inherit; color: var(--text); }
+    .code-item:hover { border-color: var(--primary); }
+    .code-item b { font-size: 11.5px; color: var(--muted); width: 44px; flex: none; }
+    .code-item span { font-family: var(--mono); font-size: 13.5px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .code-item svg { width: 15px; height: 15px; color: var(--muted); }
+    .shades { display: grid; grid-template-columns: repeat(11, 1fr); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+    .shades button { border: 0; height: 64px; cursor: pointer; font: inherit; font-size: 10.5px; font-weight: 700; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding: 6px 2px; gap: 1px; transition: transform .15s; }
+    .shades button:hover { transform: scaleY(1.06); z-index: 1; }
+    @media (max-width: 720px) { .shades { grid-template-columns: repeat(6, 1fr); } }
+    .harm { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+    .harm .h-item { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--surface); }
+    .harm .h-item .cols { display: flex; height: 54px; }
+    .harm .h-item .cols button { flex: 1; border: 0; cursor: pointer; }
+    .harm .h-item div.t { padding: 8px 12px; font-size: 12.5px; font-weight: 650; color: var(--text-2); }
+    .contrast-demo { border-radius: var(--radius); padding: 22px; border: 1px solid var(--border); }
+    .contrast-demo .big { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+  </style>
+  <div class="stack">
+    <div class="card stack">
+      <div class="grid-2" style="align-items:start">
+        <div class="stack-sm">
+          <div class="swatch-big" id="big"></div>
+        </div>
+        <div class="stack-sm">
+          <div class="field"><label for="inp">Renk kodu</label><div class="color-field"><input type="color" id="pick" value="#6366f1"><input class="input" id="inp" value="#6366F1" style="text-transform:none" spellcheck="false"></div><span class="hint" id="inErr">HEX, RGB, HSL veya CSS renk adı yazabilirsiniz.</span></div>
+          <div class="row" style="gap:8px"><button class="btn btn-sm" id="eye"><i data-icon="eye"></i>Ekrandan seç</button><button class="btn btn-sm" id="rand"><i data-icon="refresh"></i>Rastgele</button></div>
+        </div>
+      </div>
+      <div class="codes" id="codes"></div>
+    </div>
+    <div class="card stack">
+      <div class="card-title" style="margin:0"><i data-icon="layers"></i>Ton paleti</div>
+      <div class="shades" id="shades"></div>
+      <div class="row row-end"><button class="btn btn-sm" id="cssVars"><i data-icon="code"></i>CSS değişkenlerini kopyala</button></div>
+    </div>
+    <div class="card stack">
+      <div class="card-title" style="margin:0"><i data-icon="palette"></i>Renk uyumları</div>
+      <div class="harm" id="harm"></div>
+    </div>
+    <div class="card stack">
+      <div class="card-title" style="margin:0"><i data-icon="eye"></i>Kontrast kontrolü (WCAG)</div>
+      <div class="grid-2">
+        <div class="field"><label>Yazı rengi</label><div class="color-field"><input type="color" id="cf" value="#ffffff"><input class="input" id="cfT" value="#FFFFFF"></div></div>
+        <div class="field"><label>Arka plan rengi</label><div class="color-field"><input type="color" id="cb" value="#6366f1"><input class="input" id="cbT" value="#6366F1"></div></div>
+      </div>
+      <div class="grid-2" style="align-items:center">
+        <div class="contrast-demo" id="demo"><div class="big">Büyük başlık metni</div><div>Normal boyutta gövde metni örneği. Okunabilirlik önemlidir.</div></div>
+        <div class="stack-sm">
+          <div class="row"><div class="stat" style="flex:1"><div class="v" id="ratio">-</div><div class="k">Kontrast oranı</div></div><button class="btn btn-sm" id="swap" title="Renkleri değiştir"><i data-icon="refresh"></i>Değiştir</button></div>
+          <div class="chips" id="wcag"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <section class="tool-info">
+    <div class="card">
+      <h2>Nasıl kullanılır?</h2>
+      <ol class="steps">
+        <li>Renk seçiciden bir renk seçin veya herhangi bir formatta renk kodu yazın.</li>
+        <li>Tüm formatlardaki karşılıklarını, ton paletini ve renk uyumlarını görün; tıklayarak kopyalayın.</li>
+        <li>Kontrast bölümünde yazı ve arka plan renginin erişilebilirliğini kontrol edin.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Sık sorulan sorular</h2>
+      <details class="faq"><summary>WCAG kontrast oranı nedir?</summary><p>Metin ile arka plan arasındaki parlaklık farkıdır. Normal metin için en az 4.5:1 (AA), büyük metin için 3:1 önerilir. AAA seviyesi 7:1 gerektirir.</p></details>
+      <details class="faq"><summary>Hangi formatları yazabilirim?</summary><p>#6366f1, 6366f1, #fff, rgb(99, 102, 241), hsl(239 84% 67%) ve "tomato" gibi CSS renk isimleri desteklenir.</p></details>
+    </div>
+  </section>
+  <div id="related"></div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/app.js"></script>
+<script>
+(() => {
+  const { $, esc, icon } = T;
+  // ---------- color math ----------
+  const clamp = (v, a = 0, b = 255) => Math.min(b, Math.max(a, v));
+  const toHex = ({ r, g, b }) => '#' + [r, g, b].map((x) => Math.round(clamp(x)).toString(16).padStart(2, '0')).join('').toUpperCase();
+  function rgb2hsl({ r, g, b }) {
+    r /= 255; g /= 255; b /= 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b); let h = 0, s = 0; const l = (max + min) / 2;
+    if (max !== min) { const d = max - min; s = l > 0.5 ? d / (2 - max - min) : d / (max + min); h = max === r ? (g - b) / d + (g < b ? 6 : 0) : max === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60; }
+    return { h, s: s * 100, l: l * 100 };
+  }
+  function hsl2rgb({ h, s, l }) {
+    s /= 100; l /= 100; h = ((h % 360) + 360) % 360;
+    const k = (n) => (n + h / 30) % 12, a = s * Math.min(l, 1 - l);
+    const f = (n) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+    return { r: f(0) * 255, g: f(8) * 255, b: f(4) * 255 };
+  }
+  function rgb2hsv({ r, g, b }) { r /= 255; g /= 255; b /= 255; const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min; const h = rgb2hsl({ r: r * 255, g: g * 255, b: b * 255 }).h; return { h, s: max ? (d / max) * 100 : 0, v: max * 100 }; }
+  function rgb2cmyk({ r, g, b }) { r /= 255; g /= 255; b /= 255; const k = 1 - Math.max(r, g, b); if (k === 1) return { c: 0, m: 0, y: 0, k: 100 }; return { c: ((1 - r - k) / (1 - k)) * 100, m: ((1 - g - k) / (1 - k)) * 100, y: ((1 - b - k) / (1 - k)) * 100, k: k * 100 }; }
+  const lum = ({ r, g, b }) => { const c = [r, g, b].map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
+  const contrast = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+  const textOn = (c) => (lum(c) > 0.45 ? '#0f172a' : '#ffffff');
+  const ctx = document.createElement('canvas').getContext('2d');
+  function parse(str) {
+    let s = String(str).trim();
+    if (/^[0-9a-f]{3}([0-9a-f]{3})?$/i.test(s)) s = '#' + s;
+    ctx.fillStyle = '#010203'; ctx.fillStyle = s;
+    const out = ctx.fillStyle;
+    if (out === '#010203' && !/^#?010203$/i.test(s)) return null;
+    if (out.startsWith('#')) { const n = parseInt(out.slice(1), 16); return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 }; }
+    const m = out.match(/[\d.]+/g); return m ? { r: +m[0], g: +m[1], b: +m[2] } : null;
+  }
+  const R = Math.round;
+  const fmt = {
+    HEX: (c) => toHex(c),
+    RGB: (c) => `rgb(${R(c.r)}, ${R(c.g)}, ${R(c.b)})`,
+    HSL: (c) => { const h = rgb2hsl(c); return `hsl(${R(h.h)}, ${R(h.s)}%, ${R(h.l)}%)`; },
+    HSV: (c) => { const h = rgb2hsv(c); return `hsv(${R(h.h)}, ${R(h.s)}%, ${R(h.v)}%)`; },
+    CMYK: (c) => { const k = rgb2cmyk(c); return `cmyk(${R(k.c)}%, ${R(k.m)}%, ${R(k.y)}%, ${R(k.k)}%)`; },
+    RGBA: (c) => `rgba(${R(c.r)}, ${R(c.g)}, ${R(c.b)}, 1)`,
+    CSS: (c) => { const h = rgb2hsl(c); return `hsl(${R(h.h)} ${R(h.s)}% ${R(h.l)}%)`; },
+    INT: (c) => String((R(c.r) << 16) + (R(c.g) << 8) + R(c.b)),
+  };
+
+  let cur = parse('#6366f1');
+  function shades(c) {
+    const { h, s } = rgb2hsl(c);
+    const L = [97, 93, 86, 76, 64, 54, 46, 38, 30, 22, 14];
+    const names = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
+    return L.map((l, i) => ({ name: names[i], c: hsl2rgb({ h, s: Math.min(100, s * (l > 90 || l < 20 ? 0.9 : 1)), l }) }));
+  }
+  function harmonies(c) {
+    const { h, s, l } = rgb2hsl(c);
+    const at = (...d) => d.map((x) => hsl2rgb({ h: h + x, s, l }));
+    return [
+      ['Tamamlayıcı', [c, ...at(180)]], ['Benzeşik', at(-30, 0, 30)], ['Üçlü', at(0, 120, 240)],
+      ['Ayrık tamamlayıcı', at(0, 150, 210)], ['Dörtlü', at(0, 90, 180, 270)],
+      ['Tek renk', [20, 35, 50, 65, 80].map((x) => hsl2rgb({ h, s, l: x }))],
+    ];
+  }
+
+  function update(src) {
+    const hex = toHex(cur);
+    if (src !== 'inp') $('#inp').value = hex;
+    if (src !== 'pick') $('#pick').value = hex.toLowerCase();
+    const big = $('#big'); big.style.background = hex; big.style.color = textOn(cur); big.textContent = hex;
+    $('#codes').innerHTML = Object.entries(fmt).map(([k, f]) => `<button class="code-item" data-v="${esc(f(cur))}"><b>${k}</b><span>${esc(f(cur))}</span>${icon('copy')}</button>`).join('');
+    const sh = shades(cur);
+    $('#shades').innerHTML = sh.map((x) => `<button data-hex="${toHex(x.c)}" style="background:${toHex(x.c)};color:${textOn(x.c)}" title="${toHex(x.c)}"><span>${x.name}</span><span style="opacity:.8">${toHex(x.c).slice(1)}</span></button>`).join('');
+    $('#harm').innerHTML = harmonies(cur).map(([n, cs]) => `<div class="h-item"><div class="cols">${cs.map((c) => `<button data-hex="${toHex(c)}" style="background:${toHex(c)}" title="${toHex(c)}"></button>`).join('')}</div><div class="t">${n}</div></div>`).join('');
+    $('#cssVars').onclick = () => T.copy(':root {\n' + sh.map((x) => `  --color-${x.name}: ${toHex(x.c)};`).join('\n') + '\n}', 'CSS değişkenleri kopyalandı');
+    document.title.includes('|') && history.replaceState(null, '', '#' + hex.slice(1));
+  }
+  $('#pick').addEventListener('input', () => { cur = parse($('#pick').value); update('pick'); });
+  $('#inp').addEventListener('input', () => { const c = parse($('#inp').value); $('#inErr').style.color = c ? '' : 'var(--danger)'; $('#inErr').textContent = c ? 'HEX, RGB, HSL veya CSS renk adı yazabilirsiniz.' : 'Geçersiz renk kodu'; if (c) { cur = c; update('inp'); } });
+  $('#rand').onclick = () => { cur = hsl2rgb({ h: Math.random() * 360, s: 55 + Math.random() * 35, l: 45 + Math.random() * 15 }); update(); };
+  $('#eye').onclick = async () => {
+    if (!window.EyeDropper) return T.toast('Tarayıcınız ekrandan renk seçmeyi desteklemiyor (Chrome/Edge kullanın)', 'error', 4000);
+    try { const r = await new EyeDropper().open(); cur = parse(r.sRGBHex); update(); } catch {}
+  };
+  document.addEventListener('click', (e) => {
+    const ci = e.target.closest('.code-item'); if (ci) return T.copy(ci.dataset.v, ci.dataset.v + ' kopyalandı');
+    const hx = e.target.closest('[data-hex]'); if (hx) { cur = parse(hx.dataset.hex); update(); window.scrollTo({ top: 0, behavior: 'smooth' }); T.toast(hx.dataset.hex + ' seçildi'); }
+  });
+
+  // contrast
+  function cUpd(src) {
+    const f = parse(src === 'cfT' ? $('#cfT').value : $('#cf').value), b = parse(src === 'cbT' ? $('#cbT').value : $('#cb').value);
+    if (!f || !b) return;
+    if (src !== 'cfT') $('#cfT').value = toHex(f); if (src !== 'cbT') $('#cbT').value = toHex(b);
+    $('#cf').value = toHex(f).toLowerCase(); $('#cb').value = toHex(b).toLowerCase();
+    $('#demo').style.background = toHex(b); $('#demo').style.color = toHex(f);
+    const r = contrast(f, b);
+    $('#ratio').textContent = r.toFixed(2) + ':1';
+    const tests = [['AA normal metin', 4.5], ['AA büyük metin', 3], ['AAA normal metin', 7], ['AAA büyük metin', 4.5]];
+    $('#wcag').innerHTML = tests.map(([n, t]) => `<span class="badge ${r >= t ? 'ok' : 'err'}">${r >= t ? '✓' : '✕'} ${n}</span>`).join('');
+  }
+  ['cf', 'cb', 'cfT', 'cbT'].forEach((id) => $('#' + id).addEventListener('input', () => cUpd(id)));
+  $('#swap').onclick = () => { const a = $('#cf').value; $('#cf').value = $('#cb').value; $('#cb').value = a; cUpd(); };
+
+  const h0 = location.hash.slice(1); if (h0 && parse(h0)) cur = parse(h0);
+  update(); cUpd();
+})();
+</script>
+</body>
+</html>
