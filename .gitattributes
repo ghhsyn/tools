@@ -7,3 +7,4 @@ README.md export-ignore
 .gitattributes export-ignore
 CNAME export-ignore
 .nojekyll export-ignore
+.htaccess export-ignore

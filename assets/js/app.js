@@ -4,6 +4,12 @@
 (function () {
   'use strict';
 
+  // HTTPS'e yönlendir (sunucu tarafında yönlendirme yoksa yedek). Kamera ve SHA için gereklidir.
+  if (location.protocol === 'http:' && !/^(localhost|127\.|\[::1\]|192\.168\.|10\.)/.test(location.hostname)) {
+    location.replace('https://' + location.host + location.pathname + location.search + location.hash);
+    return;
+  }
+
   const SITE = {
     name: 'Notettiklerim Tools',
     url: 'https://tools.notettiklerim.com',
