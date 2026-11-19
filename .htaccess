@@ -1,0 +1,54 @@
+# Notettiklerim Tools — Apache / cPanel ayarları (Nginx vb. sunucularda yok sayılır)
+
+# HTTPS'e yönlendir (kamera ve SHA hash'leri için gereklidir)
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+ErrorDocument 404 /404.html
+Options -Indexes
+DirectoryIndex index.html
+
+<IfModule mod_mime.c>
+  AddType application/manifest+json .webmanifest
+  AddType application/wasm .wasm
+  AddType font/woff2 .woff2
+  AddType font/ttf .ttf
+  AddCharset utf-8 .html .css .js .json .webmanifest .xml .txt
+</IfModule>
+
+# .gz dil verilerini sunucu tekrar sıkıştırmasın / açmasın
+<FilesMatch "\.traineddata\.gz$">
+  <IfModule mod_headers.c>
+    Header unset Content-Encoding
+  </IfModule>
+  ForceType application/octet-stream
+</FilesMatch>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript text/javascript application/json image/svg+xml application/manifest+json text/xml application/xml text/plain
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 1 hour"
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType application/javascript "access plus 1 day"
+  ExpiresByType text/css "access plus 1 day"
+  ExpiresByType image/png "access plus 1 week"
+  ExpiresByType image/svg+xml "access plus 1 week"
+  ExpiresByType font/woff2 "access plus 1 month"
+  ExpiresByType font/ttf "access plus 1 month"
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(self), microphone=(), geolocation=(self)"
+  <FilesMatch "^sw\.js$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>

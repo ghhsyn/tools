@@ -2,3 +2,8 @@
 *.ttf binary
 *.png binary
 *.ico binary
+README.md export-ignore
+.gitignore export-ignore
+.gitattributes export-ignore
+CNAME export-ignore
+.nojekyll export-ignore
